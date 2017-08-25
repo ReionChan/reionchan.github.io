@@ -1,7 +1,7 @@
 # Site settings
 title: Reion Chan
 header-img: "img/Wheat.jpg"
-tagline: "吉光片羽"  
+tagline: "綠色梯田"  
 description: "每個人心裡都有一畝田，用它來種什麼……"  
 baseurl: ""  
 # url: "http://localhost:4000"
@@ -25,7 +25,7 @@ twitter_username:
 github_username: ReionChan  
 facebook_username:   
 weibo_username: Reion_Chan  
-zhihu_username: Reion  
+zhihu_username: reionchan  
 
 # Build settings  
 # use Github Flavored Markdown !important  
