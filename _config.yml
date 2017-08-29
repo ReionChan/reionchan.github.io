@@ -1,0 +1,107 @@
+# ---------------- #
+#   Main Configs   #
+# ---------------- #
+baseurl:
+url: http://reionchan.github.io
+date_format: "ordinal"
+title: 書陋堂-Slowtown
+subtitle: "一個讀書人的自留地"
+description: "慢下來，開雙手，閉眼睛，深呼吸，這個世界多美好……"
+keywords: 書陋堂, 书陋堂, Slowtown, Reion Chan, reionchan
+favicon: /favicon.ico
+timezone: Asia/Shanghai
+encoding: "utf-8"
+side_bar_repo_limit: 2
+
+# ---------------- #
+#      Author      #
+# ---------------- #
+author: Reion Chan
+organization: 書陋堂
+organization_url: https://reionchan.github.io
+github_username: reionchan
+location: Fuzhou, China
+email: reion78@gmail.com
+
+# ---------------- #
+#    Navigation    #
+# ---------------- #
+navs:
+  -
+    href: /
+    label: 首頁
+
+  -
+    href: /categories/
+    label: 歸類
+
+  -
+    href: /wiki/
+    label: 維基
+
+  -
+    href: /links/
+    label: 鏈接
+
+  -
+    href: /about/
+    label: 關於
+
+# ---------------- #
+#       RSS        #
+# ---------------- #
+subscribe_rss: /feed.xml
+
+# ---------------- #
+#      Jekyll      #
+# ---------------- #
+markdown: kramdown
+kramdown:
+    input: GFM
+highlighter: rouge
+paginate: 8
+lsi: false
+quiet: false
+excerpt_separator: "\n\n"
+permalink: /:year/:month/:day/:title/
+gems:
+    - jekyll-github-metadata
+    - rouge
+#     - jekyll-html-pipeline
+    - jekyll-paginate
+    - jekyll-sitemap
+    - jekyll-feed
+    - jemoji
+#     - jekyll-mentions
+collections:
+    wiki:
+        output: true
+        permalink: /wiki/:path/
+
+repository: reionchan/reionchan.github.io
+
+# ---------------- #
+#      Comments    #
+# ---------------- #
+# support provider: disqus, gitment
+comments_provider: gitment
+# !!!重要!!! 请修改下面这些信息为你自己申请的
+# !!!Important!!! Please modify infos below to yours
+# https://disqus.com
+disqus:
+    username: reionchan
+# https://imsun.net/posts/gitment-introduction/
+gitment:
+    owner: reionchan
+    repo: blog-comments
+    oauth:
+        client_id: edfc3fd1d008c64cb968
+        client_secret: b5018e60f084217c731453aeb80c7765c318a96f
+# 在使用其它评论组件时可点击显示 Disqus
+lazy_load_disqus : true
+
+# ---------------- #
+#    Analytics     #
+# ---------------- #
+google:
+    analytics_id: UA-105347494-1

@@ -1,0 +1,70 @@
+---
+layout: default
+---
+<section class="collection-head small geopattern" data-pattern-id="{{ page.title | truncate: 15, ''}}">
+<div class="container">
+  <div class="columns">
+    <div class="column three-fourths">
+      <div class="collection-title">
+        <h1 class="collection-header">{{ page.title }}</h1>
+        <div class="collection-info">
+          {% if page.date %}
+          <span class="meta-info">
+            <span class="octicon octicon-calendar"></span> {{ page.date | date: "%Y/%m/%d" }}
+          </span>
+          {% endif %}
+          {% for cat in page.categories %}
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href="{{ site.url }}/categories/#{{ cat }}" title="{{ cat }}">{{ cat }}</a>
+          </span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<!-- / .banner -->
+<section class="container content">
+<div class="columns">
+  <div class="column three-fourths" >
+    <article class="article-content markdown-body">
+    {% for lic in page.licences %}
+      {% if lic contains 'gpl' %}
+        <a href="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" title="通用性公开许可证-3.0" alt="GPL-3" height="18" /></a> 
+      {% endif %}
+      {% if lic contains 'cc' %}
+        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="{{ site.url }}/images/posts/cc-by-nc-sa.png" title="知识共享许协议-4.0" alt="知识共享许可协议" height="18" /></a> 
+      {% endif %}
+    {% endfor %}
+    {% if page.repo %}
+        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/stargazers"><img src="https://img.shields.io/github/stars/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Star" title="查看分支" alt="分支人数" height="18" /></a>
+        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/network/members"><img src="https://img.shields.io/github/forks/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Fork" title="查看关注" alt="关注人数" height="18" /></a> 
+    {% endif %}
+    {{ content }}
+    <hr>
+    {% for lic in page.licences %}
+      {% if lic contains 'gpl' %}
+        <a href="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" title="通用性公开许可证-3.0" alt="GPL-3" height="15" /></a> 
+      {% endif %}
+      {% if lic contains 'cc' %}
+        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="{{ site.url }}/images/posts/cc-by-nc-sa.png" title="知识共享许协议-4.0" alt="知识共享许可协议" width="80" /></a> 
+      {% endif %}
+    {% endfor %}
+    </article>
+    <div class="share">
+      {% include sns-share.html %}
+    </div>
+    <div class="comment">
+      {% include comments.html %}
+    </div>
+  </div>
+  <div class="column one-fourth">
+    {% include sidebar-search.html %}
+    {% include sidebar-profile.html %}
+    {% include sidebar-post-nav.html %}
+  </div>
+</div>
+</section>
+<!-- /section.content -->
