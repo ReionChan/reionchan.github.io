@@ -1821,7 +1821,7 @@ CompletableFuture类实现CompletionStage和Future接口，保留原Future的用
 			System.out.println(str + " are best friends!");
 		});
 			
-		/* 为演示阻塞主线程，否则异步线程未执行程序就结束				 * 其次验证thenApply方法的转换结果特性：将List转为String
+		/* 为演示阻塞主线程，否则异步线程未执行程序就结束		 * 其次验证thenApply方法的转换结果特性：将List转为String
 		 * 该结果由thenComplete（验证此方法的传递结果特性）生成的CF返回
 		 */
 		System.out.println(cf.get());
@@ -1850,13 +1850,15 @@ CompletableFuture类实现CompletionStage和Future接口，保留原Future的用
 	public static void main(String[] args) {
 		CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> {
 			return Arrays.asList("Tom", "Scott", "Ryan");
-		}).thenApply((names) -> {						StringJoiner sj = new StringJoiner(", ");
+		}).thenApply((names) -> {  
+			StringJoiner sj = new StringJoiner(", ");
 			for (Object name : names) {
 				sj.add((String) name);
 			}
 			return sj.toString();
 		}).thenAccept((str) -> {
-			System.out.println(str + " are best friends!");				});
+			System.out.println(str + " are best friends!");  
+		});
 			
 		/* 为演示阻塞主线程，否则异步线程未执行程序就结束
 		 * 其次验证thenAccept方法的纯消费特性：消费String返回null
