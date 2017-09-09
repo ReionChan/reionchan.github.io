@@ -21,9 +21,9 @@ repo: nand2tetris
 	*  Typical hardware architecture (Chapter 1 ~ 5)
 		* Boolean Logic			`Project 01`
 		* Boolean Arithmetic	`Project 02`
-		* Sequential Logic		[`Project 03`
-		* Machine Language		[`Project 04`
-		* Computer Architecture	[`Project 05`
+		* Sequential Logic		`Project 03`
+		* Machine Language		`Project 04`
+		* Computer Architecture	`Project 05`
 	* Typical software architecture (Chapter 6 ~ 12)
 		* Assembler		`Project 06`
 		* Virtual Machine `Project 07`, `Project 08`
