@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Nand2Tetris Projects Introduction (English)
+title: Nand2Tetris Projects Introduction
 categories: Nand2Tetris Jack Java
 description: My source code introduction of Nand2Tetris Project
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan

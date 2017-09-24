@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Nand2Tetris 项目介绍（中文）
+title: Nand2Tetris 项目介绍
 categories: Nand2Tetris Jack Java
 description: 读 《计算机系统要素-从零开始构建现代计算机》后实现的项目源代码说明 
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
