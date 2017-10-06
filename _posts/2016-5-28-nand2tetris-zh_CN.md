@@ -2,6 +2,9 @@
 layout: post
 title: Nand2Tetris 项目介绍
 categories: Nand2Tetris Jack Java
+tags: Nand2Tetris Jack VM
+excerpt: 完成书中各项目后，将其托管到Github的相关说明与介绍。
+image: http://nand2tetris.org/imgs/cover.jpg
 description: 读 《计算机系统要素-从零开始构建现代计算机》后实现的项目源代码说明 
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
 licences: gpl, cc

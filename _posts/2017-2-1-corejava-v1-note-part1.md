@@ -2,7 +2,10 @@
 layout: post
 title: 《 Java 核心技术 卷一》笔记 上篇
 categories: Book Java
-description: 读《 Java 核心技术 卷一》的笔记 
+tags: Core Java 核心技术 卷Ⅰ
+excerpt: 读《 Java 核心技术 卷一》的笔记
+image: https://images-cn.ssl-images-amazon.com/images/I/41OFsAz290L._SY498_BO1,204,203,200_.jpg
+description: 读《 Java 核心技术 卷一》的笔记  
 keywords: Java, Core Java, 核心技术, 卷 Ⅰ
 licences: cc
 ---

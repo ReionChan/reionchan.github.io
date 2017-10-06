@@ -2,7 +2,10 @@
 layout: post
 title: Nand2Tetris Projects Introduction
 categories: Nand2Tetris Jack Java
-description: My source code introduction of Nand2Tetris Project
+tags: Nand2Tetris Jack VM
+excerpt: My source code introduction about Nand2Tetris Project
+image: http://nand2tetris.org/imgs/cover.jpg
+description: My source code introduction about Nand2Tetris Project
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
 licences: gpl, cc
 repo: nand2tetris
