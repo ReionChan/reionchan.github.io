@@ -9,6 +9,7 @@ description: 读 《计算机系统要素-从零开始构建现代计算机》�
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
 licences: gpl, cc
 author: Reion Chan
+repo: nand2tetris
 --- 
 
 nand2tetris
