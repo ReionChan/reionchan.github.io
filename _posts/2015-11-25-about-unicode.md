@@ -165,13 +165,13 @@ Unicode 为现实世界的几乎所有语言的字符提供一个唯一的数字
 这种存储模式将地址的高低和数据位权有效地结合起来，高地址部分权值高，低地址部分权值低。
 
 为了让计算机正确读取 Unicode 编码的文件数据，就需要某种方式告诉计算机数据的字节序。  
-*BOM（ Byte Order Mark）* 字节序标志头就孕育而生。 
+*[BOM](https://en.wikipedia.org/wiki/Byte_order_mark)（ Byte Order Mark）* 字节序标志头就孕育而生。 
 
  UTF 编码     	|        Byte Order Mark 
  --------------- 	| --------------------------------------
 UTF-8  		| EF BB BF  (非必须)
-UTF-16EL 	| FF FE
-UTF-16BE  	| FF FE
+UTF-16LE 	| FF FE
+UTF-16BE  	| FE FF
 UTF-32LE  	| FF FE 00 00
 UTF-32BE  	| 00 00 FE FF
                
