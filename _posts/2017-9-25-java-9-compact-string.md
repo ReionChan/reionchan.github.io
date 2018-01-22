@@ -7,6 +7,7 @@ excerpt: 浅谈 Java 9 中的字符串压缩技术 【译文】
 image: https://www.ibm.com/developerworks/community/blogs/ibmandgoogle/resource/BLOGS_UPLOADED_IMAGES/java-logo-2.png
 description: Java 9 中的 Compact Strings 
 keywords: Java,  java, Java9, java9, Compact String, compact string, Reion Chan, reionchan
+licences: cc
 --- 
 
 [原文链接](http://www.baeldung.com/java-9-compact-string) 作者：baeldung 译者：Reion Chan
