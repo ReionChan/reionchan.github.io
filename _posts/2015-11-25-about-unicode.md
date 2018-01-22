@@ -83,12 +83,12 @@ Unicode 为现实世界的几乎所有语言的字符提供一个唯一的数字
 	0 分组、2 平面，对 BMP 平面里 CJK（ Chinese Japanese Korea ）字符的额外分配区域，  
 该区域的字符与 BMP 中的 CJK 字符相比，不是很常用，除一小部分常用的广东方言文字。
 	
-   * SSP（ Supplementary Special-purpose Plane ）补充特殊目的平面
-   	0分组、14平面，该平面式是一些特殊用途的格式控制字符，  
+   * SSP（ Supplementary Special-purpose Plane ）补充特殊目的平面  
+	0分组、14平面，该平面式是一些特殊用途的格式控制字符，  
 由于 BMP 分给格式控制的码位区不够，故移动到该平面
    	
-   * PUP（ Private Use Planes ）专属使用平面 
-   	0分组、15、16两个平面，这两个平面共 113,068 个字符作为专属使用，  
+   * PUP（ Private Use Planes ）专属使用平面  
+	0分组、15、16两个平面，这两个平面共 113,068 个字符作为专属使用，  
 是对BMP里面的6400个字符的进一步扩从。
 
 <center><img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/ABC/unicode_allocation.png" alt="Unicode Allocation" width="340" /></center>  
