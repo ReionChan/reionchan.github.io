@@ -61,7 +61,7 @@ CPU仿真器 | 仿真Hack计算机系统的运作，用来测试运行使用Hack
 VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用VM语言编写的基于Hack-Jack平台的程序。  | PPT[![PPT](http://www.nand2tetris.org/icons/powerpoint.gif)](http://www.nand2tetris.org/tutorials/PPT/VM%20Emulator%20Tutorial.ppt) PDF[![PDF](http://www.nand2tetris.org/icons/acrobat.gif)](http://www.nand2tetris.org/tutorials/PDF/VM%20Emulator%20Tutorial.pdf)
 汇编编译器 | 将使用Hack汇编语言编写的程序翻译成Hack二进制机器代码。编译后的代码可以直接在硬件仿真器里的计算机芯片运行或在CPU仿真器上运行（速度更快）  | PPT[![PPT](http://www.nand2tetris.org/icons/powerpoint.gif)](http://www.nand2tetris.org/tutorials/PPT/Assembler%20Tutorial.ppt) PDF[![PDF](http://www.nand2tetris.org/icons/acrobat.gif)](http://www.nand2tetris.org/tutorials/PDF/Assembler%20Tutorial.pdf)
 编译器 | 将使用Jack语言编写的程序编译成VM代码，该代码可在VM仿真器上执行。当然，VM代码还可以进一步由VM编译器和汇编编译器编译后生成机器代码在CPU仿真器或硬件仿真器上运行。  | 命令行程序
-操作系统 | Jack OS扩展了Jack语言，就想Java标准类库扩展了Java语言一样。工具包中提供了两种实现：1、 使用纯Jack余元编写的.vm类文件 2、 直接嵌入在VM仿真器里的更高效的版本  | ——
+操作系统 | Jack OS扩展了Jack语言，就想Java标准类库扩展了Java语言一样。工具包中提供了两种实现：1、 使用纯Jack语言编写的.vm类文件 2、 直接嵌入在VM仿真器里的更高效的版本  | ——
 文本比较器 | 比较两个文本是否内容一致，可用来检查自己实现的软硬件是否正确，类似`diff`命令  | 命令行程序
 
 
@@ -78,7 +78,7 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 	
 	* [Xor 异或门](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Xor.hdl)
 	
-	* [Mux 2路复用器](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Mux.hdl) [^3]
+	* [Mux 二路复用器](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Mux.hdl) [^3]
 	
 	* [DMux 解复用器](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/DMux.hdl) [^4]
 	

@@ -2,7 +2,7 @@
 layout: post
 title: 『152年一遇』超级蓝色血月今晚上演
 categories: Astronomy
-tags: supermoon lunar-eclipse blue-moon
+tags: supermoon 超级月亮 lunar-eclipse 月食 血月 blue-moon 蓝月
 excerpt: 北京时间 2018-1-31 20:51:00
 image: https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/astronomy/bluemoon.jpg
 description: 百年一遇的超级蓝色血月 
