@@ -39,8 +39,8 @@ layout: default
       {% endif %}
     {% endfor %}
     {% if page.repo %}
-        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/stargazers"><img src="https://img.shields.io/github/stars/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Star" title="查看分支" alt="分支人数" height="18" /></a>
-        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/network/members"><img src="https://img.shields.io/github/forks/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Fork" title="查看关注" alt="关注人数" height="18" /></a> 
+        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/stargazers"><img src="https://img.shields.io/github/stars/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Star" title="关注" alt="关注" height="18" /></a>
+        <a href="https://github.com/{{ site.github_username }}/{{ page.repo }}/network/members"><img src="https://img.shields.io/github/forks/{{ site.github_username }}/{{ page.repo }}.svg?style=social&label=Fork" title="分支" alt="分支" height="18" /></a> 
     {% endif %}
     {{ content }}
     <hr>
