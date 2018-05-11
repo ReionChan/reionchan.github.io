@@ -160,7 +160,7 @@ plot "capacity_base_on_loadcycles.dat" using 1:2 with lp pt -1 lw 3 lc 2 title "
 <center><picture>
     <source type="image/svg+xml" srcset="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/gnuplot/capacity_base_on_loadcycles.svg?sanitize=true">
     <img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/gnuplot/capacity_base_on_loadcycles.png" alt="capacity_base_on_loadcycles"  width="800">
-</picture> 图三 电池容量随充电循环次数变化</center>
+</picture> 图二 电池容量随充电循环次数变化</center>
 
 * 电池容量随时间变化脚本
 
@@ -206,7 +206,7 @@ plot "capacity_base_on_age_of_battery.dat" using 3:2 with filledcurves y1=0 lc 2
 <center><picture>
     <source type="image/svg+xml" srcset="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/gnuplot/capacity_base_on_age_of_battery.svg?sanitize=true">
     <img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/gnuplot/capacity_base_on_age_of_battery.png" alt="capacity_base_on_age_of_battery"  width="800">
-</picture> 图二 电池容量随时间变化</center>
+</picture> 图三 电池容量随时间变化</center>
 
 ## 总结
 
