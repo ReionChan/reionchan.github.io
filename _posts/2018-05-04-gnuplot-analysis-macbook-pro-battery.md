@@ -31,7 +31,7 @@ licences: cc
 
 *  《使用 gnuplot 科学作图 — Gnuplot 中文教程》  
 	- 作者：[马欢](mailto:yusufma77@yahoo.com) 
-	- [![pdf](http://www.nand2tetris.org/icons/acrobat.gif) 下载](https://github.com/ReionChan/PhotoRepo/raw/master/gnuplot/gnuplot_tutorial.pdf)&emsp;[![CC BY-NC-SA 3.0](http://localhost:4000/images/posts/cc-by-nc-sa.png)](https://creativecommons.org/licenses/by-nc-sa/3.0/)  
+	- [![pdf](http://www.nand2tetris.org/icons/acrobat.gif) 下载](https://github.com/ReionChan/PhotoRepo/raw/master/gnuplot/gnuplot_tutorial.pdf)&emsp;[![CC BY-NC-SA 3.0](https://reionchan.github.io/images/posts/cc-by-nc-sa.png)](https://creativecommons.org/licenses/by-nc-sa/3.0/)  
 
 <div style="text-align: right;">🌹由衷感谢资源作者！🌹&emsp;&emsp;</div>
 
