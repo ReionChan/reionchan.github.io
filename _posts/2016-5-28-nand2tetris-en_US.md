@@ -14,7 +14,7 @@ repo: nand2tetris
 
 *The Elements of Computing Systems: Building a Modern Computer from First Principles*
 
- > Has been wondering how modern computers were built and saw [*Shimon Schocken*](http://shimonschocken.com/)'s presentation at [TED](https://www.youtube.com/watch?v=iE7YRHxwoDs), which introduced a course for students to build a modern computer that describes how modern computers is built from basic gate circuits. Each chapter introduces a project, one by one to complete these projects, you can construct a 16-bit Hack computer hardware emulator, based on this emulator, developed assembler and stacking virtual machine, designed Jack advanced programming language , As well as its compiler. Using the Java language to complete the various chapters of the project, and published to GitHub.
+ > Has been wondering how modern computers were built and saw [*Shimon Schocken*](http://shimonschocken.com/)'s presentation at [TED](https://www.youtube.com/watch?v=iE7YRHxwoDs), which introduced a course for students to build a modern computer that describes how modern computers are built from basic gate circuits. Each chapter introduces a project, one by one to complete these projects, you can construct a 16-bit Hack computer hardware emulator, based on this emulator, developed assembler and stacking virtual machine, designed Jack advanced programming language , As well as its compiler. Using the Java language to complete the various chapters of the project, and published to GitHub.
  
 ### Contents
 
