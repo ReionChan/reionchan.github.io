@@ -2,6 +2,9 @@
 
 我的个人博客：<http://reionchan.github.io>
 
+<center>
+    <img src="images/blog/書陋堂-Slowtown.png" alt="書陋堂-Slowtown"  width="600"> <br /><br /></center>
+
 ## 概览
 
 <!-- vim-markdown-toc GFM -->
