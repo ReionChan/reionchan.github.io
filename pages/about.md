@@ -34,7 +34,8 @@ permalink: /about/
 ═════════════════════════════════<br>
 </div>
 <div style="font-family: 'WenYue-GuDianMingChaoTi-NC-W5';" class="mobile-visible">
-昨夜西風凋碧樹。 独上高樓， 望盡天涯路。<br>
+昨夜西風凋碧樹。 <br>
+独上高樓， 望盡天涯路。<br>
 衣帶漸寬終不悔， 为伊消得人憔悴。<br>
 众里尋他千百度， 驀然回首， <br>
 那人却在燈火闌珊處。<br>
