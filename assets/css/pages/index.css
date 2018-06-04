@@ -4,8 +4,14 @@
     color: #fff
 }
 
-.home .banner .collection-head {
+.home .banner .collection-head,
+.home .site-header h1 a,
+.home .site-header .site-header-nav-item,
+.home .collection-head .collection-header {
     font-family: "Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
+}
+
+.home .banner .collection-head {
     color: #fff;
     background: 0 0;
     box-shadow: none;
@@ -17,12 +23,10 @@
 }
 
 .home .site-header h1 a {
-    font-family:"Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
     color: #fff
 }
 
 .home .site-header .site-header-nav-item {
-    font-family:"Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
     color: rgba(255, 255, 255, .5)
 }
 
@@ -37,7 +41,6 @@
   }
 
   .home .collection-head .collection-header {
-    font-family:"Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
     font-size: 1.25em;
   }
 }

@@ -8,12 +8,44 @@
 ## 概览
 
 <!-- vim-markdown-toc GFM -->
+* [字体说明](#字体说明)
 * [关于模板说明](#关于模板说明)
 * [贴心提示](#贴心提示)
 * [经验与思考](#经验与思考)
 * [致谢](#致谢)
 
 <!-- vim-markdown-toc -->
+
+## 字体说明
+
+本博客标题、子标题、文章标题、导航等多处精心选择了两款优美的字体，现说明如下：  
+
+* 英文字体： **Apple Chancery**  
+该款字体为 Mac 系统自带字体
+  
+* 中文字体： [**文悦古典明朝体**](http://wytype.com/typeface/WenYue-GuDianMingChaoTi)  
+此款字体为文悦科技字体产品提供「非商业使用」版免费下载，点击上面的字体名即可下载。咨询过字体作者，如果商用请到官网申请授权哦。在此由衷感谢文悦字库给我们带来的优美字体。  
+  
+当然，你也可以 DIY 自己的字体，只需修改如下处的代码：
+1. assets/css/pages/index.css
+
+```
+.home .banner .collection-head,
+.home .site-header h1 a,
+.home .site-header .site-header-nav-item,
+.home .collection-head .collection-header {
+    /* 此处修改成钟意的字体 */
+    font-family: "Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
+}
+```
+2. assets/css/posts/index.css
+
+```
+.slowtown {
+    /* 此处修改成钟意的字体 */
+    font-family: "Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
+}
+```
 
 ## 关于模板说明
 
