@@ -702,8 +702,8 @@ pre {
 .tools-wrapper {
   position: fixed;
   right: 1em;
-  bottom: 3.4375em;
-  z-index: 9;
+  bottom: 1em;
+  z-index: 999;
   width: 2.5em;
 }
 
@@ -711,7 +711,8 @@ pre {
   color: #999;
   text-align: center;
   margin-bottom: -1px;
-  background: rgba(255, 255, 255, 32);
+  /* Slowtown Main Color #46989E */
+  background: rgba(70, 152, 158, 0.2);
 }
 
 .tools-wrapper span.octicon {

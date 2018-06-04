@@ -8,6 +8,7 @@
 .home .site-header h1 a,
 .home .site-header .site-header-nav-item,
 .home .collection-head .collection-header {
+    /* 此处修改成钟意的字体 */
     font-family: "Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
 }
 
