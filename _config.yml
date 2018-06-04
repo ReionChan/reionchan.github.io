@@ -92,7 +92,6 @@ disqus:
     username: reionchan
 # https://imsun.net/posts/gitment-introduction/
 gitment:
-    id: '{{ page.date }}'
     owner: reionchan
     repo: blog-comments
     oauth:
