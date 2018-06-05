@@ -12,6 +12,16 @@
     font-family: "Apple Chancery", "WenYue-GuDianMingChaoTi-NC-W5";
 }
 
+/*.repo-list-name:after {
+  margin-left: -0.2em;
+  background-image: url('new.svg');
+  background-size: 20px 20px;
+  display: inline-block;
+  width: 20px; 
+  height: 20px;
+  content:"📌";
+}*/
+
 .home .banner .collection-head {
     color: #fff;
     background: 0 0;
