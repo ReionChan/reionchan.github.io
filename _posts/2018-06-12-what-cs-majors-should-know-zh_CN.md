@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 每个从事计算机科学专业都该知道的
+title: 从事计算机科学专业都该知道的
 categories: ABC
 excerpt: 一个计算机专业教授给学生的建议【译文】
 image: https://www.ncl.ac.uk/media/wwwnclacuk/pressoffice/images/COMPUTING-SCIENCE-standard.jpg
