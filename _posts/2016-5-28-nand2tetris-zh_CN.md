@@ -55,7 +55,7 @@ repo: nand2tetris
 * 软件工具
 
 工具 | 描述 | 教程下载
------------- | ------------- | ------------
+------------ | ------------- | :------------:
 硬件仿真器 | 采用HDL描述的用来仿真及测试逻辑门电路芯片。  | [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/ppt.png" alt="ppt"  width="20" />](https://docs.wixstatic.com/ugd/44046b_a1204dadc1c34d32a30256e5652abb97.ppt?dn=Hardware%20Simulator%20Tutorial.ppt) [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/pdf.png" alt="pdf"  width="20" />](https://docs.wixstatic.com/ugd/44046b_bfd91435260748439493a60a8044ade6.pdf)
 CPU仿真器 | 仿真Hack计算机系统的运作，用来测试运行使用Hack机器语言编写的程序。（可运行二进制形式或汇编形式的版本）  | [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/ppt.png" alt="ppt"  width="20" />](https://docs.wixstatic.com/ugd/44046b_c37c115e88f849ba8e0beeab98b1160d.ppt?dn=CPU%20Emulator%20Tutorial.ppt) [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/pdf.png" alt="pdf"  width="20" />](https://docs.wixstatic.com/ugd/44046b_f63aba2611944e82974c9c5d5a3821fe.pdf)
 VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用VM语言编写的基于Hack-Jack平台的程序。  | [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/ppt.png" alt="ppt"  width="20" />](https://docs.wixstatic.com/ugd/44046b_92baafe08ad14b66b877d80b105d59ec.ppt?dn=VM%20Emulator%20Tutorial.ppt) [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/pdf.png" alt="pdf"  width="20" />](https://docs.wixstatic.com/ugd/44046b_b74d071ee4b74279b211acede232ced9.pdf)
