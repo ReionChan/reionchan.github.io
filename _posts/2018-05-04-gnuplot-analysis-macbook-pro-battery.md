@@ -27,11 +27,11 @@ licences: cc
 	- MacOS：[gnuplot-5.2.3-quartz.pkg](http://ricardo.ecn.wfu.edu/pub/gnuplot/gnuplot-5.2.3-quartz.pkg) 或 [Plot2 on AppStore](https://itunes.apple.com/cn/app/plot2/id846509360?mt=12)
 	- Windows：[gp523-win64-mingw.7z](https://jaist.dl.sourceforge.net/project/gnuplot/gnuplot/5.2.3/gp523-win64-mingw.7z)、[gp523-win32-mingw.7z](https://netix.dl.sourceforge.net/project/gnuplot/gnuplot/5.2.3/gp523-win32-mingw.7z)  
 
-* [![pdf](http://www.nand2tetris.org/icons/acrobat.gif) 官方用户手册](http://www.gnuplot.info/docs_5.2/Gnuplot_5.2.pdf)
+* [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/pdf.png" alt="点击下载" width="12" /> 官方用户手册](http://www.gnuplot.info/docs_5.2/Gnuplot_5.2.pdf)
 
 *  《使用 gnuplot 科学作图 — Gnuplot 中文教程》  
 	- 作者：[马欢](mailto:yusufma77@yahoo.com) 
-	- [![pdf](http://www.nand2tetris.org/icons/acrobat.gif) 下载](https://github.com/ReionChan/PhotoRepo/raw/master/gnuplot/gnuplot_tutorial.pdf)&emsp;[![CC BY-NC-SA 3.0](https://reionchan.github.io/images/posts/cc-by-nc-sa.png)](https://creativecommons.org/licenses/by-nc-sa/3.0/)  
+	- [<img src="https://raw.githubusercontent.com/ReionChan/nand2tetris/master/res/pdf.png" alt="点击下载" width="12" /> 下载](https://github.com/ReionChan/PhotoRepo/raw/master/gnuplot/gnuplot_tutorial.pdf)&emsp;[![CC BY-NC-SA 3.0](https://reionchan.github.io/images/posts/cc-by-nc-sa.png)](https://creativecommons.org/licenses/by-nc-sa/3.0/)  
 
 <div style="text-align: right;">🌹由衷感谢资源作者！🌹&emsp;&emsp;</div>
 
