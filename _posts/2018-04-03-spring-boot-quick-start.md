@@ -273,7 +273,7 @@ licences: cc
 
 * 嵌入 Servlet 容器  
 &emsp;&emsp;采用内嵌方式后，使得 Spring Boot 能够接管及配置 Servlet 容器。以前对容器的配置操作现在被整合提取到应用的相应配置中，使得以前分散的模块聚集成一个独立的应用，这对实现 *微服务架构*  [^2] 是一个良好基础。  
-&emsp;&emsp;参考 [Spring Boot 文档关于嵌入式 Servlet 容器支持](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-embedded-container) 小节，为了实现从 **Servlet 容器管理 ServletContextInitializer 进而引导 Spring Web 应用初始化** 转化为 **由 Spring 管理 ServletContextInitializer 引导并配置嵌入式 Servlet 容器** 的目的，应该注册实现 `org.springframework.boot.web.servlet.ServletContextInitializer` 接口的 bean，其 `onStartup` 方法提供对 `ServletContext` 的访问。  
+&emsp;&emsp;参考 [Spring Boot 文档关于嵌入式 Servlet 容器支持](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-embedded-container) 小节，为了实现从 **Servlet 容器管理 ServletContainerInitializer 进而引导 Spring Web 应用初始化** 转化为 **由 Spring 管理 ServletContextInitializer 引导并配置嵌入式 Servlet 容器** 的目的，应该注册实现 `org.springframework.boot.web.servlet.ServletContextInitializer` 接口的 bean，其 `onStartup` 方法提供对 `ServletContext` 的访问。  
 
 ## Spring MVC - 视图层  
 ### Spring MVC 原理
