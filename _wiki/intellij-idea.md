@@ -57,6 +57,11 @@ keywords: IntelliJ IDEA
 	* **author**、**params**、**return** 变量的 **Expression** 栏分别填入 `user()`、`methodParameters()` 及 `methodReturnType()`
 	* **OK** 退出到上层后，继续 **OK** 保存并退出
  
+以后只需在类、方法声明的**行前**输入 “`快捷键`+ `Tab`”组合键即可插入所设置的模板注释：  
+
+* 方法声明行前键入 “`*`+ `Tab`”快速插入方法注释
+* 类、接口、枚举声明行前键入 “`**`+ `Tab`”快速插入类注释
+ 
 <div id="code_02" style="font-size: 0.8em;color: blue;text-align: right;background-color: rgb(220,220,220);">Code_02 类、接口、枚举注释模板&emsp;&emsp;</div>
 ```java
 **
