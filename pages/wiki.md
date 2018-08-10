@@ -8,8 +8,7 @@ sharebar: false
 # menu: 維基
 permalink: /wiki/
 ---
-
-> 敬請期待……
+> <font style="font-family: 'Apple Chancery', 'WenYue-GuDianMingChaoTi-NC-W5'; font-size: 1.2em;">維基維基，唯基所至，所致大成。</font>
 
 <ul class="listing">
 {% for wiki in site.wiki %}
