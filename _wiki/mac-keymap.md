@@ -14,8 +14,8 @@ keywords: MacOS, KeyMap
 ⇧	| Shift		| →		| 右箭头
 ⌥	| Option		| ⇞		| Page Up（Fn+↑）
 ⌃	| Control		| ⇟		| Page Down（Fn+↓）
-↩︎	| Return/Enter| Home	| Fn + ←
-⌫	| Delete		| End	| Fn + →
+⏎	| Return/Enter| ↖		| Home （Fn + ←）
+⌫	| Delete		| ↘		| End （Fn + →）
 ⌦	| Fn+Delete	| ⇥		| Tab
 ↑	| 上箭头		| ⇤		| Shift+Tab
 ↓	| 下箭头		| ⎋		| Esc
