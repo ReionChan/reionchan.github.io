@@ -2,9 +2,9 @@
 layout: post
 title: Jenkins 持续集成忠实管家
 categories: Tools Spring
-excerpt: 使用 Jenkins 自动化编译部署 Springboot 项目
+excerpt: Jenkins 自动化编译部署 Springboot 项目
 image: https://camo.githubusercontent.com/fe0c9ecc354db49a376fa2a68f26bebdc75df14d/68747470733a2f2f6a656e6b696e732e696f2f73697465732f64656661756c742f66696c65732f6a656e6b696e735f6c6f676f2e706e67
-description: 使用 Jenkins 自动化编译部署 Springboot 项目
+description: Jenkins 自动化编译部署 Springboot 项目
 keywords: Jenkins, Springboot, Git，CI, CD, Deploy, artifacts, Java, jar
 licences: cc
 ---
@@ -165,7 +165,7 @@ echo -----------------------------------------
 DEPLOY_DIR=/path/deployDir
 export DEPLOY_DIR
 PID_a=$(ps -ef | grep demo-a-1.0-SNAPSHOT.jar | grep -v grep | awk '{ print $2 }')
-PID_b=$(ps -ef | grep demo-b-1.0-SNAPSHOT-exec.jar | grep -v grep | awk '{ print $2 }')
+PID_b=$(ps -ef | grep demo-b-1.0-SNAPSHOT.jar | grep -v grep | awk '{ print $2 }')
 echo ---------- 停止当前运行的服务 --------------
 if [ -z "$PID_a" ]
 then
