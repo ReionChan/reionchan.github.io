@@ -84,7 +84,7 @@ licences: cc
 
 		最初规范：  
 		> JVM将所有中间计算都进行截断，但遭到计算团体的反对。  
-		为了平衡 “最优性能” 和 “理想结果”，引入 “striptfp” 关键字，  
+		为了平衡 “最优性能” 和 “理想结果”，引入 “strictfp” 关键字，  
 		即 Strict Float Point  
     
 		默认情况：  
@@ -540,7 +540,7 @@ licences: cc
 	  
 	> 如果重新定义equals方法，就必须重新定义hashCode方法  
 	  
-	关于hashCode值的算法，参考[《Effective Java》第二版第9条](#)  
+	关于hashCode值的算法，参考[《Effective Java》第二版第9条](https://reionchan.github.io/2017/10/19/effective-java-part-1/#8-%E8%A6%86%E7%9B%96equals%E6%97%B6%E7%9A%84%E9%80%9A%E7%94%A8%E7%BA%A6%E5%AE%9A)  
   
 * toString方法  
 
@@ -629,7 +629,7 @@ licences: cc
 
 ### 反射
 	  
-* 能否分析类能力的程序称为反射  
+* 能够分析类能力的程序称为反射  
 
 * Class对象表示的是一个类型，而这个类型未必是一种类  
 	int.class表示的是int类型，int不是一种类
