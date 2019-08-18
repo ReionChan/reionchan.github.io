@@ -16,7 +16,7 @@ licences: cc
 > &emsp;&emsp;调试你的应用，而不是你的环境！无论何地都能安全的构建、分享及运行任何的应用。
 <div style="text-align: right;"> —— 摘自 <a href="https://www.docker.com">Docker 官网</a> &emsp;&emsp;</div>
 
-## Docker 概念
+## Docker 概念[^1]
 
 &emsp;&emsp;Docker 为开发人员及系统管理员从事开发、部署及运行基于容器的应用提供一个通用平台。使用基于 Linux 容器来部署应用的操作被称为 *容器化*。容器本身虽不是新技术理念，但是**通过容器化来简化部署应用的这种理念还是蛮新奇的理念**。
 
@@ -135,7 +135,18 @@ docker container ls -aq
 
 &emsp;&emsp;在 [Docker 安装](#docker-安装)中，我们通过一个小 Demo 大致感受到了采用 Docker 来编译部署及运行一个容器化的应用。在本小节我们将详细阐述 Docker 在各个阶段的主要任务的实现过程。
 
-&emsp;&emsp;在着手以 Docker 的方式构建一个应用时，一般是要经过**应用开发**、**构建容器**、**发布服务**及**合成服务栈**的几个重要步骤。创建容器应用是基础，容器应用就可以跑在 Docker 提供的应用环境上，提供具体服务。将不同的服务巧妙地组合就能构造出复杂的服务栈，来满足实际的业务需求。我们这里通过编写一个 Python 应用来实践整个过程。
+&emsp;&emsp;在着手以 Docker 的方式构建一个应用时，一般是要经过**应用开发**、**构建容器**、**发布服务**及**合成服务栈**的几个重要步骤。创建容器应用是基础，容器应用就可以跑在 Docker 提供的应用环境上，提供具体服务。将不同的服务巧妙地组合就能构造出复杂的服务栈，来满足实际的业务需求。所以它们的层级关系应该如图所示：
+
+<p align="center">
+	<image src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/docker/docker-layer.png" width="35%"></image>
+</p>
+
+> Containers 容器：可以视作包含应用代码及其运行时所需的依赖及环境的统称<br />
+> Services 服务：分布式应用中常常指能提供某项功能的单独模块<br />
+> Stacks 服务栈：将不同的服务组合堆叠从而能够完成业务需求的结构<br />
+
+
+&emsp;&emsp;我们这里通过编写一个 Python 应用来实践整个过程。首先创建容器 Container，然后将其发布成服务 Service，最后组合多个 Service 形成一个服务栈 Stack。
 
 ### 创建容器 Containers
 
@@ -245,7 +256,7 @@ docker container ls -aq
 	
 	&emsp;&emsp;由于我们将`4000`端口映射为容器中的`80`端口，故而在浏览器中访问地址 `http://localhost:4000` 即可访问页面，如图所示：
 	
-	![app-in-brower.png](https://docs.docker.com/get-started/images/app-in-browser.png)
+	![app-in-brower.png](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/docker/app-in-browser.png)
 	
 	&emsp;&emsp;尝试执行如下命令，可以获取更多相关容器的一些信息：
 	
@@ -263,11 +274,137 @@ docker container ls -aq
 
 * 发布容器化应用
 
-	&emsp;&emsp;运行调试完毕，我们可以将
-
+	&emsp;&emsp;运行调试完毕，我们可以将镜像打上标签，并上传至 [Docker Hub](https://hub.docker.com) 进行镜像托管，当然你也可以选择不同的镜像托管服务器。具体操作步骤如下：
+	
+	```sh
+	# 登录到 Docker Hub
+	$ docker login
+	Authenticating with existing credentials...
+	Login Succeeded
+	
+	# 将本地镜像 friendlyhello 重新打上规范的标签
+	# username 替换为你的 Docker Hub 账号用户名
+	$ docker tag friendlyhello username/friendlyhello:v1.0
+	
+	# 重新标签后，我们能看到一个新的镜像文件
+	$ docker image ls
+	REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+	friendlyhello           latest              550941976752        51 minutes ago      148MB
+	username/friendlyhello   v1.0                550941976752        51 minutes ago      148MB
+	
+	# 将新的镜像 push 到 Docker Hub
+	$ docker push username/friendlyhello:v1.0
+	
+	# 此后，就可以在任何时候执行如下命令拉取远程镜像文件执行
+	$ docker run -p 8081:80 username/friendlyhello:v1.0
+	
+	```
 
 ### 发布服务 Services
+
+&emsp;&emsp;对于 Docker 而言，服务就是产品级的容器，服务指定了容器以什么方式运行，例如：容器运行在哪个端口、需要多少硬件资源、需要多少容器实例拷贝...... 所以符合 Docker 容器化的服务，天生就具备良好的可扩展性。Docker 通过 `docker-compose.yml` 文件来配置容器运行的参数，下面就上一节生成的镜像文件来编写这个文件。
+
+* 编写 `docker-compose.yml` 文件
+
+	```yml
+	version: "3"
+	services:
+	  web:
+	    # 根据自身的镜像信息替换 username/friendlyhello:v1.0
+	    image: username/friendlyhello:v1.0
+	    deploy:
+	      # 容器实例个数
+	      replicas: 5
+	      # 资源配置
+	      resources:
+	        limits:
+	          # 限制每个实例占用 cpu 时间为 10%
+	          cpus: "0.1"
+	          # 限制每个实例占用内存为 50M
+	          memory: 50M
+	      restart_policy:
+	        condition: on-failure
+	    # 端口映射，将 4000 端口映射为容器的 80 端口
+	    ports:
+	      - "4000:80"
+	    # 将此 web 参与到负载均衡网络 webnet
+	    networks:
+	      - webnet
+	# 采取默认方式定义一个负载均衡的网络
+	networks:
+	  webnet:
+	```
+	
+* 发布具备负载均衡应用服务
+
+	&emsp;&emsp;由于要使用负载均衡的功能，在部署时涉及后续小节的内容，现在如果不理解，先照着命令执行即可。安装如下命令发布配置好的服务：
+	
+	```sh
+	# 将当前节点初始化为集群的管理节点，将在下节介绍。
+	# 如果不初始化，下面的 docker stack 命令将会报错。
+	$ docker swarm init
+	Swarm initialized: current node (t6r6euslxnpwitw4yn0g92uaf) is now a manager.
+	To add a worker to this swarm, run the following command:
+	    docker swarm join --token ... 192.168.65.X:2377
+	To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+	
+	# 应用根目录执行，后面的 getstartedlab 是指定的当前服务栈的名称
+	$ docker stack deploy -c docker-compose.yml getstartedlab
+	Creating network getstartedlab_webnet
+	Creating service getstartedlab_web
+	
+	# 查看当前的服务信息
+	$ docker service ls
+	ID                  NAME                MODE                REPLICAS            IMAGE                        PORTS
+	kqibyn0286pu        getstartedlab_web   replicated          5/5                 username/friendlyhello:v1.0   *:4000->80/tcp
+
+	# 除了上面的命令外，下面的可以只显示指定服务栈名称的服务信息
+	$ docker stack services getstartedlab
+	ID                  NAME                MODE                REPLICAS            IMAGE                        PORTS
+	kqibyn0286pu        getstartedlab_web   replicated          5/5                 username/friendlyhello:v1.0   *:4000->80/tcp
+	
+	# 根据配置，当前服务运行了5个容器实例
+	# 服务中的每个容器实例被称作任务 task，每个任务有一个唯一的自增长的 ID
+	# 此 ID 编号一直增长到配置文件中指定的实例个数，类似下面的 getstartedlab_web.5
+	# docker stack ps getstartedlab 也能显示相同任务内容
+	$ docker service ps getstartedlab_web
+	ID                  NAME                  IMAGE                        NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+	2j70ic6zxs55        getstartedlab_web.1   username/friendlyhello:v1.0   docker-desktop      Running             Running 4 minutes ago                       
+	vretbeyraceh        getstartedlab_web.2   username/friendlyhello:v1.0   docker-desktop      Running             Running 4 minutes ago                       
+	qig853sns67z        getstartedlab_web.3   username/friendlyhello:v1.0   docker-desktop      Running             Running 4 minutes ago                       
+	chuipb76htpg        getstartedlab_web.4   username/friendlyhello:v1.0   docker-desktop      Running             Running 4 minutes ago                       
+	mhcbn7dab9vt        getstartedlab_web.5   username/friendlyhello:v1.0   docker-desktop      Running             Running 4 minutes ago
+	
+	# 下面的命令显示不同的容器实例，只不过没有根据服务栈名称过滤
+	# 注意：这里显示的是容器ID，上面命令是任务ID
+	$ docker container ls
+	CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS              PORTS               NAMES
+	decd34f76501        username/friendlyhello:v1.0   "python app.py"     6 minutes ago       Up 6 minutes        80/tcp              getstartedlab_web.3.qig853sns67zlmdtpz83tl439
+	eb04fb1c8146        username/friendlyhello:v1.0   "python app.py"     6 minutes ago       Up 6 minutes        80/tcp              getstartedlab_web.4.chuipb76htpgsbbk0f9e7zqnr
+	4250101e9006        username/friendlyhello:v1.0   "python app.py"     6 minutes ago       Up 6 minutes        80/tcp              getstartedlab_web.2.vretbeyraceh2o7dd22jr4n20
+	5a5c3a5f525a        username/friendlyhello:v1.0   "python app.py"     6 minutes ago       Up 6 minutes        80/tcp              getstartedlab_web.5.mhcbn7dab9vt5krt3vkpe35em
+	4194f16e84a5        username/friendlyhello:v1.0   "python app.py"     6 minutes ago       Up 6 minutes        80/tcp              getstartedlab_web.1.2j70ic6zxs55cpekpusq4tjmp
+	```
+	
+	&emsp;&emsp;执行完命令后，访问 URL 地址 `http://localhost:4000`。刷新几次页面，发现页面中 **Hostname** 是变化的，因为每次请求可能被负载均衡到不同的容器实例上。可以修改 `docker-compose.yml` 文件来改变应用的资源配置、实例数等参数，每次修改保存后，只要重复执行 `docker stack deploy -c docker-compose.yml getstartedlab` 命令就能更新实例。值得注意的是，Docker 平台采取一站式更新，因此你不必先停掉你的 stack 或者 kill 所有的容器，Awesome！
+	
+* 停止应用及集群
+
+	```sh
+	# 停止服务栈
+	$ docker stack rm getstartedlab
+	
+	# 关闭集群
+	$ docker swarm leave --force
+	```
+
 ### 创建集群 Swarms
+
 ### 创建服务栈 Stacks
+
 ### 部署应用
+
+
+## 脚注
+[^1]: 本文参考翻译自 Docker 官方文档，阅读原文请移步 [Get started](https://docs.docker.com/get-started)。
 	
