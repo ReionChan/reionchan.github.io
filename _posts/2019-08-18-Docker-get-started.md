@@ -497,7 +497,7 @@ docker container ls -aq
 	&emsp;&emsp;至此，我们已经将默认执行命令的节点设置为 myvm1，接下来我们就可以默认在此管理节点执行命令来将应用部署到 Swarm 集群中了。和上一小节一样，执行服务栈部署命令，不同的是此命令现在是交由 Swarm 集群中的管理节点 myvm1 来执行：
 	
 	```sh
-	# 拷贝物理记得 docker-compose.yml 文件到管理节点的 Docker 用户主目录
+	# 拷贝物理机的 docker-compose.yml 文件到管理节点的 Docker 用户主目录
 	$ docker-machine scp docker-compose.yml myvm1:~
 	
 	# 在 myvm1 上部署应用
