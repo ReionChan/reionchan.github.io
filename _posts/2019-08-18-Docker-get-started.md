@@ -83,7 +83,7 @@ licences: cc
 		```
 		docker login && docker push docker/cheers2019
 		```
-		如何感觉这个例子有趣，执行上面命令，将会在 [Docker Hub](hub.docker.com) 分享你的容器镜像。
+		如果感觉这个例子有趣，执行上面命令，将会在 [Docker Hub](hub.docker.com) 分享你的容器镜像。
 		
 ## Docker CLI
 ### 检查版本
