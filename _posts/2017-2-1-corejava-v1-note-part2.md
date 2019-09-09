@@ -1783,7 +1783,29 @@ CompletableFuture类实现CompletionStage和Future接口，保留原Future的用
 
 	<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/CoreJava/Volume1/Ch14/Image_14.9.5-1.png" alt="Image_14.9.5-1.png" width="500" />
 	<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/CoreJava/Volume1/Ch14/Thread_State_Color.png" alt="线程状态颜色标识" width="200" />  
-	[Java VisualVM线程状态说明](#TODO)   
+	
+	“Java VisualVM 线程状态图“与”线程状态“对应关系：
+
+	* 运行：
+
+		调用线程的 `start()` 方法后，线程处于 **RUNNABLE** 
+	* 休眠：
+
+		调用线程静态方法 `Thread.sleep(long n)` 后，线程处于 **TIMED_WAITING (sleeping)** 
+	* 等待：
+
+		- 调用 `object.wait()`、`thread.join()` 后， 线程处于 **WAITING (on object monitor)**
+		- 调用 `object.wait(long)`、`thread.join(long)` 后， 线程处于 **TIMED_WAITING (on object monitor)**
+	* 驻留：
+
+		- 调用 `LockSupport.park()` 后，线程处于 **WAITING (parking)**
+		- 调用 LockSupport 的 `parkUntil(long)`、`parkNanos(long)` 后，线程处于 **TIMED_WAITING (parking)**
+
+		注意：使用 JDK8 的附带的 jvisualvm 去监视 JDK11 的应用时，WATTING/TIMED_WATING (parking) 显示的状态是**等待**而非**驻留**（明显是错误的）。在 JDK9 及以上版本中，已经不附带 jvisualvm 工具，请移步[这里](https://visualvm.github.io/download.html)下载，目前已支持 JDK12，使用新版本就能解决 parking 时状态显示错误的问题。
+		
+	* 监视：
+
+		线程申请监视器锁却不可得时被阻塞时，线程处于 **BLOCKED (on object monitor)**  
 		
 * 任务完成时对结果进行转换任务后返回新CF的结果  
 	相较于前一节，最后返回的结果为新CF的结果类型，原CF值只作为数据输入  
