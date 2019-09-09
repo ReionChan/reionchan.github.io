@@ -1784,7 +1784,7 @@ CompletableFuture类实现CompletionStage和Future接口，保留原Future的用
 	<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/CoreJava/Volume1/Ch14/Image_14.9.5-1.png" alt="Image_14.9.5-1.png" width="500" />
 	<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/CoreJava/Volume1/Ch14/Thread_State_Color.png" alt="线程状态颜色标识" width="200" />  
 	
-	“Java VisualVM 线程状态图“与”线程状态“对应关系：
+	“Java VisualVM 线程状态图”与“线程状态”对应关系：
 
 	* 运行：
 
