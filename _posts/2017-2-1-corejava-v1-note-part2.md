@@ -1452,6 +1452,7 @@ Java SE 7之后提供了7个具体的实现类：
 	- 超过队列大小的元素虽然也可以放入，**但不参与排序**  
 * DelayQueue实现Delayed接口，其getDelay方法返回剩余延迟，负数即延迟结束才能移除  
 * LinkedTransferQueue实现TransferQueue接口，其transfer方法阻塞直到有另一线程将元素删除
+* SynchronousQueue 由于不存元素，offer **永远false** put/take **阻塞,需其他线程调用take/put**
 	
 具体实现细节可参考：  
 [聊聊并发（七）——Java中的阻塞队列](http://www.infoq.com/cn/articles/java-blocking-queue#)  
