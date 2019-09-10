@@ -1445,11 +1445,13 @@ Java SE 7之后提供了7个具体的实现类：
 * LinkedBlockingDeque：一个由链表结构组成的双向阻塞队列。
 
 注意：   
-LinkedBlockingQueue此书说其无上限，其实默认上限`Integer.MAX_VALUE`  
-ArrayBlockingQueue有界，需指定容量，还可传入可选参数来指定是否使用公平性  
-PriorityBlockingQueue优先级队列，默认自然排序而非先进先出，可自定义比较器  
-DelayQueue实现Delayed接口，其getDelay方法返回剩余延迟，负数即延迟结束才能移除  
-LinkedTransferQueue实现TransferQueue接口，其transfer方法阻塞直到有另一线程将元素删除
+* LinkedBlockingQueue此书说其无上限，其实默认上限`Integer.MAX_VALUE`  
+* ArrayBlockingQueue有界，需指定容量，还可传入可选参数来指定是否使用公平性  
+* PriorityBlockingQueue优先级队列，默认自然排序而非先进先出，可自定义比较器。
+	- 队列满时，put、offer方法**不阻塞**，可以正常放入队列
+	- 超过队列大小的元素虽然也可以放入，**但不参与排序**  
+* DelayQueue实现Delayed接口，其getDelay方法返回剩余延迟，负数即延迟结束才能移除  
+* LinkedTransferQueue实现TransferQueue接口，其transfer方法阻塞直到有另一线程将元素删除
 	
 具体实现细节可参考：  
 [聊聊并发（七）——Java中的阻塞队列](http://www.infoq.com/cn/articles/java-blocking-queue#)  
