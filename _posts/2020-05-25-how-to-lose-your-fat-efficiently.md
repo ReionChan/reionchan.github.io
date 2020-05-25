@@ -3,7 +3,7 @@ layout: post
 title: 如何科学的减脂
 categories: Health
 excerpt: 减脂卡路里公式
-image: https://www.rabbitmq.com/img/RabbitMQ-logo.svg
+image: https://delawarestatenews.net/wp-content/uploads/2015/04/c3-healthcare-logo-md.jpg
 description: 减脂卡路里公式
 keywords: lose fat calorie calculation formula 卡路里 计算 公式
 licences: cc
