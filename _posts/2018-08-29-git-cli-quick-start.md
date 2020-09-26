@@ -9,20 +9,19 @@ keywords: git GIT CLI 版本控制
 licences: cc
 ---
 
-<br/>
 ![git](https://git-scm.com/images/logo@2x.png)
 
-##介绍
+## 介绍
 	
 	man git-log
 	git help log
 	
-###设置 name & email
+### 设置 name & email
 
 	git config --global user.name "your name"
 	git config --global user.email you@example.com
 
-###导入新工程
+### 导入新工程
 	
 	cd your_project_path
 	git init
