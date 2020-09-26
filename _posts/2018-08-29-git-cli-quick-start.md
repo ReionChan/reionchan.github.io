@@ -2,7 +2,7 @@
 layout: post
 title: Git CLI 快速入门
 categories: Tool
-excerpt: https://git-scm.com/images/logo@2x.png
+excerpt: Git CLI 实用命令快速上手
 image: https://git-scm.com/images/logo@2x.png
 description: Git CLI 实用命令快速上手
 keywords: git GIT CLI 版本控制
