@@ -170,4 +170,9 @@ licences: cc
 ### Git GUI 客户端推荐
 
 * [GitHub Desktop](https://desktop.github.com/) `快捷`
+
+	![GitKraken](https://desktop.github.com/images/github-desktop-screenshot-mac.png)
+	
 * [GitKraken](https://www.gitkraken.com/) `酷炫`
+
+	![GitKraken](https://www.gitkraken.com/img/index/gk-product-2.png)
