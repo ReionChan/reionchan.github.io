@@ -11,7 +11,7 @@ licences: cc
 
 ![git](https://git-scm.com/images/logo@2x.png)
 
-## 介绍
+## 帮助文档
 	
 	man git-log
 	git help log
