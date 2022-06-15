@@ -12,17 +12,17 @@ licences: cc
 ![git](https://git-scm.com/images/logo@2x.png)
 
 ### 帮助文档
-	
+
 	man git-log
 	git help log
-	
+
 ### 设置 name & email
 
 	git config --global user.name "your name"
 	git config --global user.email you@example.com
 
 ### 导入新工程
-	
+
 	cd your_project_path
 	git init
 		创建一个空的 Git 仓库 .git/
@@ -30,7 +30,7 @@ licences: cc
 		为目录下的所有文件创建一个快照，存储在 `index` 区
 	git commit
 		要求输入提交信息
-		
+
 ### 更改
 	git add file1 file2 file3
 		将三个文件的更改添加到 `index` 区
@@ -43,12 +43,12 @@ licences: cc
 		提交index区变动到库，后接 -a 参数，可以掠过 git add 操作
 		提交备注信息是个好习惯，一般要求简短，50个字以内的标题  
 		后接一个空行，再最佳一些说明。
-		
+
 ### 查看历史
 	git log
 		查看变更记录，-p 查看每一步的全部不同之处
 		--stat --summary 可以对每一步有一个感官上的概览
-		
+
 ### 管理分支
 	git branch experimental
 		创建名为 experimental 的分支
@@ -69,7 +69,7 @@ licences: cc
 	git branch -d experimental 
 		将会删除该分支，应确保分支的更改已经存在于当前的分支中
 		-D 如果仅让分支做一些实验性的尝试，此命令忽略所有变动
-		
+
 ### 协同合作
 #### 本地库共享
 
@@ -99,9 +99,9 @@ licences: cc
 		表示查看他们中任意一个可达的更改，但不包括他们都可达的
 		部分
 		范围标记可以被 gitk 和 git log 两个命令使用
-		
+
 #### 远程库共享
-	
+
 	git remote add bob /home/bob/myrepo
 		远程仓库添加 bob 的更改
 	git fetch bob
@@ -121,7 +121,7 @@ licences: cc
 		
 		git 同样保存一个全新的原始库的拷贝
 		git branch -r 即可查看
-		
+
 ### 浏览历史
 
 	git log
@@ -165,7 +165,7 @@ licences: cc
 	
 	gitk --since="2 weeks ago" drivers/
 		列出至两个星期以来 drivers 目录下的所有更新
-		
+
 ### Git GUI 客户端推荐
 
 * [GitHub Desktop](https://desktop.github.com/) `快捷`
@@ -174,4 +174,4 @@ licences: cc
 	
 * [GitKraken](https://www.gitkraken.com/) `酷炫`
 
-	![GitKraken](https://www.gitkraken.com/img/index/gk-product-2.png)
+	![GitKraken](https://1v5ymx3zt3y73fq5gy23rtnc-wpengine.netdna-ssl.com/wp-content/uploads/2022/03/index-thumbnail.png)
