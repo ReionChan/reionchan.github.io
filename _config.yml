@@ -113,4 +113,5 @@ simple_jekyll_search:
 #    Analytics     #
 # ---------------- #
 google:
-    analytics_id: UA-105347494-1
+    # UA-105347494-1
+    analytics_id: G-YC7HJYESGV
