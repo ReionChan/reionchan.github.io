@@ -174,4 +174,5 @@ licences: cc
 	
 * [GitKraken](https://www.gitkraken.com/) `酷炫`
 
-	![GitKraken](https://1v5ymx3zt3y73fq5gy23rtnc-wpengine.netdna-ssl.com/wp-content/uploads/2022/03/index-thumbnail.png)
+	![GitKraken](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/git/index-thumbnail.png)
+
