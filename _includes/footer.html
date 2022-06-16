@@ -55,12 +55,12 @@
         ga('send', 'pageview');
 
       </script> -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-YC7HJYESGV"></script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google.analytics_id }}"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-YC7HJYESGV');
+        gtag('config', '{{ site.google.analytics_id }}');
       </script>
     </div>
     {% endif %}
