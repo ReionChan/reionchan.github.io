@@ -4401,7 +4401,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 [《Spring Boot 编程思想（核心篇）》上篇 —— 总览 Spring Boot](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-1)
 
-[《Spring Boot 编程思想（核心篇）》下篇 —— 理解 SpringApplication](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-3)
+[《Spring Boot 编程思想（核心篇）》下篇 —— 理解 SpringApplication](https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3)
 
 
 
