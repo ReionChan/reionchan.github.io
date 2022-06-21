@@ -223,13 +223,13 @@ Bean 定义注解
        
        	private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
        	
-         // 解析方法
+         	// 解析方法
        	public BeanDefinition parse(Element element, ParserContext parserContext) {
        		String[] basePackages = StringUtils.commaDelimitedListToStringArray(element.getAttribute(BASE_PACKAGE_ATTRIBUTE));
        
        		// 真正参与扫描的类 ClassPathBeanDefinitionScanner ①
        		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
-           // 扫描具体方法 ④
+           	// 扫描具体方法 ④
        		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
        		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
        
@@ -248,7 +248,7 @@ Bean 定义注解
        	}
          
          protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
-           // 构造 ClassPathBeanDefinitionScanner ③
+           	// 构造 ClassPathBeanDefinitionScanner ③
        		return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters);
        	}
        }
@@ -259,17 +259,17 @@ Bean 定义注解
        ```java
        public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
        	
-         public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
+       	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
            // 调用父类生成默认扫描过滤器 ①
        		super(useDefaultFilters);
        		// ...
        	}
          
-         // 扫描处理 
+         	// 扫描处理 
        	protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
        		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
        		for (int i = 0; i < basePackages.length; i++) {
-             // 调用父类搜索可选组件方法 ②
+             		// 调用父类搜索可选组件方法 ②
        			Set<BeanDefinition> candidates = findCandidateComponents(basePackages[i]);
        		}
        		return beanDefinitions;
@@ -284,24 +284,26 @@ Bean 定义注解
        
        	protected static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
        	
-         // 构造方法 ①
-         public ClassPathScanningCandidateComponentProvider(boolean useDefaultFilters) {
+         	// 构造方法 ①
+         	public ClassPathScanningCandidateComponentProvider(boolean useDefaultFilters) {
        		if (useDefaultFilters) {
-             // 默认构造过滤器，见具体方法 【CODE_1】
+       			// 默认构造过滤器，见具体方法 【CODE_1】
        			registerDefaultFilters();
        		}
        	}
-         // 【CODE_1】 默认过滤器中默认搜索目标 Component.class 注解类
-         protected void registerDefaultFilters() {
+         
+       	// 【CODE_1】 默认过滤器中默认搜索目标 Component.class 注解类
+       	protected void registerDefaultFilters() {
        		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
        	}
          
        	// 扫描处理方法 ② 
        	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
        		Set<BeanDefinition> candidates = new LinkedHashSet<BeanDefinition>();
-       		try {
+       		...
        			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
        					resolveBasePackage(basePackage) + "/" + this.resourcePattern;
+       			
        			Resource[] resources = this.resourcePatternResolver.getResources(packageSearchPath);
              
        			for (int i = 0; i < resources.length; i++) {
@@ -309,33 +311,32 @@ Bean 定义注解
        				if (resource.isReadable()) {
        					MetadataReader metadataReader = this.metadataReaderFactory.getMetadataReader(resource);
        					// 【条件一】从元注解读取器中筛选是否是可选组件
-                 if (isCandidateComponent(metadataReader)) {
+       					if (isCandidateComponent(metadataReader)) {
        						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
        						sbd.setResource(resource);
        						sbd.setSource(resource);
-                   // 【条件二】从 Bean 定义类中进一步判断
+       						// 【条件二】从 Bean 定义类中进一步判断
        						if (isCandidateComponent(sbd)) {
        							// 都符合时, 才加入可选组件集合
        							candidates.add(sbd);
        						}
        					}
        				}
-             }
-       		}
-       		// ...
+             		}
+       		...
        		return candidates;
        	}
          
-         // 【条件一】从元注解读取器中筛选是否是可选组件
-         protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
+       	// 【条件一】从元注解读取器中筛选是否是可选组件
+       	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
        		for (TypeFilter tf : this.excludeFilters) {
        			if (tf.match(metadataReader, this.metadataReaderFactory)) {
        				return false;
        			}
        		}
-           // includeFilters 中包含 new AnnotationTypeFilter(Component.class)
+           	// includeFilters 中包含 new AnnotationTypeFilter(Component.class)
        		for (TypeFilter tf : this.includeFilters) {
-             // AnnotationTypeFilter 类的 match 方法
+       			// AnnotationTypeFilter 类的 match 方法
        			if (tf.match(metadataReader, this.metadataReaderFactory)) {
        				return true;
        			}
@@ -343,7 +344,7 @@ Bean 定义注解
        		return false;
        	}
          
-        	// 【条件二】验证 Bean 定义中的候选对象是否是非接口、非抽象的独立对象（顶级类或内部静态类）
+       	// 【条件二】验证 Bean 定义中的候选对象是否是非接口、非抽象的独立对象（顶级类或内部静态类）
        	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
        		return (beanDefinition.getMetadata().isConcrete() && beanDefinition.getMetadata().isIndependent());
        	}
@@ -354,45 +355,44 @@ Bean 定义注解
     
        ```java
        public class AnnotationTypeFilter extends AbstractTypeHierarchyTraversingFilter {
-       	
-         // 搜索目标注解
-         private final Class<? extends Annotation> annotationType;
-         // 表示是否考虑元注解
-       	private final boolean considerMetaAnnotations;
+           // 搜索目标注解
+           private final Class<? extends Annotation> annotationType;
+           // 表示是否考虑元注解
+           private final boolean considerMetaAnnotations;
        
-       	// 由前面代码片段 【CODE_1】调用 new AnnotationTypeFilter(Component.class)
-         // 搜索目标注解：Component
-         // 是否考虑元注解：true
-       	public AnnotationTypeFilter(Class<? extends Annotation> annotationType) {
-       		this(annotationType, true);
-       	}
-       	
-         // 覆盖父类实现，进行最终判断
-       	@Override
-       	protected boolean matchSelf(MetadataReader metadataReader) {
-           // 影响最终判断逻辑的根源在于 MetadataReader 获取的 AnnotationMetadata 对象
-       		AnnotationMetadata metadata = metadataReader.getAnnotationMetadata();
-          	// 以下条件满足任意一个即可
-           // 1. metadata 中所有注解中是否包含 @Component 注解
-           // 2. metadata 中所有注解的元注解中是否包含 @Component 注解
-       		return metadata.hasAnnotation(this.annotationType.getName()) || 
-       				(this.considerMetaAnnotations && metadata.hasMetaAnnotation(this.annotationType.getName()));
-       	}
+           // 由前面代码片段 【CODE_1】调用 new AnnotationTypeFilter(Component.class)
+           // 搜索目标注解：Component
+           // 是否考虑元注解：true
+           public AnnotationTypeFilter(Class<? extends Annotation> annotationType) {
+               this(annotationType, true);
+           }
+       
+           // 覆盖父类实现，进行最终判断
+           @Override
+           protected boolean matchSelf(MetadataReader metadataReader) {
+               // 影响最终判断逻辑的根源在于 MetadataReader 获取的 AnnotationMetadata 对象
+               AnnotationMetadata metadata = metadataReader.getAnnotationMetadata();
+               // 以下条件满足任意一个即可
+               // 1. metadata 中所有注解中是否包含 @Component 注解
+               // 2. metadata 中所有注解的元注解中是否包含 @Component 注解
+               return metadata.hasAnnotation(this.annotationType.getName()) ||
+                       (this.considerMetaAnnotations && metadata.hasMetaAnnotation(this.annotationType.getName()));
+           }
        }
        ```
-    
+       
         
-    
+       
     7. 重点分析 `AnnotationMetadata metadata = metadataReader.getAnnotationMetadata()` 注解元数据获取，由于接口 `MetadataReader` 在 2.5 版本只存在唯一实现 *SimpleMetadataReader* ，它的 `getAnnotationMetadata()` 方法如下所示 ：
     
        ```java
        class SimpleMetadataReader implements MetadataReader {
-       	// 交给 AnnotationMetadataReadingVisitor 来生成 AnnotationMetadata 信息
-       	public AnnotationMetadata getAnnotationMetadata() {
-       		AnnotationMetadataReadingVisitor visitor = new AnnotationMetadataReadingVisitor(this.classLoader);
-       		this.classReader.accept(visitor, true);
-       		return visitor;
-       	}
+           // 交给 AnnotationMetadataReadingVisitor 来生成 AnnotationMetadata 信息
+           public AnnotationMetadata getAnnotationMetadata() {
+               AnnotationMetadataReadingVisitor visitor = new AnnotationMetadataReadingVisitor(this.classLoader);
+               this.classReader.accept(visitor, true);
+               return visitor;
+           }
        }
        ```
     
@@ -402,69 +402,69 @@ Bean 定义注解
     
        ```java
        class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
-       	
-         // 类上的直接注解信息
-       	private final Map<String, Map<String, Object>> attributesMap = new LinkedHashMap<String, Map<String, Object>>();
-       	// 类上的直接注解的元注解信息
-       	private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
        
-       	// ASM 方式回调读取当前扫描到的 class 上的注解信息方法
-       	public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-       		final String className = Type.getType(desc).getClassName();
-       		final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
-       		return new EmptyVisitor() {
-       			public void visit(String name, Object value) {
-       				// Explicitly defined annotation attribute value.
-       				attributes.put(name, value);
-       			}
-       			public void visitEnd() {
-       				try {
-                 // 加载被注解类上的某个注解的 Class 对象，例如：Component.class
-       					Class annotationClass = classLoader.loadClass(className);
-       					// 获取注解中所有默认属性方法.
-       					Method[] annotationAttributes = annotationClass.getMethods();
-       					for (int i = 0; i < annotationAttributes.length; i++) {
-       						Method annotationAttribute = annotationAttributes[i];
-       						String attributeName = annotationAttribute.getName();
-       						Object defaultValue = annotationAttribute.getDefaultValue();
-       						if (defaultValue != null && !attributes.containsKey(attributeName)) {
-                     // 收集注解的属性方法及默认值
-       							attributes.put(attributeName, defaultValue);
-       						}
-       					}
-       					// 获取注解上的所有元注解，例如：注解在 Component.class 上的所有注解 ①
-       					Annotation[] metaAnnotations = annotationClass.getAnnotations();
-       					// 所有元注解类型集合
-                 Set<String> metaAnnotationTypeNames = new HashSet<String>();
-       					for (Annotation metaAnnotation : metaAnnotations) {
-       						metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
-       					}
-                 // 收集当前注解类名为 key 所有元注解类型为 value 的 Map
-       					metaAnnotationMap.put(className, metaAnnotationTypeNames);
-       				}
-       				catch (ClassNotFoundException ex) {
-       				}
-               // 收集当前扫描到的 class 上的注解类名为 key 注解属性方法集合为 value 的 Map ②
-       				attributesMap.put(className, attributes);
-       			}
-       		};
-       	}
+           // 类上的直接注解信息
+           private final Map<String, Map<String, Object>> attributesMap = new LinkedHashMap<String, Map<String, Object>>();
+           // 类上的直接注解的元注解信息
+           private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
        
-       	// 判断类上的注解中，是否包含指定注解类型 
-       	public boolean hasAnnotation(String annotationType) {
-       		return this.attributesMap.containsKey(annotationType);
-       	}
-       	
-         // 判断类上的注解的元注解中，是否包含指定注解类型
-       	public boolean hasMetaAnnotation(String metaAnnotationType) {
-       		Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
-       		for (Set<String> metaTypes : allMetaTypes) {
-       			if (metaTypes.contains(metaAnnotationType)) {
-       				return true;
-       			}
-       		}
-       		return false;
-       	}
+           // ASM 方式回调读取当前扫描到的 class 上的注解信息方法
+           public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
+               final String className = Type.getType(desc).getClassName();
+               final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+               return new EmptyVisitor() {
+                   public void visit(String name, Object value) {
+                       // Explicitly defined annotation attribute value.
+                       attributes.put(name, value);
+                   }
+       
+                   public void visitEnd() {
+                       try {
+                           // 加载被注解类上的某个注解的 Class 对象，例如：Component.class
+                           Class annotationClass = classLoader.loadClass(className);
+                           // 获取注解中所有默认属性方法.
+                           Method[] annotationAttributes = annotationClass.getMethods();
+                           for (int i = 0; i < annotationAttributes.length; i++) {
+                               Method annotationAttribute = annotationAttributes[i];
+                               String attributeName = annotationAttribute.getName();
+                               Object defaultValue = annotationAttribute.getDefaultValue();
+                               if (defaultValue != null && !attributes.containsKey(attributeName)) {
+                                   // 收集注解的属性方法及默认值
+                                   attributes.put(attributeName, defaultValue);
+                               }
+                           }
+                           // 获取注解上的所有元注解，例如：注解在 Component.class 上的所有注解 ①
+                           Annotation[] metaAnnotations = annotationClass.getAnnotations();
+                           // 所有元注解类型集合
+                           Set<String> metaAnnotationTypeNames = new HashSet<String>();
+                           for (Annotation metaAnnotation : metaAnnotations) {
+                               metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
+                           }
+                           // 收集当前注解类名为 key 所有元注解类型为 value 的 Map
+                           metaAnnotationMap.put(className, metaAnnotationTypeNames);
+                       } catch (ClassNotFoundException ex) {
+                       }
+                       // 收集当前扫描到的 class 上的注解类名为 key 注解属性方法集合为 value 的 Map ②
+                       attributesMap.put(className, attributes);
+                   }
+               };
+           }
+       
+           // 判断类上的注解中，是否包含指定注解类型 
+           public boolean hasAnnotation(String annotationType) {
+               return this.attributesMap.containsKey(annotationType);
+           }
+       
+           // 判断类上的注解的元注解中，是否包含指定注解类型
+           public boolean hasMetaAnnotation(String metaAnnotationType) {
+               Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
+               for (Set<String> metaTypes : allMetaTypes) {
+                   if (metaTypes.contains(metaAnnotationType)) {
+                       return true;
+                   }
+               }
+               return false;
+           }
        }
        ```
     
@@ -523,16 +523,19 @@ Bean 定义注解
     3. 利用 `<context:component-scan>` 子元素 `<context:include-filter>` 也能实现不派生 @Component 的注解扫描注册（**配置式**）：
     
        ```xml
-       <!-- 注意 @Component 具备两项语义：
-       					1. 可扫描成候选组件 
-       					2. value 指定 Bean 名称
-       			@StringRepository 不派生 @Component 但要达到相同功能就要将这两个语义修复
-       					1. <context:include-filter> 使其拥有可扫描成候选组件语义
-       					2. name-generator 属性使其 value 拥有指定 Bean 名称语义
+       <!-- 
+           注意 @Component 具备两项语义：
+       		1. 可扫描成候选组件 
+       		2. value 指定 Bean 名称
+       	@StringRepository 不派生 @Component 但要达到相同功能就要将这两个语义修复
+       		1. <context:include-filter> 使其拥有可扫描成候选组件语义
+       		2. name-generator 属性使其 value 拥有指定 Bean 名称语义
        -->
-       <context:component-scan base-package="thinking.in.spring.boot.samples.spring25" name-generator="thinking.in.spring.boot.samples.spring25.annotation.CustomerAnnotationBeanNameGenerator">
-         <!-- 此元素让 @StringRepository 具备可扫描性 -->
-         <context:include-filter type="annotation" expression="thinking.in.spring.boot.samples.spring25.annotation.StringRepository"/>
+       <context:component-scan base-package="thinking.in.spring.boot.samples.spring25"
+                               name-generator="thinking.in.spring.boot.samples.spring25.annotation.CustomerAnnotationBeanNameGenerator">
+           <!-- 此元素让 @StringRepository 具备可扫描性 -->
+           <context:include-filter type="annotation"
+                                   expression="thinking.in.spring.boot.samples.spring25.annotation.StringRepository"/>
        </context:component-scan>
        ```
     
@@ -550,9 +553,9 @@ Bean 定义注解
 
     ```xml
     <properties>
-      <!-- <spring.version>2.5.6.SEC03</spring.version> -->
-      <!-- 升级 Spring Framework 到 3.0.0.RELEASE  -->
-      <spring.version>3.0.0.RELEASE</spring.version>
+        <!-- <spring.version>2.5.6.SEC03</spring.version> -->
+        <!-- 升级 Spring Framework 到 3.0.0.RELEASE  -->
+        <spring.version>3.0.0.RELEASE</spring.version>
     </properties>
     ```
 
@@ -572,37 +575,37 @@ Bean 定义注解
     // 变更为 final 类
     final class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
     
-    	// 新增直接注解集合
-    	private final Set<String> annotationSet = new LinkedHashSet<String>();
+        // 新增直接注解集合
+        private final Set<String> annotationSet = new LinkedHashSet<String>();
     
-    	private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
+        private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
     
-    	private final Map<String, Map<String, Object>> attributeMap = new LinkedHashMap<String, Map<String, Object>>();
-    	
-      // 注解访问方式委托给 AnnotationAttributesReadingVisitor 类的 visitEnd() 方法
-      // 2.5 版本则是委托给 EmptyVisitor 类的 visitEnd() 方法
-    	@Override
-    	public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-    		String className = Type.getType(desc).getClassName();
-    		this.annotationSet.add(className);
-    		return new AnnotationAttributesReadingVisitor(className, this.attributeMap, this.metaAnnotationMap, this.classLoader);
-    	}
-      
-      // 2.5 是 this.attributesMap.containsKey(annotationType) 判断
-      public boolean hasAnnotation(String annotationType) {
-    		return this.annotationSet.contains(annotationType);
-    	}
-    	
-      // 【影响派生层次的判断方法不变】证明主要改动是 this.metaAnnotationMap.values() 值的变化
-    	public boolean hasMetaAnnotation(String metaAnnotationType) {
-    		Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
-    		for (Set<String> metaTypes : allMetaTypes) {
-    			if (metaTypes.contains(metaAnnotationType)) {
-    				return true;
-    			}
-    		}
-    		return false;
-    	}
+        private final Map<String, Map<String, Object>> attributeMap = new LinkedHashMap<String, Map<String, Object>>();
+    
+        // 注解访问方式委托给 AnnotationAttributesReadingVisitor 类的 visitEnd() 方法
+        // 2.5 版本则是委托给 EmptyVisitor 类的 visitEnd() 方法
+        @Override
+        public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
+            String className = Type.getType(desc).getClassName();
+            this.annotationSet.add(className);
+            return new AnnotationAttributesReadingVisitor(className, this.attributeMap, this.metaAnnotationMap, this.classLoader);
+        }
+    
+        // 2.5 是 this.attributesMap.containsKey(annotationType) 判断
+        public boolean hasAnnotation(String annotationType) {
+            return this.annotationSet.contains(annotationType);
+        }
+    
+        // 【影响派生层次的判断方法不变】证明主要改动是 this.metaAnnotationMap.values() 值的变化
+        public boolean hasMetaAnnotation(String metaAnnotationType) {
+            Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
+            for (Set<String> metaTypes : allMetaTypes) {
+                if (metaTypes.contains(metaAnnotationType)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
     ```
 
@@ -611,56 +614,54 @@ Bean 定义注解
     ```java
     final class AnnotationAttributesReadingVisitor implements AnnotationVisitor {
     
-    	private final String annotationType;
+        private final String annotationType;
     
-    	private final Map<String, Map<String, Object>> attributesMap;
+        private final Map<String, Map<String, Object>> attributesMap;
     
-    	private final Map<String, Set<String>> metaAnnotationMap;
+        private final Map<String, Set<String>> metaAnnotationMap;
     
-    	private final Map<String, Object> localAttributes = new LinkedHashMap<String, Object>();
+        private final Map<String, Object> localAttributes = new LinkedHashMap<String, Object>();
     
-    	public void visitEnd() {
-    		this.attributesMap.put(this.annotationType, this.localAttributes);
-    		try {
-          // 当前需解析上层元注解的注解 class，本例为 StringRepository.class
-    			Class<?> annotationClass = this.classLoader.loadClass(this.annotationType);
-    			// Check declared default values of attributes in the annotation type.
-    			Method[] annotationAttributes = annotationClass.getMethods();
-    			for (Method annotationAttribute : annotationAttributes) {
-    				String attributeName = annotationAttribute.getName();
-    				Object defaultValue = annotationAttribute.getDefaultValue();
-    				if (defaultValue != null && !this.localAttributes.containsKey(attributeName)) {
-    					this.localAttributes.put(attributeName, defaultValue);
-    				}
-    			}
-    			// 该注解上的元注解名称集合，本例为 StringRepository 上的元注解集合
-    			Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
-          // 与 2.5 版本单层 for 循环相比，3.0 采取双层 for 循环
-          // 很明显，下探层数为两级, 本例为：
-          //		1. 第一层 for 解析 StringRepository 的元注解，得到 Repository
-          // 		2. 第二层 for 解析 Repository 的元注解，得到 Component
-    			for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
-    				metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
-    				if (!this.attributesMap.containsKey(metaAnnotation.annotationType().getName())) {
-    					this.attributesMap.put(metaAnnotation.annotationType().getName(),
-    							AnnotationUtils.getAnnotationAttributes(metaAnnotation, true));
-    				}
-    				for (Annotation metaMetaAnnotation : metaAnnotation.annotationType().getAnnotations()) {
-    					metaAnnotationTypeNames.add(metaMetaAnnotation.annotationType().getName());
-    				}
-    			}
-    			if (this.metaAnnotationMap != null) {
-    				this.metaAnnotationMap.put(this.annotationType, metaAnnotationTypeNames);
-    			}
-    		}
-    		catch (ClassNotFoundException ex) {
-    			// Class not found - can't determine meta-annotations.
-    		}
-    	}
-    
+        public void visitEnd() {
+            this.attributesMap.put(this.annotationType, this.localAttributes);
+            try {
+                // 当前需解析上层元注解的注解 class，本例为 StringRepository.class
+                Class<?> annotationClass = this.classLoader.loadClass(this.annotationType);
+                // Check declared default values of attributes in the annotation type.
+                Method[] annotationAttributes = annotationClass.getMethods();
+                for (Method annotationAttribute : annotationAttributes) {
+                    String attributeName = annotationAttribute.getName();
+                    Object defaultValue = annotationAttribute.getDefaultValue();
+                    if (defaultValue != null && !this.localAttributes.containsKey(attributeName)) {
+                        this.localAttributes.put(attributeName, defaultValue);
+                    }
+                }
+                // 该注解上的元注解名称集合，本例为 StringRepository 上的元注解集合
+                Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
+                // 与 2.5 版本单层 for 循环相比，3.0 采取双层 for 循环
+                // 很明显，下探层数为两级, 本例为：
+                //		1. 第一层 for 解析 StringRepository 的元注解，得到 Repository
+                // 		2. 第二层 for 解析 Repository 的元注解，得到 Component
+                for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
+                    metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
+                    if (!this.attributesMap.containsKey(metaAnnotation.annotationType().getName())) {
+                        this.attributesMap.put(metaAnnotation.annotationType().getName(),
+                                AnnotationUtils.getAnnotationAttributes(metaAnnotation, true));
+                    }
+                    for (Annotation metaMetaAnnotation : metaAnnotation.annotationType().getAnnotations()) {
+                        metaAnnotationTypeNames.add(metaMetaAnnotation.annotationType().getName());
+                    }
+                }
+                if (this.metaAnnotationMap != null) {
+                    this.metaAnnotationMap.put(this.annotationType, metaAnnotationTypeNames);
+                }
+            } catch (ClassNotFoundException ex) {
+                // Class not found - can't determine meta-annotations.
+            }
+        }
     }
     ```
-
+    
     &emsp;&emsp;由此证明，Spring Framework 3.0 版本支持两层次的派生, 并且由于采取双层 for 循环解析的原因，也仅仅只支持两层派生。 通过项目 [HierarchicalDerivedComponentAnnotationBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-3.0.x-sample) 修改 3.x 的不同版本，进一步发现：
 
     
@@ -674,47 +675,46 @@ Bean 定义注解
     ```java
     final class AnnotationAttributesReadingVisitor extends RecursiveAnnotationAttributesVisitor {
     
-    	private final String annotationType;
+        private final String annotationType;
     
-    	private final MultiValueMap<String, AnnotationAttributes> attributesMap;
+        private final MultiValueMap<String, AnnotationAttributes> attributesMap;
     
-    	private final Map<String, Set<String>> metaAnnotationMap;
+        private final Map<String, Set<String>> metaAnnotationMap;
     
     
-    	@Override
-    	public void doVisitEnd(Class<?> annotationClass) {
-    		super.doVisitEnd(annotationClass);
-    		List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
-    		if (attributes == null) {
-    			this.attributesMap.add(this.annotationType, this.attributes);
-    		}
-    		else {
-    			attributes.add(0, this.attributes);
-    		}
-    		Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
-    		for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
-          // 将每个元注解递归解析上层元注解
-    			recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
-    		}
-    		if (this.metaAnnotationMap != null) {
-    			this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
-    		}
-    	}
+        @Override
+        public void doVisitEnd(Class<?> annotationClass) {
+            super.doVisitEnd(annotationClass);
+            List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
+            if (attributes == null) {
+                this.attributesMap.add(this.annotationType, this.attributes);
+            } else {
+                attributes.add(0, this.attributes);
+            }
+            Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
+            for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
+                // 将每个元注解递归解析上层元注解
+                recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
+            }
+            if (this.metaAnnotationMap != null) {
+                this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
+            }
+        }
     
-    	private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
-    		if (visited.add(annotation.annotationType().getName())) {
-    			// Only do further scanning for public annotations; we'd run into IllegalAccessExceptions
-    			// otherwise, and don't want to mess with accessibility in a SecurityManager environment.
-    			if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
-    				this.attributesMap.add(annotation.annotationType().getName(),
-    						AnnotationUtils.getAnnotationAttributes(annotation, true, true));
-    				for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
-              // 此处递归收集元注解
-    					recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
-    				}
-    			}
-    		}
-    	}
+        private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
+            if (visited.add(annotation.annotationType().getName())) {
+                // Only do further scanning for public annotations; we'd run into IllegalAccessExceptions
+                // otherwise, and don't want to mess with accessibility in a SecurityManager environment.
+                if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
+                    this.attributesMap.add(annotation.annotationType().getName(),
+                            AnnotationUtils.getAnnotationAttributes(annotation, true, true));
+                    for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
+                        // 此处递归收集元注解
+                        recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
+                    }
+                }
+            }
+        }
     }
     ```
     
@@ -869,7 +869,7 @@ Bean 定义注解
             // 读取 @TransactionService AnnotationMetadata 信息
             // AnnotationMetadata Java 反射实现版本
             AnnotationMetadata annotationMetadata = new StandardAnnotationMetadata(TransactionalServiceStandardAnnotationMetadataBootstrap.class);
-            
+    
             // AnnotationMetadata ASM 实现版本
             // MetadataReader reader = new SimpleMetadataReaderFactory().getMetadataReader(TransactionalServiceStandardAnnotationMetadataBootstrap.class.getName());
             // AnnotationMetadata annotationMetadata = reader.getAnnotationMetadata();
@@ -929,9 +929,9 @@ Bean 定义注解
     &emsp;&emsp;以项目 [**spring-framework-5.0.x-sample**](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-5.0.x-sample) 中所定义的注解 *@TransactionalService* 为例，它的元注解层次关系为：
   
     ```java
-    @Component													高
-    	|-	@Service											中
-        		|-	@TransactionalService		低
+    @Component                          高
+        |-  @Service                    中
+            |-  @TransactionalService   低
     ```
   
     
@@ -951,7 +951,7 @@ Bean 定义注解
       ```java
       @Service(value = "transactionalService")
       public @interface TransactionalService {
-      		// 显式指定将 name 属性显示覆盖其上元注解 @Service 的 value 属性
+          // 显式指定将 name 属性显示覆盖其上元注解 @Service 的 value 属性
           @AliasFor(attribute = "value", annotation = Service.class)
           String name() default "";
       }
@@ -979,10 +979,10 @@ Bean 定义注解
   
       ```
       IF
-      	@One#A --Overrides--> @Two#B
-      	@Two#B --Overrides--> @Three#C
+          @One#A --Overrides--> @Two#B
+          @Two#B --Overrides--> @Three#C
       THEN
-      	@One#A --Overrides--> @Three#C
+          @One#A --Overrides--> @Three#C
       ```
   
       
@@ -1032,11 +1032,11 @@ Bean 定义注解
       &emsp;&emsp;继续上面例子，*@TransactionalService* 中 `name()` 和 `value()` 显式别名，其中的 `value()` 又隐式覆盖其元注解 *@Service* 的 `value()`，那么可以称 *@TransactionalSerice* 的 `name()` 隐式别名覆盖 *@Service* 的 `value()`。
   
       ```
-      IF 
-      	@TransactionalService#name --Alias--> @TransactionalService#value
-      	@TransactionalService#value --Implicit Overrides--> @Service#value
+      IF
+          @TransactionalService#name --Alias--> @TransactionalService#value
+          @TransactionalService#value --Implicit Overrides--> @Service#value
       THEN
-      	@TransactionalService#name -- Implicit Alias Overrides--> @Service#value
+          @TransactionalService#name -- Implicit Alias Overrides--> @Service#value
       ```
   
       &emsp;&emsp;注意：这里之所以称为隐式别名覆盖，而不直接叫隐式别名，是遵照别名只发生在相同注解之中，只有覆盖才发生在不同注解之间。
@@ -1048,12 +1048,12 @@ Bean 定义注解
       &emsp;&emsp;隐式别名覆盖更进一步，考虑 *@Service* 的 `value()` 又隐式覆盖 *@Component* 的 `value()`，那么可以称  *@TransactionalSerice* 的 `name()` 传递隐式别名覆盖  *@Component* 的 `value()`。
   
       ```
-      IF 
-      	@TransactionalService#name --Alias--> @TransactionalService#value
-      	@TransactionalService#value --Implicit Overrides--> @Service#value
-      	@Service#value --Implicit Overrides--> @Component#value
+      IF
+          @TransactionalService#name --Alias--> @TransactionalService#value
+          @TransactionalService#value --Implicit Overrides--> @Service#value
+          @Service#value --Implicit Overrides--> @Component#value
       THEN
-      	@TransactionalService#name -- Transitive Implicit Alias Overrides--> @Component#value
+          @TransactionalService#name -- Transitive Implicit Alias Overrides--> @Component#value
       ```
   
   
@@ -1206,52 +1206,50 @@ Bean 定义注解
 
        ```java
        protected AnnotationMetadata doProcessConfigurationClass(ConfigurationClass configClass, AnnotationMetadata metadata) throws IOException {
-       		...
+           ...
        
-       		// 收集 @PropertySource 注解定义的配置信息
-       		AnnotationAttributes propertySource = MetadataUtils.attributesFor(metadata,
-       				org.springframework.context.annotation.PropertySource.class);
-       		if (propertySource != null) {
-       			...
-       		}
+           // 收集 @PropertySource 注解定义的配置信息
+           AnnotationAttributes propertySource = MetadataUtils.attributesFor(metadata,
+               org.springframework.context.annotation.PropertySource.class);
+           if (propertySource != null) {
+               ...
+           }
        
-       		// 收集 @ComponentScan 注解定义的配置信息
-       		AnnotationAttributes componentScan = MetadataUtils.attributesFor(metadata, ComponentScan.class);
-       		if (componentScan != null) {
-       			...
-       			}
-       		}
+           // 收集 @ComponentScan 注解定义的配置信息
+           AnnotationAttributes componentScan = MetadataUtils.attributesFor(metadata, ComponentScan.class);
+           if (componentScan != null) {
+               ...
+           }
        
-       		// 收集 @Import 注解定义的配置信息
-       		Set<Object> imports = new LinkedHashSet<Object>();
-       		Set<String> visited = new LinkedHashSet<String>();
-       		collectImports(metadata, imports, visited);
-       		if (!imports.isEmpty()) {
-       			processImport(configClass, metadata, imports, true);
-       		}
+           // 收集 @Import 注解定义的配置信息
+           Set<Object> imports = new LinkedHashSet<Object>();
+           Set<String> visited = new LinkedHashSet<String>();
+           collectImports(metadata, imports, visited);
+           if (!imports.isEmpty()) {
+               processImport(configClass, metadata, imports, true);
+           }
        
-       		// 收集 @ImportResource 注解定义的配置信息
-       		if (metadata.isAnnotated(ImportResource.class.getName())) {
-       			...
-       		}
+           // 收集 @ImportResource 注解定义的配置信息
+           if (metadata.isAnnotated(ImportResource.class.getName())) {
+               ...
+           }
        
-       		// 收集 @Bean 注解定义的配置信息
-       		Set<MethodMetadata> beanMethods = metadata.getAnnotatedMethods(Bean.class.getName());
-       		for (MethodMetadata methodMetadata : beanMethods) {
-       			...
-       		}
+           // 收集 @Bean 注解定义的配置信息
+           Set<MethodMetadata> beanMethods = metadata.getAnnotatedMethods(Bean.class.getName());
+           for (MethodMetadata methodMetadata : beanMethods) {
+               ...
+           }
        
-       		// 递归处理父类中的配置信息
-       		if (metadata.hasSuperClass()) {
-       			String superclass = metadata.getSuperClassName();
-       			...
-       			}
-       		}
+           // 递归处理父类中的配置信息
+           if (metadata.hasSuperClass()) {
+               String superclass = metadata.getSuperClassName();
+               ...
+           }
        
-       		return null;
-       	}
+           return null;
+       }
        ```
-     
+       
        
      
      * 定义激活注解
@@ -1277,7 +1275,7 @@ Bean 定义注解
      * 编写 *ImportSelector* 或 *ImportBeanDefinitionRegistrar* 实现类，达到选择性装配可选配置组件
      
        - *ImportSelector* 实现
-
+     
          ```java
          public class ServerImportSelector implements ImportSelector {
          
@@ -1343,35 +1341,35 @@ Bean 定义注解
                - 不满足契约，将抛出 ***InvalidConfigurationImportProblem*** 异常：
        
                  ```java
-                 private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
-                 		if (configClass.isImported()) {
-                       // ImportSelector 引入的配置型组件类 交给此方法生成并注册 BeanDefinition
-                 			registerBeanDefinitionForImportedConfigurationClass(configClass);
-                 		}
-                 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
-                 			loadBeanDefinitionsForBeanMethod(beanMethod);
-                 		}
-                 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
-                 	}
+                 private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass){
+                     if(configClass.isImported()){
+                         // ImportSelector 引入的配置型组件类 交给此方法生成并注册 BeanDefinition
+                         registerBeanDefinitionForImportedConfigurationClass(configClass);
+                     }
+                     for(BeanMethod beanMethod:configClass.getBeanMethods()){
+                         loadBeanDefinitionsForBeanMethod(beanMethod);
+                     }
+                     loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
+                 }
                  
-                 	private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) {
-                 		AnnotationMetadata metadata = configClass.getMetadata();
-                 		BeanDefinition configBeanDef = new AnnotatedGenericBeanDefinition(metadata);
+                 private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass){
+                     AnnotationMetadata metadata=configClass.getMetadata();
+                     BeanDefinition configBeanDef=new AnnotatedGenericBeanDefinition(metadata);
+                         
                      // 【ImportSelector 契约】不满足 Full 或 Lite 模式将抛出异常
-                 		if (ConfigurationClassUtils.checkConfigurationClassCandidate(configBeanDef, this.metadataReaderFactory)) {
-                 			String configBeanName = this.importBeanNameGenerator.generateBeanName(configBeanDef, this.registry);
-                 			// 在此进行引入的配置型组件类 BeanDefinition 的注册
-                       this.registry.registerBeanDefinition(configBeanName, configBeanDef);
-                 			configClass.setBeanName(configBeanName);
-                 			if (logger.isDebugEnabled()) {
-                 				logger.debug(String.format("Registered bean definition for imported @Configuration class %s", configBeanName));
-                 			}
-                 		}
-                 		else {
-                 			this.problemReporter.error(
-                 					new InvalidConfigurationImportProblem(metadata.getClassName(), configClass.getResource(), metadata));
-                 		}
-                 	}
+                     if(ConfigurationClassUtils.checkConfigurationClassCandidate(configBeanDef,this.metadataReaderFactory)){
+                         String configBeanName=this.importBeanNameGenerator.generateBeanName(configBeanDef,this.registry);
+                         // 在此进行引入的配置型组件类 BeanDefinition 的注册
+                         this.registry.registerBeanDefinition(configBeanName,configBeanDef);
+                         configClass.setBeanName(configBeanName);
+                         if(logger.isDebugEnabled()){
+                             logger.debug(String.format("Registered bean definition for imported @Configuration class %s",configBeanName));
+                         }
+                     }
+                     else {
+                         this.problemReporter.error(new InvalidConfigurationImportProblem(metadata.getClassName(),configClass.getResource(),metadata));
+                     }
+                 }
                  ```
        
                  
@@ -1380,25 +1378,26 @@ Bean 定义注解
                
                  ```java
                  public static boolean checkConfigurationClassCandidate(BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
-                 		AnnotationMetadata metadata = null;
-                 		...
-                 		if (metadata != null) {
-                       // FULL 模式：metadata.isAnnotated(Configuration.class.getName())
-                 			if (isFullConfigurationCandidate(metadata)) {
-                 				beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
-                 				return true;
-                 			}
-                       // LITE 模式：(Spring Framework 3.1+ 之后添加了许多注解，本代码为 3.1 版本)
-                       // 	!metadata.isInterface() && (metadata.isAnnotated(Component.class.getName()) || metadata.hasAnnotatedMethods(Bean.class.getName())));
-                 			else if (isLiteConfigurationCandidate(metadata)) {
-                 				beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
-                 				return true;
-                 			}
-                 		}
-                 		return false;
-                 	}
+                         AnnotationMetadata metadata = null;
+                     ...
+                     if (metadata != null) {
+                         // FULL 模式：metadata.isAnnotated(Configuration.class.getName())
+                         if (isFullConfigurationCandidate(metadata)) {
+                             beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
+                             return true;
+                         }
+                         //  LITE 模式：(Spring Framework 3.1+ 之后添加了许多注解，本代码为 3.1 版本)
+                         //  !metadata.isInterface() && (metadata.isAnnotated(Component.class.getName()) || metadata.hasAnnotatedMethods(Bean.class.getName())));
+                         else if (isLiteConfigurationCandidate(metadata)) {
+                             beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
+                             return true;
+                         }
+                     }
+                     
+                     return false;
+                 }
                  ```
-               
+                 
                  
        
          - *ImportBeanDefinitionRegistrar* 额外提供了 BeanDefinitionRegistry，可以使开发人员额外注册一些 Bean 定义
@@ -1440,7 +1439,7 @@ Bean 定义注解
      > [EnableServerBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-3.2.x-sample/src/main/java/thinking/in/spring/boot/samples/spring3/bootstrap/EnableHelloWorldBootstrap.java)
      
      
-
+  
 - @Enable 模块驱动原理
 
   
@@ -1492,11 +1491,11 @@ Bean 定义注解
      * 此处替换为 @Component 或其它派生至 @Component 的注解
      * 原因：ConfigurationClassPostProcessor 只会处理 @Component 或 派生至 @Component 所标注的类的元注解信息。
      *      由它处理的注解包括：@PropertySource @ComponentScan @Import @ImportResource @Bean
-     * 
+     *
      * 由此，可以引出 Spring 模式注解标注的 Bean 与 未被 Spring 模式注解标注的 Bean 差异问题。
-     * 			至少，未被模式注解标注的 Bean 它上面的 @PropertySource @ComponentScan @Import @ImportResource @Bean 不会被识别处理
+     *      至少，未被模式注解标注的 Bean 它上面的 @PropertySource @ComponentScan @Import @ImportResource @Bean 不会被识别处理
      */
-    @Configuration  
+    @Configuration
     @EnableServer(type = Server.Type.HTTP) // 设置 HTTP 服务器
     public class EnableServerBootstrap {
     
@@ -1504,7 +1503,7 @@ Bean 定义注解
             // 构建 Annotation 配置驱动 Spring 上下文
             AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
             // 注册 当前引导类（被 @Configuration 标注） 到 Spring 上下文
-          	// 显示注册到 Spring 容器
+            // 显示注册到 Spring 容器
             context.register(EnableServerBootstrap.class);
             ...
         }
@@ -1551,28 +1550,27 @@ Bean 定义注解
        ```java
        public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
        
-       	protected void registerComponents(
-       			XmlReaderContext readerContext, Set<BeanDefinitionHolder> beanDefinitions, Element element) {
-       		...
-       		boolean annotationConfig = true;
-       		if (element.hasAttribute(ANNOTATION_CONFIG_ATTRIBUTE)) {
-             // 属性 annotation-config 是否是 true
-       			annotationConfig = Boolean.valueOf(element.getAttribute(ANNOTATION_CONFIG_ATTRIBUTE));
-       		}
-       		if (annotationConfig) {
-             // 为 true 注册注解配置处理器 
-       			Set<BeanDefinitionHolder> processorDefinitions =
-       					AnnotationConfigUtils.registerAnnotationConfigProcessors(readerContext.getRegistry(), source);
-       				...
-       			}
-       		}
-       		...
-       	}
+           protected void registerComponents(
+                   XmlReaderContext readerContext, Set<BeanDefinitionHolder> beanDefinitions, Element element) {
+               ...
+               boolean annotationConfig = true;
+               if (element.hasAttribute(ANNOTATION_CONFIG_ATTRIBUTE)) {
+                   // 属性 annotation-config 是否是 true
+                   annotationConfig = Boolean.valueOf(element.getAttribute(ANNOTATION_CONFIG_ATTRIBUTE));
+               }
+               if (annotationConfig) {
+                   // 为 true 注册注解配置处理器
+                   Set<BeanDefinitionHolder> processorDefinitions =
+                           AnnotationConfigUtils.registerAnnotationConfigProcessors(readerContext.getRegistry(), source);
+                   ...
+               }
+               ...
+           }
        }
        ```
-  
+       
        &emsp;&emsp;查看 `registerAnnotationConfigProcessors` 方法，发现 *ConfigurationClassPostProcessor* 处理器只是其中被注册的处理器之一：
-  
+       
        ```java
        public class AnnotationConfigUtils {
        	// XML 配置驱动时代调用的注册方法
@@ -1600,13 +1598,13 @@ Bean 定义注解
        	}
        }
        ```
-  
        
-  
+       
+       
     2. 注解驱动时代，由 ***AnnotationConfigApplicationContext*** 上下文构造方法激活注册
-  
+    
        &emsp;&emsp;*AnnotationConfigApplicationContext* 构造方法中初始化两种 Bean 定义读取器时，委托它们俩由激活注册：
-  
+    
        ```java
        public class AnnotationConfigApplicationContext extends GenericApplicationContext {
        	// 两种 Bean 定义读取器，分别基于 ASM 和 Java 反射技术实现
@@ -1620,44 +1618,44 @@ Bean 定义注解
        	}
        }
        ```
-  
+    
        &emsp;&emsp;*AnnotatedBeanDefinitionReader* 激活 ConfigurationClassPostProcessor 注册方法：
-  
+    
        ```java
        public class AnnotatedBeanDefinitionReader {
-         ...
-       	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
            ...
-           // 委托 AnnotationConfigUtils 注册，方法参考上面 XML 配置驱动涉及该类的源代码
-       		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
-       	}
-         ...
+           public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
+               ...
+               // 委托 AnnotationConfigUtils 注册，方法参考上面 XML 配置驱动涉及该类的源代码
+               AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
+           }
+           ...
        }
        ```
-  
+    
        &emsp;&emsp;*ClassPathBeanDefinitionScanner* 激活 ConfigurationClassPostProcessor 注册方法：
-  
+    
        ```java
        public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
-       	...
-       	public int scan(String... basePackages) {
-       		...
-       		doScan(basePackages);
-       		if (this.includeAnnotationConfig) {
-             // 扫描完毕后，进行注册，方法参考上面 XML 配置驱动涉及该类的源代码
-       			AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
-       		}
-       		return (this.registry.getBeanDefinitionCount() - beanCountAtScanStart);
-       	}
+           ...
+           public int scan(String... basePackages) {
+               ...
+               doScan(basePackages);
+               if (this.includeAnnotationConfig) {
+                   // 扫描完毕后，进行注册，方法参考上面 XML 配置驱动涉及该类的源代码
+                   AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
+               }
+               return (this.registry.getBeanDefinitionCount() - beanCountAtScanStart);
+           }
        }
        ```
-  
     
-  
+    
+    
     &emsp;&emsp;至此，已经明确知道 *@Import* 的处理器 *ConfigurationClassPostProcessor* 在何时加载注册到 Spring 应用上下文，接下来将详细讲述该处理器对 @Import 的解析过程。
-  
     
-  
+    
+    
   - *@Import* 注解的解析
   
     
@@ -1671,178 +1669,176 @@ Bean 定义注解
     ```java
     // 【注意】此代码为 Spring Framework 3.2 源码
     public abstract class AbstractApplicationContext extends DefaultResourceLoader
-    		implements ConfigurableApplicationContext, DisposableBean {
-    	...
+            implements ConfigurableApplicationContext, DisposableBean {
     
-    	// 模板方法默认实现
-    	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-    		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
-    		Set<String> processedBeans = new HashSet<String>();
-    		if (beanFactory instanceof BeanDefinitionRegistry) {
-    			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
-    			List<BeanFactoryPostProcessor> regularPostProcessors = new LinkedList<BeanFactoryPostProcessor>();
-    			List<BeanDefinitionRegistryPostProcessor> registryPostProcessors =
-    					new LinkedList<BeanDefinitionRegistryPostProcessor>();
-    			for (BeanFactoryPostProcessor postProcessor : getBeanFactoryPostProcessors()) {
-            // 此处的 BeanDefinitionRegistryPostProcessor 来源于 AbstractApplicationContext#beanFactoryPostProcessors
-            // 不是 ConfigurationClassPostProcessor 注册所存的位置
-    				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
-    					BeanDefinitionRegistryPostProcessor registryPostProcessor =
-    							(BeanDefinitionRegistryPostProcessor) postProcessor;
-    					registryPostProcessor.postProcessBeanDefinitionRegistry(registry);
-    					registryPostProcessors.add(registryPostProcessor);
-    				}
-    				else {
-    					regularPostProcessors.add(postProcessor);
-    				}
-    			}
-         	// 此处的 BeanDefinitionRegistryPostProcessor 来源于 DefaultListableBeanFactory#beanDefinitionMap
-          // 正是 ConfigurationClassPostProcessor 注册所存的位置，并生成其单例对象返回
-    			Map<String, BeanDefinitionRegistryPostProcessor> beanMap =
-    					beanFactory.getBeansOfType(BeanDefinitionRegistryPostProcessor.class, true, false);
-    			List<BeanDefinitionRegistryPostProcessor> registryPostProcessorBeans =
-    					new ArrayList<BeanDefinitionRegistryPostProcessor>(beanMap.values());
-    			OrderComparator.sort(registryPostProcessorBeans);
-    			for (BeanDefinitionRegistryPostProcessor postProcessor : registryPostProcessorBeans) {
-            // 【阶段一】此处调用 ConfigurationClassPostProcessor 实现方法 postProcessBeanDefinitionRegistry
-    				postProcessor.postProcessBeanDefinitionRegistry(registry);
-    			}
-    			invokeBeanFactoryPostProcessors(registryPostProcessors, beanFactory);
-          // 再调用 invokeBeanFactoryPostProcessors 方法，跳转到【阶段二】调用 
-    			invokeBeanFactoryPostProcessors(registryPostProcessorBeans, beanFactory);
-    			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
-    			processedBeans.addAll(beanMap.keySet());
-    		}
-    		...
-    	}
-      
-      private void invokeBeanFactoryPostProcessors(
-    			Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
-    		for (BeanFactoryPostProcessor postProcessor : postProcessors) {
-          // 【阶段二】此处调用 ConfigurationClassPostProcessor 实现方法 postProcessBeanFactory
-    			postProcessor.postProcessBeanFactory(beanFactory);
-    		}
-    	}
-    }
-    ```
-  
-    &emsp;&emsp;先看【阶段一】即 *ConfigurationClassPostProcessor* 实现接口 *BeanDefinitionRegistryPostProcessor* 的方法：
-  
-    ```java
-    public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
-    		Ordered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
-    
-    	// 实现 BeanDefinitionRegistryPostProcessor 的方法
-    	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-    		Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
-    		for (String beanName : registry.getBeanDefinitionNames()) {
-    			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
-          // 过滤出希望被 ConfigurationClassPostProcessor 处理的 Bean 定义
-          //【注意】checkConfigurationClassCandidate 方法
-          // 	1. 它能解释为何 @EnableXxx 注解一定要标注在 Spring 模式注解注解的类上，能被称作具备配置能力的类需含如下特征
-          //			1.1 明确被 @Configuration 注解, 归为 Full 模式，后续被 CGLIB 提升
-          //			1.2	非接口，并且要么被 @Component 注解（4.0后支持多层递归派生）要么方法中有被 @Bean 标注，归为 Lite 模式，不会被提升 
-          //			1.3 Lite 模式条件在 4.0 中添加了 @Import, 5.0 中更是追加了 @ComponentScan 及 @ ImportResource
-          //	2. 它能解释为何 @Configuration 注解的类会被 CGLIB 提升
-    			if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
-    				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
-    			}
-    		}
-    		...
-          
-    		// 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
-    		ConfigurationClassParser parser = new ConfigurationClassParser(
-    				this.metadataReaderFactory, this.problemReporter, this.environment,
-    				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
-    		for (BeanDefinitionHolder holder : configCandidates) {
-    			BeanDefinition bd = holder.getBeanDefinition();
-    			try {
-    				if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
-              // 已装载 class 的采用 Java 反射解析 
-    					parser.parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
-    				}
-    				else {
-              // 未装载的采用 ASM 方式解析
-    					parser.parse(bd.getBeanClassName(), holder.getBeanName());
-    				}
-    			}
-    			catch (IOException ex) {
-    				...
-    			}
-    		}
-    		...
-    	}
-    }
-    ```
-  
-    &emsp;&emsp;要关注对 *@Import* 的处理，那么观察解析器 *ConfigurationClassParser* 的解析方法 **`parse`** ：
-  
-    ```java
-    class ConfigurationClassParser {
-    	// ASM 解析，将目标类封装为 ConfigurationClass
-    	public void parse(String className, String beanName) throws IOException {
-    		MetadataReader reader = this.metadataReaderFactory.getMetadataReader(className);
-    		processConfigurationClass(new ConfigurationClass(reader, beanName));
-    	}
-    	// Java 反射解析，将目标类封装为 ConfigurationClass
-    	public void parse(Class<?> clazz, String beanName) throws IOException {
-    		processConfigurationClass(new ConfigurationClass(clazz, beanName));
-    	}
-    	// 统一解析封装类 ConfigurationClass 的方法
-    	protected void processConfigurationClass(ConfigurationClass configClass) throws IOException {
-    		AnnotationMetadata metadata = configClass.getMetadata();
-    		...
-    		
-    		do {
-          // 如果当前的配置类有父类，会递归调用解析所有继承层级的类
-    			metadata = doProcessConfigurationClass(configClass, metadata);
-    		}
-    		while (metadata != null);
-    		// 将解析完成后的 configClass 放入集合，方便【阶段二】做 CGLIB 提升 
-    		this.configurationClasses.add(configClass);
-    	}
-    
-    	// 真正解析的方法
-    	protected AnnotationMetadata doProcessConfigurationClass(ConfigurationClass configClass, AnnotationMetadata metadata) throws IOException {
-        
-    		// 实际代码有省略，该处还会解析处理如下注解 @PropertySource @ComponentScan @ImportResource  @Bean methods
         ...
-          
-    		// 解析 @Import 注解的处理方法
-    		Set<Object> imports = new LinkedHashSet<Object>();
-    		Set<String> visited = new LinkedHashSet<String>();
-        // 解析 @Import 收集由它导入的类
-    		collectImports(metadata, imports, visited);
-    		if (!imports.isEmpty()) {
-          // 都收集的导入类进行装载
-    			processImport(configClass, metadata, imports, true);
-    		}
-        
-        // 如果当前类有父类，返回父类元信息方便递归解析
-    		if (metadata.hasSuperClass()) {
-    			String superclass = metadata.getSuperClassName();
-    			if (!superclass.startsWith("java") && !this.knownSuperclasses.containsKey(superclass)) {
-    				this.knownSuperclasses.put(superclass, configClass);
-    				// superclass found, return its annotation metadata and recurse
-    				if (metadata instanceof StandardAnnotationMetadata) {
-    					Class<?> clazz = ((StandardAnnotationMetadata) metadata).getIntrospectedClass();
-    					return new StandardAnnotationMetadata(clazz.getSuperclass(), true);
-    				}
-    				else {
-    					MetadataReader reader = this.metadataReaderFactory.getMetadataReader(superclass);
-    					return reader.getAnnotationMetadata();
-    				}
-    			}
-    		}
-    		return null;
-    	}
+        // 模板方法默认实现
+        protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+            // Invoke BeanDefinitionRegistryPostProcessors first, if any.
+            Set<String> processedBeans = new HashSet<String>();
+            if (beanFactory instanceof BeanDefinitionRegistry) {
+                BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+                List<BeanFactoryPostProcessor> regularPostProcessors = new LinkedList<BeanFactoryPostProcessor>();
+                List<BeanDefinitionRegistryPostProcessor> registryPostProcessors =
+                        new LinkedList<BeanDefinitionRegistryPostProcessor>();
+                for (BeanFactoryPostProcessor postProcessor : getBeanFactoryPostProcessors()) {
+                    // 此处的 BeanDefinitionRegistryPostProcessor 来源于 AbstractApplicationContext#beanFactoryPostProcessors
+                    // 不是 ConfigurationClassPostProcessor 注册所存的位置
+                    if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+                        BeanDefinitionRegistryPostProcessor registryPostProcessor =
+                                (BeanDefinitionRegistryPostProcessor) postProcessor;
+                        registryPostProcessor.postProcessBeanDefinitionRegistry(registry);
+                        registryPostProcessors.add(registryPostProcessor);
+                    } else {
+                        regularPostProcessors.add(postProcessor);
+                    }
+                }
+                // 此处的 BeanDefinitionRegistryPostProcessor 来源于 DefaultListableBeanFactory#beanDefinitionMap
+                // 正是 ConfigurationClassPostProcessor 注册所存的位置，并生成其单例对象返回
+                Map<String, BeanDefinitionRegistryPostProcessor> beanMap =
+                        beanFactory.getBeansOfType(BeanDefinitionRegistryPostProcessor.class, true, false);
+                List<BeanDefinitionRegistryPostProcessor> registryPostProcessorBeans =
+                        new ArrayList<BeanDefinitionRegistryPostProcessor>(beanMap.values());
+                OrderComparator.sort(registryPostProcessorBeans);
+                for (BeanDefinitionRegistryPostProcessor postProcessor : registryPostProcessorBeans) {
+                    // 【阶段一】此处调用 ConfigurationClassPostProcessor 实现方法 postProcessBeanDefinitionRegistry
+                    postProcessor.postProcessBeanDefinitionRegistry(registry);
+                }
+                invokeBeanFactoryPostProcessors(registryPostProcessors, beanFactory);
+                // 再调用 invokeBeanFactoryPostProcessors 方法，跳转到【阶段二】调用 
+                invokeBeanFactoryPostProcessors(registryPostProcessorBeans, beanFactory);
+                invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
+                processedBeans.addAll(beanMap.keySet());
+            }
+            ...
+        }
+    
+        private void invokeBeanFactoryPostProcessors(
+                Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
+            for (BeanFactoryPostProcessor postProcessor : postProcessors) {
+                // 【阶段二】此处调用 ConfigurationClassPostProcessor 实现方法 postProcessBeanFactory
+                postProcessor.postProcessBeanFactory(beanFactory);
+            }
+        }
     }
     ```
-  
+    
+  &emsp;&emsp;先看【阶段一】即 *ConfigurationClassPostProcessor* 实现接口 *BeanDefinitionRegistryPostProcessor* 的方法：
+    
+  ```java
+    public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
+            Ordered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
+    
+        // 实现 BeanDefinitionRegistryPostProcessor 的方法
+        public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+            Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
+            for (String beanName : registry.getBeanDefinitionNames()) {
+                BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+                // 过滤出希望被 ConfigurationClassPostProcessor 处理的 Bean 定义
+                //【注意】checkConfigurationClassCandidate 方法
+                // 	1. 它能解释为何 @EnableXxx 注解一定要标注在 Spring 模式注解注解的类上，能被称作具备配置能力的类需含如下特征
+                //      1.1 明确被 @Configuration 注解, 归为 Full 模式，后续被 CGLIB 提升
+                //      1.2	非接口，并且要么被 @Component 注解（4.0后支持多层递归派生）要么方法中有被 @Bean 标注，归为 Lite 模式，不会被提升
+                //      1.3 Lite 模式条件在 4.0 中添加了 @Import, 5.0 中更是追加了 @ComponentScan 及 @ ImportResource
+                //	2. 它能解释为何 @Configuration 注解的类会被 CGLIB 提升
+                if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+                    configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
+                }
+            }
+    		...
+    
+            // 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
+            ConfigurationClassParser parser = new ConfigurationClassParser(
+                    this.metadataReaderFactory, this.problemReporter, this.environment,
+                    this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+            for (BeanDefinitionHolder holder : configCandidates) {
+                BeanDefinition bd = holder.getBeanDefinition();
+                try {
+                    if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+                        // 已装载 class 的采用 Java 反射解析
+                        parser.parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+                    } else {
+                        // 未装载的采用 ASM 方式解析
+                        parser.parse(bd.getBeanClassName(), holder.getBeanName());
+                    }
+                } catch (IOException ex) {
+    				...
+                }
+            }
+    		...
+        }
+    }
+    ```
+    
+    &emsp;&emsp;要关注对 *@Import* 的处理，那么观察解析器 *ConfigurationClassParser* 的解析方法 **`parse`** ：
+    
+  ```java
+    class ConfigurationClassParser {
+      // ASM 解析，将目标类封装为 ConfigurationClass
+        public void parse(String className, String beanName) throws IOException {
+            MetadataReader reader = this.metadataReaderFactory.getMetadataReader(className);
+            processConfigurationClass(new ConfigurationClass(reader, beanName));
+        }
+    
+        // Java 反射解析，将目标类封装为 ConfigurationClass
+        public void parse(Class<?> clazz, String beanName) throws IOException {
+            processConfigurationClass(new ConfigurationClass(clazz, beanName));
+        }
+    
+        // 统一解析封装类 ConfigurationClass 的方法
+        protected void processConfigurationClass(ConfigurationClass configClass) throws IOException {
+            AnnotationMetadata metadata = configClass.getMetadata();
+    		...
+    
+            do {
+                // 如果当前的配置类有父类，会递归调用解析所有继承层级的类
+                metadata = doProcessConfigurationClass(configClass, metadata);
+            }
+            while (metadata != null);
+            // 将解析完成后的 configClass 放入集合，方便【阶段二】做 CGLIB 提升 
+            this.configurationClasses.add(configClass);
+        }
+    
+        // 真正解析的方法
+        protected AnnotationMetadata doProcessConfigurationClass(ConfigurationClass configClass, AnnotationMetadata metadata) throws IOException {
+    
+            // 实际代码有省略，该处还会解析处理如下注解 @PropertySource @ComponentScan @ImportResource  @Bean methods
+            ...
+    
+            // 解析 @Import 注解的处理方法
+            Set<Object> imports = new LinkedHashSet<Object>();
+            Set<String> visited = new LinkedHashSet<String>();
+            // 解析 @Import 收集由它导入的类
+            collectImports(metadata, imports, visited);
+            if (!imports.isEmpty()) {
+                // 都收集的导入类进行装载
+                processImport(configClass, metadata, imports, true);
+            }
+    
+            // 如果当前类有父类，返回父类元信息方便递归解析
+            if (metadata.hasSuperClass()) {
+                String superclass = metadata.getSuperClassName();
+                if (!superclass.startsWith("java") && !this.knownSuperclasses.containsKey(superclass)) {
+                    this.knownSuperclasses.put(superclass, configClass);
+                    // superclass found, return its annotation metadata and recurse
+                    if (metadata instanceof StandardAnnotationMetadata) {
+                        Class<?> clazz = ((StandardAnnotationMetadata) metadata).getIntrospectedClass();
+                        return new StandardAnnotationMetadata(clazz.getSuperclass(), true);
+                    } else {
+                        MetadataReader reader = this.metadataReaderFactory.getMetadataReader(superclass);
+                        return reader.getAnnotationMetadata();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+    ```
+    
      &emsp;&emsp;最终定位到对注解 *@Import* 处理的方法，其中 **`collectImport`** 方法为解析 @Import 并收集由其导入的类：
   
     ```java
-    private void collectImports(AnnotationMetadata metadata, Set<Object> imports, Set<String> visited) throws IOException {
+  private void collectImports(AnnotationMetadata metadata, Set<Object> imports, Set<String> visited) throws IOException {
     		String className = metadata.getClassName();
     		if (visited.add(className)) {
           // 反射形式解析
@@ -1873,7 +1869,7 @@ Bean 定义注解
     		}
     	}
     ```
-  
+    
     
   
     &emsp;&emsp;解析完毕后得到了引入类的集合，进而对引入类进行装载，由 **`processImport`** 方法进行处理。按引入类的类型划分为**被 *@Configuration* 标注的类的装载**、**实现 *ImportSelector*、*ImportBeanDefinitionRegistrar* 接口的类的装载**，将在下面两小节介绍。 
@@ -1886,69 +1882,70 @@ Bean 定义注解
   
     ```java
     private void processImport(ConfigurationClass configClass, AnnotationMetadata metadata,
-    			Collection<?> classesToImport, boolean checkForCircularImports) throws IOException {
-    		...
-    		else {
-    				...
-    				for (Object candidate : classesToImport) {
-    					Object candidateToCheck = (candidate instanceof Class ? (Class) candidate :
-    							this.metadataReaderFactory.getMetadataReader((String) candidate));
-    					...
-    					else {
-    						this.importStack.registerImport(metadata,
-    								(candidate instanceof Class ? ((Class) candidate).getName() : (String) candidate));
-                // 此处就是处理被 @Configuration 注解的类、含 @Bean 的方法的类、@Component 修饰或普通类的装载
-                // 其实就是封装为 ConfigurationClass 后转调上一节的方法
-    						processConfigurationClass(candidateToCheck instanceof Class ?
-    								new ConfigurationClass((Class) candidateToCheck, true) :
-    								new ConfigurationClass((MetadataReader) candidateToCheck, true));
-    					}
-    				}
-    			}
-    			...
-    		}
-    	}
+            Collection<?> classesToImport, boolean checkForCircularImports) throws IOException {
+        ...
+        else {
+            ...
+            for (Object candidate : classesToImport) {
+                Object candidateToCheck = (candidate instanceof Class ? (Class) candidate :
+                    this.metadataReaderFactory.getMetadataReader((String) candidate));
+                ...
+                else {
+                    this.importStack.registerImport(metadata,
+                        (candidate instanceof Class ? ((Class) candidate).getName() : (String) candidate));
+                    // 此处就是处理被 @Configuration 注解的类、含 @Bean 的方法的类、@Component 修饰或普通类的装载
+                    // 其实就是封装为 ConfigurationClass 后转调上一节的方法
+                    processConfigurationClass(candidateToCheck instanceof Class ?
+                        new ConfigurationClass((Class) candidateToCheck, true) :
+                        new ConfigurationClass((MetadataReader) candidateToCheck, true));
+                }
+            }
+        }
+        ...
+    }
     ```
-  
     
-  
+    
+    
   - *@Import* 引入的 *ImportSelector*、*ImportBeanDefinitionRegistrar* 实现类装载
   
     &emsp;&emsp;同样在 **`processImport`** 方法中，可以看到针对实现两接口的类的处理逻辑，此处理逻辑是 Spring Framework 3.1 后添加：
   
     ```java
     private void processImport(ConfigurationClass configClass, AnnotationMetadata metadata,
-    			Collection<?> classesToImport, boolean checkForCircularImports) throws IOException {
-      
-    			...
-    				for (Object candidate : classesToImport) {
-    					Object candidateToCheck = (candidate instanceof Class ? (Class) candidate :
-    							this.metadataReaderFactory.getMetadataReader((String) candidate));
-              // 判断是否为 ImportSelector 接口实现类
-    					if (checkAssignability(ImportSelector.class, candidateToCheck)) {
-    						Class<?> candidateClass = (candidate instanceof Class ? (Class) candidate :
-    								this.resourceLoader.getClassLoader().loadClass((String) candidate));
-    						ImportSelector selector = BeanUtils.instantiateClass(candidateClass, ImportSelector.class);
+            Collection<?> classesToImport, boolean checkForCircularImports) throws IOException {
+        ...
+        for (Object candidate : classesToImport) {
+            Object candidateToCheck = (candidate instanceof Class ? (Class) candidate :
+                this.metadataReaderFactory.getMetadataReader((String) candidate));
+            
+            // 判断是否为 ImportSelector 接口实现类
+            if (checkAssignability(ImportSelector.class, candidateToCheck)) {
+                Class<?> candidateClass = (candidate instanceof Class ? (Class) candidate :
+                    this.resourceLoader.getClassLoader().loadClass((String) candidate));
+                ImportSelector selector = BeanUtils.instantiateClass(candidateClass, ImportSelector.class);
+                
                 // 调用接口 ImportSelector#selectImports 方法，并将返回的引入类递归调用，继续处理引入
-    						processImport(configClass, metadata, Arrays.asList(selector.selectImports(metadata)), false);
-    					}
-              // 判断是否为 ImportBeanDefinitionRegistrar 接口实现类
-    					else if (checkAssignability(ImportBeanDefinitionRegistrar.class, candidateToCheck)) {
-    						Class<?> candidateClass = (candidate instanceof Class ? (Class) candidate :
-    								this.resourceLoader.getClassLoader().loadClass((String) candidate));
-    						ImportBeanDefinitionRegistrar registrar =
-    								BeanUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class);
-    						invokeAwareMethods(registrar);
+                processImport(configClass, metadata, Arrays.asList(selector.selectImports(metadata)), false);
+            }
+            // 判断是否为 ImportBeanDefinitionRegistrar 接口实现类
+            else if (checkAssignability(ImportBeanDefinitionRegistrar.class, candidateToCheck)) {
+                Class<?> candidateClass = (candidate instanceof Class ? (Class) candidate :
+                    this.resourceLoader.getClassLoader().loadClass((String) candidate));
+                ImportBeanDefinitionRegistrar registrar =
+                    BeanUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class);
+                
+                invokeAwareMethods(registrar);
+                
                 // 调用 ImportBeanDefinitionRegistrar#registerBeanDefinitions 交由它进行需要的 Bean 定义装载
-    						registrar.registerBeanDefinitions(metadata, this.registry);
-    					}
-    					else {
-    						// 走 @Configuration 装载逻辑，参考上一小节：@Import 引入的 @Configuration 类装载
-    					}
-    				}
-    			...
-    		}
-    	}
+                registrar.registerBeanDefinitions(metadata, this.registry);
+            }
+            else {
+                // 走 @Configuration 装载逻辑，参考上一小节：@Import 引入的 @Configuration 类装载
+            }
+            ...
+        }
+    }
     ```
   
     
@@ -1959,28 +1956,27 @@ Bean 定义注解
   
     ```java
     public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-    		Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
-          
-    		// 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
-    		ConfigurationClassParser parser = new ConfigurationClassParser(
-    				this.metadataReaderFactory, this.problemReporter, this.environment,
-    				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
-    		
-     		// 解析处理上面有详细说明，故省略...
-    		
-      	// 实例化 ConfigurationClassBeanDefinitionReader
-    		if (this.reader == null) {
-    			this.reader = new ConfigurationClassBeanDefinitionReader(
-    					registry, this.sourceExtractor, this.problemReporter, this.metadataReaderFactory,
-    					this.resourceLoader, this.environment, this.importBeanNameGenerator);
-    		}
-      	// 获得 parser 得到的配置类集合
-    		this.reader.loadBeanDefinitions(parser.getConfigurationClasses());
-    	}
-    ```
-  
+        Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
+        
+        // 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
+        ConfigurationClassParser parser = new ConfigurationClassParser(
+            this.metadataReaderFactory, this.problemReporter, this.environment,
+            this.resourceLoader, this.componentScanBeanNameGenerator, registry);
     
-  
+            // 解析处理上面有详细说明，故省略...
+    
+            // 实例化 ConfigurationClassBeanDefinitionReader
+        if (this.reader == null) {
+            this.reader = new ConfigurationClassBeanDefinitionReader(registry, this.sourceExtractor, this.problemReporter, 
+                this.metadataReaderFactory, this.resourceLoader, this.environment, this.importBeanNameGenerator);
+        }
+        // 获得 parser 得到的配置类集合
+        this.reader.loadBeanDefinitions(parser.getConfigurationClasses());
+    }
+    ```
+    
+    
+    
   - @Configuration 类 CGLIB 增强
   
     &emsp;&emsp;该处理处于【阶段二】即 *ConfigurationClassPostProcessor* 实现接口 BeanFactoryPostProcessor 的方法
@@ -1988,40 +1984,42 @@ Bean 定义注解
     ```java
     // BeanFactoryPostProcessor 接口实现方法【阶段二】
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-    		...
-      	// 增强处理
-    		enhanceConfigurationClasses(beanFactory);
-    	}
+        ...
+        // 增强处理
+        enhanceConfigurationClasses(beanFactory);
+    }
     
     // 增强处理方法
     public void enhanceConfigurationClasses(ConfigurableListableBeanFactory beanFactory) {
-    		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<String, AbstractBeanDefinition>();
-    	// 拿到所有 Bean 定义，筛选为 Full 模式的 Bean 定义，进行增强处理	
-      for (String beanName : beanFactory.getBeanDefinitionNames()) {
-    			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
-    			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) {
-    				...
-            // 符合条件，放入待处理 Map
-    				configBeanDefs.put(beanName, (AbstractBeanDefinition) beanDef);
-    			}
-    		}
-    		
-    		ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer(beanFactory);
-    		for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
-    			AbstractBeanDefinition beanDef = entry.getValue();
-    			try {
-    				Class<?> configClass = beanDef.resolveBeanClass(this.beanClassLoader);
-            // 进行增强处理
-    				Class<?> enhancedClass = enhancer.enhance(configClass);
-    				if (configClass != enhancedClass) {
-    					beanDef.setBeanClass(enhancedClass);
-    				}
-    			}
-    			...
-    		}
-    	}
+        Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<String, AbstractBeanDefinition>();
+        
+        // 拿到所有 Bean 定义，筛选为 Full 模式的 Bean 定义，进行增强处理	
+        for (String beanName : beanFactory.getBeanDefinitionNames()) {
+            BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+            if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) {
+                ...
+                // 符合条件，放入待处理 Map
+                configBeanDefs.put(beanName, (AbstractBeanDefinition) beanDef);
+            }
+        }
+        
+        ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer(beanFactory);
+        for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
+            AbstractBeanDefinition beanDef = entry.getValue();
+            try {
+                Class<?> configClass = beanDef.resolveBeanClass(this.beanClassLoader);
+                
+                // 进行增强处理
+                Class<?> enhancedClass = enhancer.enhance(configClass);
+                if (configClass != enhancedClass) {
+                    beanDef.setBeanClass(enhancedClass);
+                }
+            }
+            ...
+        }
+    }
     ```
-  
+    
     
 
 &emsp;&emsp;&emsp;综上所述， **@Enable 模块驱动实现原理** 的**主要过程**已经全部描述完毕，其主要由 ***ConfigurationClassPostProcessor*** 负责筛选 @Component 类、@Configuration 类、@Bean 方法类的 **Bean 定义（*BeanDefinition*）**，然后通过 ***ConfigurationClassParser*** 从候选的 Bean 定义中解析出 ***ConfigurationClass*** 集合，随后被 ***ConfigurationClassBeanDefinitionReader*** 转化并注册为 *BeanDefinition*，以上过程由【阶段一】*ConfigurationClassPostProcessor* 实现接口 BeanDefinitionRegistryPostProcessor 的方法完成。接下来把所有符合 Full 模式的 BeanDefinition **进行 CGLIB 增强**，此过程由【阶段二】*ConfigurationClassPostProcessor* 实现接口 BeanFactoryPostProcessor 的方法完成。
