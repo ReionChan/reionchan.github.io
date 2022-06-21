@@ -443,6 +443,6 @@ Spring Cloud			|	提供分布式核心特性：分布式配置、服务注册与
 
 ## 推荐阅读
 
-### [《Spring Boot 编程思想（核心篇）》中篇 —— 走向自动装配](#)
+[《Spring Boot 编程思想（核心篇）》中篇 —— 走向自动装配](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-2)
 
-### [《Spring Boot 编程思想（核心篇）》下篇 —— 理解 SpringApplication](#)
+[《Spring Boot 编程思想（核心篇）》下篇 —— 理解 SpringApplication](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-3)
