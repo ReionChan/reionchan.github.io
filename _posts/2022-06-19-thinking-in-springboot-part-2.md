@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 《Spring Boot 编程思想》中篇
+title: 《Spring Boot 编程思想（核心篇）》中篇
 categories: Book Spring
 tags: SpringBoot Spring Boot 
 excerpt: 读该书 “第 2 部分 —— 走向自动装配” 心得笔记 
