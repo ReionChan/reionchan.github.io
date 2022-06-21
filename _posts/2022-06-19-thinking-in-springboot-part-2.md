@@ -210,8 +210,8 @@ Bean 定义注解
        // context 元素处理器
        public class ContextNamespaceHandler extends NamespaceHandlerSupport {
            public void init() {
-          			// component-scan 属性解析器类
-               this.registerJava5DependentParser("component-scan", "org.springframework.context.annotation.ComponentScanBeanDefinitionParser");
+             // component-scan 属性解析器类
+             this.registerJava5DependentParser("component-scan", "org.springframework.context.annotation.ComponentScanBeanDefinitionParser");
            }
        }
        ```
