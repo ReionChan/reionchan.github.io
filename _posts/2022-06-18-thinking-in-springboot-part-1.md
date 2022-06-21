@@ -17,8 +17,6 @@ licences: cc
 > &emsp;&emsp;Spring Boot 具有一套固化的视图，该视图用于构建生产级别的应用。
 <div style="text-align: right;"> —— 摘自 <a href="https://spring.io/projects/spring-boot/">Spring 官网</a> &emsp;&emsp;</div>
 
-
-
 ## 初览 Spring Boot
 
 ### Spring Framework 时代
