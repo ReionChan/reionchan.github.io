@@ -1839,35 +1839,35 @@ Bean 定义注解
   
     ```java
   private void collectImports(AnnotationMetadata metadata, Set<Object> imports, Set<String> visited) throws IOException {
-    		String className = metadata.getClassName();
-    		if (visited.add(className)) {
-          // 反射形式解析
-    			if (metadata instanceof StandardAnnotationMetadata) {
-    				StandardAnnotationMetadata stdMetadata = (StandardAnnotationMetadata) metadata;
-            // 拿到当前类的所有注解
-    				for (Annotation ann : stdMetadata.getIntrospectedClass().getAnnotations()) {
-    					if (!ann.annotationType().getName().startsWith("java") && !(ann instanceof Import)) {
-                // 递归嵌套收集 @Import 标注的类元信息，因为 @Import 可能引入被 @Import 标注的类
-    						collectImports(new StandardAnnotationMetadata(ann.annotationType()), imports, visited);
-    					}
-    				}
-            // 获得 @Import 上的属性方法，拿到 value 值（引入类的集合）
-    				Map<String, Object> attributes = stdMetadata.getAnnotationAttributes(Import.class.getName(), false);
-    				if (attributes != null) {
-    					Class<?>[] value = (Class<?>[]) attributes.get("value");
-    					if (!ObjectUtils.isEmpty(value)) {
-    						for (Class<?> importedClass : value) {
-    							imports.remove(importedClass.getName());
-                  // 收集引入类到集合
-    							imports.add(importedClass);
-    						}
-    					}
-    				}
-    			} else {
-            // ASM 形式解析，逻辑雷同，故省略
-    			}
-    		}
-    	}
+        String className = metadata.getClassName();
+        if (visited.add(className)) {
+            // 反射形式解析
+            if (metadata instanceof StandardAnnotationMetadata) {
+                StandardAnnotationMetadata stdMetadata = (StandardAnnotationMetadata) metadata;
+                // 拿到当前类的所有注解
+                for (Annotation ann : stdMetadata.getIntrospectedClass().getAnnotations()) {
+                    if (!ann.annotationType().getName().startsWith("java") && !(ann instanceof Import)) {
+                        // 递归嵌套收集 @Import 标注的类元信息，因为 @Import 可能引入被 @Import 标注的类
+                        collectImports(new StandardAnnotationMetadata(ann.annotationType()), imports, visited);
+                    }
+                }
+                // 获得 @Import 上的属性方法，拿到 value 值（引入类的集合）
+                Map<String, Object> attributes = stdMetadata.getAnnotationAttributes(Import.class.getName(), false);
+                if (attributes != null) {
+                    Class<?>[] value = (Class<?>[]) attributes.get("value");
+                    if (!ObjectUtils.isEmpty(value)) {
+                        for (Class<?> importedClass : value) {
+                            imports.remove(importedClass.getName());
+                            // 收集引入类到集合
+                            imports.add(importedClass);
+                        }
+                    }
+                }
+            } else {
+                // ASM 形式解析，逻辑雷同，故省略
+            }
+        }
+    }
     ```
     
     
