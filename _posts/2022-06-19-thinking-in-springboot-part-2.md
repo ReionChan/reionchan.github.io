@@ -1723,8 +1723,9 @@ Bean 定义注解
     }
     ```
     
+  
   &emsp;&emsp;先看【阶段一】即 *ConfigurationClassPostProcessor* 实现接口 *BeanDefinitionRegistryPostProcessor* 的方法：
-    
+  
   ```java
     public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
             Ordered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
@@ -1768,10 +1769,10 @@ Bean 定义注解
     		...
         }
     }
-    ```
-    
+  ```
+  
     &emsp;&emsp;要关注对 *@Import* 的处理，那么观察解析器 *ConfigurationClassParser* 的解析方法 **`parse`** ：
-    
+  
   ```java
     class ConfigurationClassParser {
       // ASM 解析，将目标类封装为 ConfigurationClass
@@ -1833,8 +1834,8 @@ Bean 定义注解
             return null;
         }
     }
-    ```
-    
+  ```
+  
      &emsp;&emsp;最终定位到对注解 *@Import* 处理的方法，其中 **`collectImport`** 方法为解析 @Import 并收集由其导入的类：
   
     ```java
@@ -1869,7 +1870,7 @@ Bean 定义注解
         }
     }
     ```
-    
+  
     
   
     &emsp;&emsp;解析完毕后得到了引入类的集合，进而对引入类进行装载，由 **`processImport`** 方法进行处理。按引入类的类型划分为**被 *@Configuration* 标注的类的装载**、**实现 *ImportSelector*、*ImportBeanDefinitionRegistrar* 接口的类的装载**，将在下面两小节介绍。 
@@ -2109,16 +2110,19 @@ Bean 定义注解
       }
   
       @Override
-      protected Class<?>[] getServletConfigClasses() { // DispatcherServlet 配置Bean
+      // DispatcherServlet 配置Bean
+      protected Class<?>[] getServletConfigClasses() {
           return of(SpringWebMvcConfiguration.class);
       }
   
       @Override
-      protected String[] getServletMappings() {        // DispatcherServlet URL Pattern 映射
+      // DispatcherServlet URL Pattern 映射
+      protected String[] getServletMappings() {
           return of("/*");
       }
   
-      private static <T> T[] of(T... values) {         // 便利 API ，减少 new T[] 代码
+      // 便利 API ，减少 new T[] 代码
+      private static <T> T[] of(T... values) {
           return values;
       }
   }
@@ -2166,172 +2170,177 @@ Bean 定义注解
     // 过滤出 WebApplicationInitializer 接口的实现类
     @HandlesTypes(WebApplicationInitializer.class)
     public class SpringServletContainerInitializer implements ServletContainerInitializer {
-      // 被 Servlet 容器调用的方法，第一个参数为所有的 WebApplicationInitializer 实现类集合
-    	public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
-    			throws ServletException {
+        // 被 Servlet 容器调用的方法，第一个参数为所有的 WebApplicationInitializer 实现类集合
+        public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+                throws ServletException {
     
-    		List<WebApplicationInitializer> initializers = new LinkedList<WebApplicationInitializer>();
+            List<WebApplicationInitializer> initializers = new LinkedList<WebApplicationInitializer>();
     
-    		if (webAppInitializerClasses != null) {
-    			for (Class<?> waiClass : webAppInitializerClasses) {
-            // 进一步筛选出 非接口、非抽象的 WebApplicationInitializer 子类
-    				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
-    						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
-              	...
-    						initializers.add((WebApplicationInitializer) waiClass.newInstance());
-              	...
-    				}
-    			}
-    		}
+            if (webAppInitializerClasses != null) {
+                for (Class<?> waiClass : webAppInitializerClasses) {
+                    // 进一步筛选出 非接口、非抽象的 WebApplicationInitializer 子类
+                    if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
+                            WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
+                        ...
+                        initializers.add((WebApplicationInitializer) waiClass.newInstance());
+                        ...
+                    }
+                }
+            }
     		...
-    		// 排序
-    		AnnotationAwareOrderComparator.sort(initializers);
-    		servletContext.log("Spring WebApplicationInitializers detected on classpath: " + initializers);
-    		// 根据顺序依次调用实现类的 onStartup 方法
-    		for (WebApplicationInitializer initializer : initializers) {
-    			initializer.onStartup(servletContext);
-    		}
-    	}
-    
+            // 排序
+            AnnotationAwareOrderComparator.sort(initializers);
+            servletContext.log("Spring WebApplicationInitializers detected on classpath: " + initializers);
+            // 根据顺序依次调用实现类的 onStartup 方法
+            for (WebApplicationInitializer initializer : initializers) {
+                initializer.onStartup(servletContext);
+            }
+        }
     }
     ```
-
-    &emsp;&emsp;Spring Framework 3.1 时没有提供 *WebApplicationInitializer* 接口的任何实现，完全交给开发人员实现，而 Spring Framework 3.2 提供了三种抽象实现类以减少此接口的实现成本，三者继承关系为：
-
-    ```
+    
+  
+  &emsp;&emsp;Spring Framework 3.1 时没有提供 *WebApplicationInitializer* 接口的任何实现，完全交给开发人员实现，而 Spring Framework 3.2 提供了三种抽象实现类以减少此接口的实现成本，三者继承关系为：
+  
+  ```
     AbstractContextLoaderInitializer
-    	|- AbstractDispatcherServletInitializer
-    				|- AbstractAnnotationConfigDispatcherServletInitializer
-    ```
-
-    &emsp;&emsp;三个抽象类的使用场景为：
-
-    | 抽象类                                                 | 使用场景                                                     |
+        |- AbstractDispatcherServletInitializer
+            |- AbstractAnnotationConfigDispatcherServletInitializer
+  ```
+  
+  &emsp;&emsp;三个抽象类的使用场景为：
+  
+  | 抽象类                                                 | 使用场景                                                     |
     | ------------------------------------------------------ | ------------------------------------------------------------ |
     | *AbstractContextLoaderInitializer*                     | 构建 Web Root 应用上下文，替代 `web.xml` 注册 *ContextLoaderListener* |
     | *AbstractDispatcherServletInitializer*                 | 替代 `web.xml` 注册 *DispatcherServlet*，必要时创建 Web Root 应用上下文 |
     | *AbstractAnnotationConfigDispatcherServletInitializer* | 具备注解配置驱动能力的 *AbstractDispatcherServletInitializer* |
-
-    &emsp;&emsp;接下来依次分析它们的装配原理，并分析它们继承扩展后都在哪些方面做了优化调整来达到简化开发成本。
-
-    
-
-  - AbstractContextLoaderInitializer 装配原理
-
-    &emsp;&emsp;传统 Servlet 应用场景， Spring Web MVC 的 **Root** ***WebApplicationContext*** 由 ***ContextLoaderListener*** 装载：
-
-    ```xml
+  
+  &emsp;&emsp;接下来依次分析它们的装配原理，并分析它们继承扩展后都在哪些方面做了优化调整来达到简化开发成本。
+  
+  
+  
+- AbstractContextLoaderInitializer 装配原理
+  
+  &emsp;&emsp;传统 Servlet 应用场景， Spring Web MVC 的 **Root** ***WebApplicationContext*** 由 ***ContextLoaderListener*** 装载：
+  
+  ```xml
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    ```
-
-    &emsp;&emsp;此监听器是标准的 *ServletContextListener* 实现，当 Web 应用启动时 Servlet 容器会调用它的 `contextInitialized(ServletContextEvent)` 方法，该方法在 ***ContextLoaderListener*** 实现类里，会调用初始化 **Root *WebApplicationContext***。
-
-    &emsp;&emsp;当 Web 应用运行在 Servlet 3.0+ 环境时，可以简单通过继承 `spring-web` 中的抽象 *AbstractContextLoaderInitializer* 类，由它的默认方法向 *ServletContext* 添加 *ContextLoaderListener* 监听器来实现初始化 **Root *WebApplicationContext*** 的过程。所以此抽象类是帮助简化初始化 Root *WebApplicationContext*，如果开发人员想使用 Spring Web MVC，那么得完全手动完成核心前端控制器 *DispatcherServlet* 的注册，否则只能使用常规的 Servlet 进行 Web 开发。
-
-    ```java
-    public abstract class AbstractContextLoaderInitializer implements WebApplicationInitializer {
-    	// 在此接口的实现方法上调用注册 ContextLoaderListener 监听器
+  ```
+  
+  &emsp;&emsp;此监听器是标准的 *ServletContextListener* 实现，当 Web 应用启动时 Servlet 容器会调用它的 `contextInitialized(ServletContextEvent)` 方法，该方法在 ***ContextLoaderListener*** 实现类里，会调用初始化 **Root *WebApplicationContext***。
+  
+  &emsp;&emsp;当 Web 应用运行在 Servlet 3.0+ 环境时，可以简单通过继承 `spring-web` 中的抽象 *AbstractContextLoaderInitializer* 类，由它的默认方法向 *ServletContext* 添加 *ContextLoaderListener* 监听器来实现初始化 **Root *WebApplicationContext*** 的过程。所以此抽象类是帮助简化初始化 Root *WebApplicationContext*，如果开发人员想使用 Spring Web MVC，那么得完全手动完成核心前端控制器 *DispatcherServlet* 的注册，否则只能使用常规的 Servlet 进行 Web 开发。
+  
+  ```java
+  public abstract class AbstractContextLoaderInitializer implements WebApplicationInitializer {
+      // 在此接口的实现方法上调用注册 ContextLoaderListener 监听器
       @Override
-    	public void onStartup(ServletContext servletContext) throws ServletException {
-    		registerContextLoaderListener(servletContext);
-    	}
-    	// 在默认实现中，先初始化 Root WebApplicationContext, 后注册监听器
-    	protected void registerContextLoaderListener(ServletContext servletContext) {
-    		WebApplicationContext rootAppContext = createRootApplicationContext();
-    		if (rootAppContext != null) {
-    			servletContext.addListener(new ContextLoaderListener(rootAppContext));
-    		}
+      public void onStartup(ServletContext servletContext) throws ServletException {
+          registerContextLoaderListener(servletContext);
+      }
+  
+      // 在默认实现中，先初始化 Root WebApplicationContext, 后注册监听器
+      protected void registerContextLoaderListener(ServletContext servletContext) {
+          WebApplicationContext rootAppContext = createRootApplicationContext();
+          if (rootAppContext != null) {
+              servletContext.addListener(new ContextLoaderListener(rootAppContext));
+          }
     		...
-    	}
-    	// 初始化根应用上下文的具体实现交由开发人员处理
-    	protected abstract WebApplicationContext createRootApplicationContext();
-    
-    }
-    ```
-
-     
-
-  - AbstractDispatcherServletInitializer 装配原理
-
-    &emsp;&emsp;为了使用 Spring Web MVC 框架，Spring Framework 在 `spring-webmvc` 给我们提供了 *AbstractContextLoaderInitializer* 的抽象子类 ***AbstractDispatcherServletInitializer*** 默认注册核心前端控制器 ***DispatcherServlet*** ：
-
-    ```java
-    public abstract class AbstractDispatcherServletInitializer extends AbstractContextLoaderInitializer {
-        public static final String DEFAULT_SERVLET_NAME = "dispatcher";
-    		
-      	// 覆盖父类方法
-        public void onStartup(ServletContext servletContext) throws ServletException {
-          	// 先调用父类方法，初始化 Root WebApplicationContext
-            super.onStartup(servletContext);
-          	// 然后注册 Spring Web MVC 核心控制器
-            this.registerDispatcherServlet(servletContext);
-        }
-    		
-      	// 此模板方法帮助开发人员注册 DispatcherServlet
-      	// 并提供模板方法方便开发人员扩展诸如：创建子 WebApplicationContext、监听器注册 等关键过程
-        protected void registerDispatcherServlet(ServletContext servletContext) {
-            String servletName = this.getServletName();
-          	// 创建子 WebApplicationContext 上下文
-            WebApplicationContext servletAppContext = this.createServletApplicationContext();
-            DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
-            Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
-            registration.setLoadOnStartup(1);
-            registration.addMapping(this.getServletMappings());
-            registration.setAsyncSupported(this.isAsyncSupported());
-            Filter[] filters = this.getServletFilters();
-            if (!ObjectUtils.isEmpty(filters)) {
+      }
+  
+      // 初始化根应用上下文的具体实现交由开发人员处理
+      protected abstract WebApplicationContext createRootApplicationContext();
+  }
+  ```
+  
+   
+  
+- AbstractDispatcherServletInitializer 装配原理
+  
+  &emsp;&emsp;为了使用 Spring Web MVC 框架，Spring Framework 在 `spring-webmvc` 给我们提供了 *AbstractContextLoaderInitializer* 的抽象子类 ***AbstractDispatcherServletInitializer*** 默认注册核心前端控制器 ***DispatcherServlet*** ：
+  
+  ```java
+  public abstract class AbstractDispatcherServletInitializer extends AbstractContextLoaderInitializer {
+      
+      public static final String DEFAULT_SERVLET_NAME = "dispatcher";
+  
+      // 覆盖父类方法
+      public void onStartup(ServletContext servletContext) throws ServletException {
+          // 先调用父类方法，初始化 Root WebApplicationContext
+          super.onStartup(servletContext);
+          // 然后注册 Spring Web MVC 核心控制器
+          this.registerDispatcherServlet(servletContext);
+      }
+  
+      // 此模板方法帮助开发人员注册 DispatcherServlet
+      // 并提供模板方法方便开发人员扩展诸如：创建子 WebApplicationContext、监听器注册 等关键过程
+      protected void registerDispatcherServlet(ServletContext servletContext) {
+          String servletName = this.getServletName();
+          // 创建子 WebApplicationContext 上下文
+          WebApplicationContext servletAppContext = this.createServletApplicationContext();
+          DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
+          Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
+          registration.setLoadOnStartup(1);
+          registration.addMapping(this.getServletMappings());
+          registration.setAsyncSupported(this.isAsyncSupported());
+          Filter[] filters = this.getServletFilters();
+          if (!ObjectUtils.isEmpty(filters)) {
                 ...
-            }
-            this.customizeRegistration(registration);
-        }
-    
-    		...
-    }
-    ```
-
-    
-
-  - AbstractAnnotationConfigDispatcherServletInitializer 装配原理
-
-    &emsp;&emsp;在针对上面抽象类 *AbstractDispatcherServletInitializer* 的实现中，开发人员还需完整实现创建 **Root *WebApplicationContext*** 的方法 **`createRootApplicationContext()`** 及创建子上下文 ***DispatcherServlet WebApplicationContext*** 的方法 **`createServletApplicationContext()`**，对 Spring Web MVC 上下文层次理解不深的开发人员，实现成本还是比较高，故在 Spring Framework 3.2  提供了基于注解驱动的抽象类 ***AbstractAnnotationConfigDispatcherServletInitializer***，进一步简化开发：
-
-    ```java
-    public abstract class AbstractAnnotationConfigDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
-        public AbstractAnnotationConfigDispatcherServletInitializer() {
-        }
-    		// Root WebApplicationContext 的创建已经实现，仅仅留下根上下文的配置类需要开发人员覆盖指定
-        protected WebApplicationContext createRootApplicationContext() {
-            Class<?>[] configClasses = this.getRootConfigClasses();
-            if (!ObjectUtils.isEmpty(configClasses)) {
-              	// 创建基于注解驱动的上下文
-                AnnotationConfigWebApplicationContext rootAppContext = new AnnotationConfigWebApplicationContext();
-                rootAppContext.register(configClasses);
-                return rootAppContext;
-            } else {
-                return null;
-            }
-        }
-    		// Servlet WebApplicationContext 的创建也已实现，仅仅留下上下文的配置需开发人员覆盖指定
-        protected WebApplicationContext createServletApplicationContext() {
-          	// 创建基于注解驱动的上下文
-            AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
-            Class<?>[] configClasses = this.getServletConfigClasses();
-            if (!ObjectUtils.isEmpty(configClasses)) {
-                servletAppContext.register(configClasses);
-            }
-    
-            return servletAppContext;
-        }
-    		// 根应用上下文配置类交由开发人员指定
-        protected abstract Class<?>[] getRootConfigClasses();
-    		// Servlet 子应用上下文配置类交由开发人员指定
-        protected abstract Class<?>[] getServletConfigClasses();
-    }
-    ```
-
-    &emsp;&emsp;可以看到父子上下文默认都已创建为 *AnnotationConfigWebApplicationContext*，开发人员仅仅只需关注为两上下文指定配置类的操作。从全局视角看，***SpringServletContainerInitializer*** 通过实现 **Servlet 3.0 SPI** 接口 ***ServletContainerInitializer***，与 ***@HandlesTypes*** 配合过滤出 ***WebApplicationInitializer*** 具体类的集合，随后顺序迭代执行该集合的元素，进而利用 **Servlet 3.0 在类 *ServletContext* 中添加的配置方法 API** 实现 Web 自动装配的目的。在 Spring Framework 3.2 后更是利用 ***AbstractAnnotationConfigDispatcherServletInitializer*** 极大的简化了注解驱动开发的成本。
+          }
+          this.customizeRegistration(registration);
+      }
+      ...
+  }
+  ```
+  
+  
+  
+- AbstractAnnotationConfigDispatcherServletInitializer 装配原理
+  
+  &emsp;&emsp;在针对上面抽象类 *AbstractDispatcherServletInitializer* 的实现中，开发人员还需完整实现创建 **Root *WebApplicationContext*** 的方法 **`createRootApplicationContext()`** 及创建子上下文 ***DispatcherServlet WebApplicationContext*** 的方法 **`createServletApplicationContext()`**，对 Spring Web MVC 上下文层次理解不深的开发人员，实现成本还是比较高，故在 Spring Framework 3.2  提供了基于注解驱动的抽象类 ***AbstractAnnotationConfigDispatcherServletInitializer***，进一步简化开发：
+  
+  ```java
+  public abstract class AbstractAnnotationConfigDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
+      public AbstractAnnotationConfigDispatcherServletInitializer() {
+      }
+  
+      // Root WebApplicationContext 的创建已经实现，仅仅留下根上下文的配置类需要开发人员覆盖指定
+      protected WebApplicationContext createRootApplicationContext() {
+          Class<?>[] configClasses = this.getRootConfigClasses();
+          if (!ObjectUtils.isEmpty(configClasses)) {
+              // 创建基于注解驱动的上下文
+              AnnotationConfigWebApplicationContext rootAppContext = new AnnotationConfigWebApplicationContext();
+              rootAppContext.register(configClasses);
+              return rootAppContext;
+          } else {
+              return null;
+          }
+      }
+  
+      // Servlet WebApplicationContext 的创建也已实现，仅仅留下上下文的配置需开发人员覆盖指定
+      protected WebApplicationContext createServletApplicationContext() {
+          // 创建基于注解驱动的上下文
+          AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
+          Class<?>[] configClasses = this.getServletConfigClasses();
+          if (!ObjectUtils.isEmpty(configClasses)) {
+              servletAppContext.register(configClasses);
+          }
+  
+          return servletAppContext;
+      }
+  
+      // 根应用上下文配置类交由开发人员指定
+      protected abstract Class<?>[] getRootConfigClasses();
+  
+      // Servlet 子应用上下文配置类交由开发人员指定
+      protected abstract Class<?>[] getServletConfigClasses();
+  }
+  ```
+  
+  &emsp;&emsp;可以看到父子上下文默认都已创建为 *AnnotationConfigWebApplicationContext*，开发人员仅仅只需关注为两上下文指定配置类的操作。从全局视角看，***SpringServletContainerInitializer*** 通过实现 **Servlet 3.0 SPI** 接口 ***ServletContainerInitializer***，与 ***@HandlesTypes*** 配合过滤出 ***WebApplicationInitializer*** 具体类的集合，随后顺序迭代执行该集合的元素，进而利用 **Servlet 3.0 在类 *ServletContext* 中添加的配置方法 API** 实现 Web 自动装配的目的。在 Spring Framework 3.2 后更是利用 ***AbstractAnnotationConfigDispatcherServletInitializer*** 极大的简化了注解驱动开发的成本。
 
 ### Spring 条件装配
 
@@ -2411,25 +2420,27 @@ Bean 定义注解
      return this.environment.acceptsProfiles(profile.getStringArray("value"));
      ```
 
-  2. <beans profile="..."> 条件装配原理
+  2. &lt;beans profile="..."&gt; 条件装配原理
 
      &emsp;&emsp;XML 配置驱动方式相比较注解方式而言，只是解析方式改为由 ***DefaultBeanDefinitionDocumentReader*** 类解析 XML 中的 profile 属性配置，除此之外与上面的判断并无不同：
 
      ```java
      public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocumentReader {
-       public static final String PROFILE_ATTRIBUTE = "profile";
-       protected void doRegisterBeanDefinitions(Element root) {
-         	// 从 XML 元素中解析 profile 元素配置
-           String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
-           if (StringUtils.hasText(profileSpec)) {
-             String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
-                 profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
-             // 根据当前环境配置检测是否包含注解中指定的配置
-             if (!getEnvironment().acceptsProfiles(specifiedProfiles)) {
-               return;
+         
+         public static final String PROFILE_ATTRIBUTE = "profile";
+     
+         protected void doRegisterBeanDefinitions(Element root) {
+             // 从 XML 元素中解析 profile 元素配置
+             String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
+             if (StringUtils.hasText(profileSpec)) {
+                 String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
+                         profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+                 // 根据当前环境配置检测是否包含注解中指定的配置
+                 if (!getEnvironment().acceptsProfiles(specifiedProfiles)) {
+                     return;
+                 }
              }
-           }
-           ...
+             ...
          }
      }
      ```
@@ -2441,40 +2452,41 @@ Bean 定义注解
   ```java
   /**
    * 从 4.0 开始引入
-   * @since 4.0
+   *
    * @see Condition
+   * @since 4.0
    */
   @Target({ElementType.TYPE, ElementType.METHOD})
   @Retention(RetentionPolicy.RUNTIME)
   @Documented
   public @interface Conditional {
-    // 条件判断逻辑在 Condition 接口实现类中
-    // 允许指定多个条件实现类，当且仅当所有条件都满足才匹配
-  	Class<? extends Condition>[] value();
+      // 条件判断逻辑在 Condition 接口实现类中
+      // 允许指定多个条件实现类，当且仅当所有条件都满足才匹配
+      Class<? extends Condition>[] value();
   }
   ```
-
+  
   &emsp;&emsp;*Condition* 接口：
-
+  
   ```java
   public interface Condition {
-  	/*
-     * 具体条件判断方法
-     * context
-     *	包含 BeanDefinitionRegistry ConfigurableListableBeanFactory Envrionment ResourceLoader ClassLoader 信息
-     * metadata
-     *	包含当前注解所在的元注解信息
-     */
-  	boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata);
+      /*
+       * 具体条件判断方法
+       * context
+       *	包含 BeanDefinitionRegistry ConfigurableListableBeanFactory Envrionment ResourceLoader ClassLoader 信息
+       * metadata
+       *	包含当前注解所在的元注解信息
+       */
+      boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata);
   }
   ```
-
+  
   1. 自定义 *@Conditioinal* 条件装配
-
+  
      &emsp;&emsp;下面通过派生 @Conditional 注解来自定义条件装配，具体步骤如下：
-
+  
      - 编写派生注解
-
+  
        ```java
        @Target({ElementType.METHOD}) // 定义此注解只标注在方法上
        @Retention(RetentionPolicy.RUNTIME)
@@ -2493,9 +2505,9 @@ Bean 定义注解
            String value();
        }
        ```
-
+  
      - 实现条件匹配判断实现类
-
+  
        ```java
        public class OnSystemPropertyCondition implements Condition {
        
@@ -2518,9 +2530,9 @@ Bean 定义注解
            }
        }
        ```
-
+  
      - Bean 配置添加自定义条件注解
-
+  
        ```java
        @Configuration
        public class ConditionalMessageConfiguration {
@@ -2538,9 +2550,9 @@ Bean 定义注解
            }
        }
        ```
-
+  
      - 测试运行
-
+  
        ```java
        public class ConditionalOnSystemPropertyBootstrap {
        
@@ -2562,57 +2574,57 @@ Bean 定义注解
            }
        }
        ```
-
+  
      > [ConditionalOnSystemPropertyBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-4.3.x-sample/src/main/java/thinking/in/spring/boot/samples/spring4/bootstrap/ConditionalOnSystemPropertyBootstrap.java)
-
+  
   2. *@Conditional* 条件装配原理
-
+  
      &emsp;&emsp;*@Conditional* 条件装配注解所标注的类是否进行装载被一个通用的**条件鉴别器 *ConditionEvaluator*** 来进行评估。像上一节讲的 *@Profile* 及 XML 配置中的 *profile* 属性也在 **Spring Framework 4.0** 引入 *@Conditional* 后进行了重构，*@Profile* 注解增加 *@Conditional* 元注解，并指明条件判断逻辑类为 *ProfileCondition*。重构后使得 **“配置条件” 装载**** 和 *@Conditioanl* 条件装载都统一交给 *ConditionEvaluator* 进行处理：
-
+  
      ```java
      class ConditionEvaluator {
      
-     	public boolean shouldSkip(AnnotatedTypeMetadata metadata, ConfigurationPhase phase) {
-     		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
-     			return false;
-     		}
+         public boolean shouldSkip(AnnotatedTypeMetadata metadata, ConfigurationPhase phase) {
+             if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
+                 return false;
+             }
      
-     		if (phase == null) {
-     			if (metadata instanceof AnnotationMetadata &&
-     					ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
-             // 配置类解析阶段
-     				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
-     			}
-           // Bean 注册阶段
-     			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
-     		}
+             if (phase == null) {
+                 if (metadata instanceof AnnotationMetadata &&
+                         ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
+                     // 配置类解析阶段
+                     return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
+                 }
+                 // Bean 注册阶段
+                 return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
+             }
      
-     		List<Condition> conditions = new ArrayList<Condition>();
-     		for (String[] conditionClasses : getConditionClasses(metadata)) {
-     			for (String conditionClass : conditionClasses) {
-     				Condition condition = getCondition(conditionClass, this.context.getClassLoader());
-     				conditions.add(condition);
-     			}
-     		}
+             List<Condition> conditions = new ArrayList<Condition>();
+             for (String[] conditionClasses : getConditionClasses(metadata)) {
+                 for (String conditionClass : conditionClasses) {
+                     Condition condition = getCondition(conditionClass, this.context.getClassLoader());
+                     conditions.add(condition);
+                 }
+             }
      
-     		AnnotationAwareOrderComparator.sort(conditions);
-     		// 遍历所有 @Conditional 中设置的 Condition 接口实现类，依次进行判断
-     		for (Condition condition : conditions) {
-     			ConfigurationPhase requiredPhase = null;
-     			if (condition instanceof ConfigurationCondition) {
-     				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
-     			}
-           // 当条件在符合的阶段才会进行条件判断
-     			if (requiredPhase == null || requiredPhase == phase) {
-             // 一旦有条件不符即跳过装载
-     				if (!condition.matches(this.context, metadata)) {
-     					return true;
-     				}
-     			}
-     		}
+             AnnotationAwareOrderComparator.sort(conditions);
+             // 遍历所有 @Conditional 中设置的 Condition 接口实现类，依次进行判断
+             for (Condition condition : conditions) {
+                 ConfigurationPhase requiredPhase = null;
+                 if (condition instanceof ConfigurationCondition) {
+                     requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
+                 }
+                 // 当条件在符合的阶段才会进行条件判断
+                 if (requiredPhase == null || requiredPhase == phase) {
+                     // 一旦有条件不符即跳过装载
+                     if (!condition.matches(this.context, metadata)) {
+                         return true;
+                     }
+                 }
+             }
      
-     		return false;
-     	}
+             return false;
+         }
      }
      ```
 
