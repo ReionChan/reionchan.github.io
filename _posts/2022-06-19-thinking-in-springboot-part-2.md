@@ -221,36 +221,36 @@ Bean 定义注解
        // component-scan 属性解析器类
        public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
        
-       	private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
-       	
-         	// 解析方法
-       	public BeanDefinition parse(Element element, ParserContext parserContext) {
-       		String[] basePackages = StringUtils.commaDelimitedListToStringArray(element.getAttribute(BASE_PACKAGE_ATTRIBUTE));
+           private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
        
-       		// 真正参与扫描的类 ClassPathBeanDefinitionScanner ①
-       		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
-           	// 扫描具体方法 ④
-       		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
-       		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
+           // 解析方法
+           public BeanDefinition parse(Element element, ParserContext parserContext) {
+               String[] basePackages = StringUtils.commaDelimitedListToStringArray(element.getAttribute(BASE_PACKAGE_ATTRIBUTE));
        
-       		return null;
-       	}
-         
-         protected ClassPathBeanDefinitionScanner configureScanner(ParserContext parserContext, Element element) {
-       		XmlReaderContext readerContext = parserContext.getReaderContext();
-       		// 采取默认过滤器
-       		boolean useDefaultFilters = true;
-       		// 创建 ClassPathBeanDefinitionScanner ②
-       		ClassPathBeanDefinitionScanner scanner = createScanner(readerContext, useDefaultFilters);
-       		scanner.setResourceLoader(readerContext.getResourceLoader());
-       		// ...
-       		return scanner;
-       	}
-         
-         protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
-           	// 构造 ClassPathBeanDefinitionScanner ③
-       		return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters);
-       	}
+               // 真正参与扫描的类 ClassPathBeanDefinitionScanner ①
+               ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
+               // 扫描具体方法 ④
+               Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
+               registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
+               
+               return null;
+           }
+       
+           protected ClassPathBeanDefinitionScanner configureScanner(ParserContext parserContext, Element element) {
+               XmlReaderContext readerContext = parserContext.getReaderContext();
+               // 采取默认过滤器
+               boolean useDefaultFilters = true;
+               // 创建 ClassPathBeanDefinitionScanner ②
+               ClassPathBeanDefinitionScanner scanner = createScanner(readerContext, useDefaultFilters);
+               scanner.setResourceLoader(readerContext.getResourceLoader());
+               // ...
+               return scanner;
+           }
+       
+           protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
+               // 构造 ClassPathBeanDefinitionScanner ③
+               return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters);
+           }
        }
        ```
     
@@ -258,22 +258,22 @@ Bean 定义注解
     
        ```java
        public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
-       	
-       	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
-           // 调用父类生成默认扫描过滤器 ①
-       		super(useDefaultFilters);
-       		// ...
-       	}
-         
-         	// 扫描处理 
-       	protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
-       		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
-       		for (int i = 0; i < basePackages.length; i++) {
-             		// 调用父类搜索可选组件方法 ②
-       			Set<BeanDefinition> candidates = findCandidateComponents(basePackages[i]);
-       		}
-       		return beanDefinitions;
-       	}
+       
+           public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
+               // 调用父类生成默认扫描过滤器 ①
+               super(useDefaultFilters);
+               // ...
+           }
+       
+           // 扫描处理
+           protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
+               Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
+               for (int i = 0; i < basePackages.length; i++) {
+                   // 调用父类搜索可选组件方法 ②
+                   Set<BeanDefinition> candidates = findCandidateComponents(basePackages[i]);
+               }
+               return beanDefinitions;
+           }
        }
        ```
     
@@ -1731,48 +1731,48 @@ Bean 定义注解
   &emsp;&emsp;先看【阶段一】即 *ConfigurationClassPostProcessor* 实现接口 *BeanDefinitionRegistryPostProcessor* 的方法：
   
   ```java
-    public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
-            Ordered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
-    
-        // 实现 BeanDefinitionRegistryPostProcessor 的方法
-        public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-            Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
-            for (String beanName : registry.getBeanDefinitionNames()) {
-                BeanDefinition beanDef = registry.getBeanDefinition(beanName);
-                // 过滤出希望被 ConfigurationClassPostProcessor 处理的 Bean 定义
-                //【注意】checkConfigurationClassCandidate 方法
-                // 	1. 它能解释为何 @EnableXxx 注解一定要标注在 Spring 模式注解注解的类上，能被称作具备配置能力的类需含如下特征
-                //      1.1 明确被 @Configuration 注解, 归为 Full 模式，后续被 CGLIB 提升
-                //      1.2	非接口，并且要么被 @Component 注解（4.0后支持多层递归派生）要么方法中有被 @Bean 标注，归为 Lite 模式，不会被提升
-                //      1.3 Lite 模式条件在 4.0 中添加了 @Import, 5.0 中更是追加了 @ComponentScan 及 @ ImportResource
-                //	2. 它能解释为何 @Configuration 注解的类会被 CGLIB 提升
-                if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
-                    configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
-                }
-            }
+  public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
+          Ordered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
+  
+      // 实现 BeanDefinitionRegistryPostProcessor 的方法
+      public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+          Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<BeanDefinitionHolder>();
+          for (String beanName : registry.getBeanDefinitionNames()) {
+              BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+              // 过滤出希望被 ConfigurationClassPostProcessor 处理的 Bean 定义
+              //【注意】checkConfigurationClassCandidate 方法
+              //  1. 它能解释为何 @EnableXxx 注解一定要标注在 Spring 模式注解注解的类上，能被称作具备配置能力的类需含如下特征
+              //      1.1 明确被 @Configuration 注解, 归为 Full 模式，后续被 CGLIB 提升
+              //      1.2	非接口，并且要么被 @Component 注解（4.0后支持多层递归派生）要么方法中有被 @Bean 标注，归为 Lite 模式，不会被提升
+              //      1.3 Lite 模式条件在 4.0 中添加了 @Import, 5.0 中更是追加了 @ComponentScan 及 @ ImportResource
+              //  2. 它能解释为何 @Configuration 注解的类会被 CGLIB 提升
+              if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+                  configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
+              }
+          }
     		...
-    
-            // 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
-            ConfigurationClassParser parser = new ConfigurationClassParser(
-                    this.metadataReaderFactory, this.problemReporter, this.environment,
-                    this.resourceLoader, this.componentScanBeanNameGenerator, registry);
-            for (BeanDefinitionHolder holder : configCandidates) {
-                BeanDefinition bd = holder.getBeanDefinition();
-                try {
-                    if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
-                        // 已装载 class 的采用 Java 反射解析
-                        parser.parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
-                    } else {
-                        // 未装载的采用 ASM 方式解析
-                        parser.parse(bd.getBeanClassName(), holder.getBeanName());
-                    }
-                } catch (IOException ex) {
-    				...
-                }
-            }
-    		...
-        }
-    }
+  
+          // 开始解析过滤出的 Bean 定义（具备配置能力的 Bean 定义）
+          ConfigurationClassParser parser = new ConfigurationClassParser(
+                  this.metadataReaderFactory, this.problemReporter, this.environment,
+                  this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+          for (BeanDefinitionHolder holder : configCandidates) {
+              BeanDefinition bd = holder.getBeanDefinition();
+              try {
+                  if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+                      // 已装载 class 的采用 Java 反射解析
+                      parser.parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+                  } else {
+                      // 未装载的采用 ASM 方式解析
+                      parser.parse(bd.getBeanClassName(), holder.getBeanName());
+                  }
+              } catch (IOException ex) {
+                  ...
+              }
+          }
+          ...
+      }
+  }
   ```
   
     &emsp;&emsp;要关注对 *@Import* 的处理，那么观察解析器 *ConfigurationClassParser* 的解析方法 **`parse`** ：
