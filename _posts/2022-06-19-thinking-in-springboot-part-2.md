@@ -538,8 +538,12 @@ Bean 定义注解
                                    expression="thinking.in.spring.boot.samples.spring25.annotation.StringRepository"/>
        </context:component-scan>
        ```
+       
+       
     
     > [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample)
+    
+    
     
   - 多层次 @Component 派生性及原理
 
@@ -788,7 +792,7 @@ Bean 定义注解
   * 应用启动阶段减少不必要的 *类装载 ClassLoader* 开销
   * 方便做字节码增强，为框架实现类动态功能增强做铺垫
 
-  
+    
 
   > [TransactionalServiceAnnotationMetadataBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceAnnotationMetadataBootstrap.java)
 
@@ -896,7 +900,7 @@ Bean 定义注解
 
     
 
-    &emsp;&emsp;而只用 **纯 Java 反射 API ** 获取每个嵌套元注解的属性信息时，需要开发者自己编写递归查询。与之相对，***StandardAnnotationMetadata*** **`getAnnotationTypes()`** 方法却能直接获取所有嵌套元注解的类型集合，再通过 **`getAnnotationAttributes(String annotationName)`** 方法获取每个注解的属性信息。
+    &emsp;&emsp;而只用 **纯 Java 反射 API** 获取每个嵌套元注解的属性信息时，需要开发者自己编写递归查询。与之相对，***StandardAnnotationMetadata*** **`getAnnotationTypes()`** 方法却能直接获取所有嵌套元注解的类型集合，再通过 **`getAnnotationAttributes(String annotationName)`** 方法获取每个注解的属性信息。
 
     
 
@@ -1470,7 +1474,7 @@ Bean 定义注解
      
      > &emsp;&emsp;Spring Framework 4.0 开始支持被 *@Import* 注解（含被间接注解）也能被 ***ConfigurationClassPostProcessor*** 处理，而自定义 @Enable 本身就带有 *@Import*，也就是说 4.0 开始**只要被标注自定义 *@Enable* 的类被注册即可实现自定义装配而无需该类是 @Component 标注的模式注解。**
      >
-     > &emsp;&emsp;这点很重要，该特性使得 Spring boot 的 *@EnableAutoConfiguration* 无需依赖 *@SpringBootConfiguration* 或 *@Configuration* 标注的类。详细参考 [理解 @EnableAutoConfiguration](#理解 Spring Boot 自动装配)
+     > &emsp;&emsp;这点很重要，该特性使得 Spring boot 的 *@EnableAutoConfiguration* 无需依赖 *@SpringBootConfiguration* 或 *@Configuration* 标注的类，详细参考 [理解 Spring Boot 自动装配对 @EnableAutoConfiguration 理解小节阐述](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#%E7%90%86%E8%A7%A3-spring-boot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D)。
      
      
   
@@ -1516,7 +1520,7 @@ Bean 定义注解
   
     1. XML 配置驱动时代，由元素 `<context:annotation-config />` 或元素 `<context:component-scan>` 的**解析器**激活注册
   
-       &emsp;&emsp;由 [Spring 注解编程模型章节关于**派生性原理**](#Spring 注解编程模型) 中搜索元素`<context:component-scan>` 的 **解析器** 可知，两元素的解析器分别为：*AnnotationConfigBeanDefinitionParser*、 *ComponentScanBeanDefinitionParser*
+       &emsp;&emsp;由 [Spring 注解编程模型关于**派生性及原理**小节](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#spring-%E6%B3%A8%E8%A7%A3%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B) 中搜索元素`<context:component-scan>` 的 **解析器** 可知，两元素的解析器分别为：*AnnotationConfigBeanDefinitionParser*、 *ComponentScanBeanDefinitionParser*
   
        ```java
        public class ContextNamespaceHandler extends NamespaceHandlerSupport {
@@ -2579,7 +2583,7 @@ Bean 定义注解
   
   2. *@Conditional* 条件装配原理
   
-     &emsp;&emsp;*@Conditional* 条件装配注解所标注的类是否进行装载被一个通用的**条件鉴别器 *ConditionEvaluator*** 来进行评估。像上一节讲的 *@Profile* 及 XML 配置中的 *profile* 属性也在 **Spring Framework 4.0** 引入 *@Conditional* 后进行了重构，*@Profile* 注解增加 *@Conditional* 元注解，并指明条件判断逻辑类为 *ProfileCondition*。重构后使得 **“配置条件” 装载**** 和 *@Conditioanl* 条件装载都统一交给 *ConditionEvaluator* 进行处理：
+     &emsp;&emsp;*@Conditional* 条件装配注解所标注的类是否进行装载被一个通用的**条件鉴别器 *ConditionEvaluator*** 来进行评估。像上一节讲的 *@Profile* 及 XML 配置中的 *profile* 属性也在 **Spring Framework 4.0** 引入 *@Conditional* 后进行了重构，*@Profile* 注解增加 *@Conditional* 元注解，并指明条件判断逻辑类为 *ProfileCondition*。重构后使得 **“配置条件” 装载** 和 *@Conditioanl* 条件装载都统一交给 *ConditionEvaluator* 进行处理：
   
      ```java
      class ConditionEvaluator {
@@ -3175,7 +3179,7 @@ public class AutoConfigurationImportSelector
 
   2. 读取候选装配组件
 
-     &emsp;&emsp;Spring Boot 所有候选自动装配配置类都以 **工厂加载机制（Factory Loading Mechanism）**放入到 `META-INF/spring.factories` 文件中，这些配置类都配置在键名为 ***org.springframework.boot.autoconfigure.EnableAutoConfiguration*** 下，详情可参考 [理解自动配置机制](#理解自动配置机制)。该文件内容类似：
+     &emsp;&emsp;Spring Boot 所有候选自动装配配置类都以 **工厂加载机制（Factory Loading Mechanism）**放入到 `META-INF/spring.factories` 文件中，这些配置类都配置在键名为 ***org.springframework.boot.autoconfigure.EnableAutoConfiguration*** 下，详情可参考 [理解自动配置机制](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-1/#%E7%90%86%E8%A7%A3%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%9C%BA%E5%88%B6)。该文件内容类似：
 
      ```properties
      org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
@@ -3860,7 +3864,7 @@ public class AutoConfigurationImportSelector
 
 ### Spring Boot 条件化自动装配
 
-&emsp;&emsp;Spring Boot 实现条件化自动装配，其底层还是利用派生 Spring Framework 引入的 *@Conditional* 条件注解来实现。自动化条件装配的候选类都是被 *@Configuration* 注解的类，这些配置类解析之后被 ***ConfigurationClassBeanDefinitionReader*** 的方法 `loadBeanDefinitions(Set<ConfigurationClass>)` 进行 Bean 定义的注册。在注册中会分别处理 **候选配置类** 和 类中被 ***@Bean* 注解的方法** 上的 ***@Conditional* 派生注解**，将其转交给 ***ConditionEvaluator*** 判断是否满足条件，而该条件评估器底层逻辑就是收集 *@Conditional* 派生注解所指定的 ***Condition*** 接口实现类，统一调用该接口声明的 `matches` 方法，具体可参考 [Spring 条件装配对 *@Conditional* 条件装配原理 的阐述](#Spring 条件装配)。
+&emsp;&emsp;Spring Boot 实现条件化自动装配，其底层还是利用派生 Spring Framework 引入的 *@Conditional* 条件注解来实现。自动化条件装配的候选类都是被 *@Configuration* 注解的类，这些配置类解析之后被 ***ConfigurationClassBeanDefinitionReader*** 的方法 `loadBeanDefinitions(Set<ConfigurationClass>)` 进行 Bean 定义的注册。在注册中会分别处理 **候选配置类** 和 类中被 ***@Bean* 注解的方法** 上的 ***@Conditional* 派生注解**，将其转交给 ***ConditionEvaluator*** 判断是否满足条件，而该条件评估器底层逻辑就是收集 *@Conditional* 派生注解所指定的 ***Condition*** 接口实现类，统一调用该接口声明的 `matches` 方法，具体可参考 [Spring 条件装配对 *@Conditional* 条件装配原理 的阐述](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#spring-%E6%9D%A1%E4%BB%B6%E8%A3%85%E9%85%8D)。
 
 &emsp;&emsp;下面是 *ConfigurationClassBeanDefinitionReader* 类判断 **候选配置类** 和 ***@Bean* 注解的方法** 中的条件注解的方法：
 
@@ -4239,7 +4243,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 * Resource 条件注解
 
-  &emsp;&emsp;&emsp;Resource 条件注解 *@ConditionalOnResource*, 其语义为 “当指定资源存在时条件成立”。值得注意的是，查找资源是否存是委托给 ***ResourceLoader*** 实例，该实例**默认情况下**追本溯源最终实例对象为 ***DefaultResourceLoader***，不过在 **Spring Framework 4.3+** 或 **Spring Boot 1.4+** 时略有不同。在这个指定的版本之前，*ResourceLoader* 的实例要么是 DefaultResourceLoader 实例，要么是 *DefaultResourceLoader* 的子类即应用上下文 *AbstractApplicationContext* 的实现类，而后者未对父类做特别变动，所以行为与父类 *DefaultResourceLoader* 无差别，故说默认情况下其实就是 *DefaultResourceLoader* 的实例。然后在上述指定版本之后，*DefaultResourceLoader* 增加了新增自定义协议解析器的方法 `addProtocalResoler(ProtocalResolver)`，使得开发人员能借由上下文对象 *AbstractApplicationContext* 动态添加自定义的协议解析器，此时添加自定义解析器后的 *AbstractApplicationContext* 与默认的 *DefaultResourceLoader* 实例行为就有所差别，应予以关注。*ProtocalResolver* 扩展机制的出现也是有价值的，它能够简化复杂的 ***URLStreamHandler* 及 *URLStreamHandlerFactory*** 的扩展机制。*URLStreamHandler* 属于 Java 标准协议扩展机制，在 [运行 Spring Boot 应用](#运行 Spring Boot 应用) 章节中关于 **JarLauncher 实现原理** 描述中知道 Spring Boot 正是通过扩展该机制，实现了对 Jar 的增强处理从而引导 Spring Boot 应用 Jar 包的运行。
+  &emsp;&emsp;&emsp;Resource 条件注解 *@ConditionalOnResource*, 其语义为 “当指定资源存在时条件成立”。值得注意的是，查找资源是否存是委托给 ***ResourceLoader*** 实例，该实例**默认情况下**追本溯源最终实例对象为 ***DefaultResourceLoader***，不过在 **Spring Framework 4.3+** 或 **Spring Boot 1.4+** 时略有不同。在这个指定的版本之前，*ResourceLoader* 的实例要么是 DefaultResourceLoader 实例，要么是 *DefaultResourceLoader* 的子类即应用上下文 *AbstractApplicationContext* 的实现类，而后者未对父类做特别变动，所以行为与父类 *DefaultResourceLoader* 无差别，故说默认情况下其实就是 *DefaultResourceLoader* 的实例。然后在上述指定版本之后，*DefaultResourceLoader* 增加了新增自定义协议解析器的方法 `addProtocalResoler(ProtocalResolver)`，使得开发人员能借由上下文对象 *AbstractApplicationContext* 动态添加自定义的协议解析器，此时添加自定义解析器后的 *AbstractApplicationContext* 与默认的 *DefaultResourceLoader* 实例行为就有所差别，应予以关注。*ProtocalResolver* 扩展机制的出现也是有价值的，它能够简化复杂的 ***URLStreamHandler* 及 *URLStreamHandlerFactory*** 的扩展机制。*URLStreamHandler* 属于 Java 标准协议扩展机制，在 [运行 Spring Boot 应用](https://reionchan.github.io/2022/06/18/thinking-in-springboot-part-1/#%E8%BF%90%E8%A1%8C-spring-boot-%E5%BA%94%E7%94%A8) 章节中关于 **JarLauncher 实现原理** 描述中知道 Spring Boot 正是通过扩展该机制，实现了对 Jar 的增强处理从而引导 Spring Boot 应用 Jar 包的运行。
 
    
 
@@ -4363,13 +4367,15 @@ class ConfigurationClassBeanDefinitionReader {
 
 * 指定自动装载配置类的顺序
 
-  &emsp;&emsp;也许是篇幅太长，小马哥在讲完这些条件注解后漏掉了 [自定义 Spring Boot 自动装配](#自定义 Spring Boot 自动装配) 小节最后所提出的问题：
+  &emsp;&emsp;也许是篇幅太长，小马哥在讲完这些条件注解后漏掉了 [自定义 Spring Boot 自动装配](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#%E8%87%AA%E5%AE%9A%E4%B9%89-spring-boot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D) 小节最后所提出的问题：
 
   > 如果加入的配置 Class 之间存在初始化前后依赖关系，那么又应该如何实现呢？
+  >
+  > （引至原书 P337）
 
   
 
-  &emsp;&emsp;其实这个问题在 [Spring Boot 自动装配原理](#Spring Boot 自动装配原理) 小节有关 “*AutoConfigurationGroup* 排序及装载候选组件” 原理讲解中已有答案。自动装配类的排序支持 **绝对排序 （@AutoConfigureOrder）** 和 **相对排序 （@AutoConfigureBefore @AutoConfigureAfter）** 两种注解方式。
+  &emsp;&emsp;其实这个问题在 [Spring Boot 自动装配原理](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#spring-boot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%8E%9F%E7%90%86) 小节有关 “*AutoConfigurationGroup* 排序及装载候选组件” 原理讲解中已有答案。自动装配类的排序支持 **绝对排序 （@AutoConfigureOrder）** 和 **相对排序 （@AutoConfigureBefore @AutoConfigureAfter）** 两种注解方式。
 
   
 
@@ -4378,7 +4384,7 @@ class ConfigurationClassBeanDefinitionReader {
   
 
   &emsp;&emsp;在自动装配类标注排序注解：
-
+  
   ```java
   @Configuration
   @ConditionalOnProperty(prefix = "formatter", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -4394,7 +4400,7 @@ class ConfigurationClassBeanDefinitionReader {
   ```
 
   &emsp;&emsp;在资源文件 `spring-autoconfigure-metadata.properties` 配置排序注解：
-
+  
   ```properties
   # 此行空值行需要配置，否则 AutoConfigurationMetadata#wasProcessed 方法判断为 false 就不会读取该资源文件的配置，还是读取类上的注解了
   thinking.in.spring.boot.samples.autoconfigure.formatter.FormatterAutoConfiguration=
@@ -4404,7 +4410,7 @@ class ConfigurationClassBeanDefinitionReader {
   # 支持配置多个，以英文逗号 , 隔开
   thinking.in.spring.boot.samples.autoconfigure.formatter.FormatterAutoConfiguration.AutoConfigureBefore=org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
   ```
-
+  
   &emsp;&emsp;经过实测，按上面设置时 *FormatterAutoConfiguration* 将被放在首位装载。
 
 
