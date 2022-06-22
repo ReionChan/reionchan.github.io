@@ -4404,7 +4404,7 @@ class ConfigurationClassBeanDefinitionReader {
   ```properties
   # 此行空值行需要配置，否则 AutoConfigurationMetadata#wasProcessed 方法判断为 false 就不会读取该资源文件的配置，还是读取类上的注解了
   thinking.in.spring.boot.samples.autoconfigure.formatter.FormatterAutoConfiguration=
-  # 设置绝对排序值，数组越小优先级越高
+  # 设置绝对排序值，数值越小优先级越高
   thinking.in.spring.boot.samples.autoconfigure.formatter.FormatterAutoConfiguration.AutoConfigureOrder=-100
   # 设置相对位置排序，值为另一个相对位置的自动装配类全限定名，当然还可指定 AutoConfigureAfter 属性，本例只演示 AutoConfigureBefore
   # 支持配置多个，以英文逗号 , 隔开
