@@ -908,7 +908,7 @@ Bean 定义注解
 
     
 
-    &emsp;&emsp;观察 *StandardAnnotationMetadata* 类的 **`getAnnotationAttributes(String annotationName)`** 方法的返回类型为 **AnnotationAttributes**, 它由 **AnnotatedElementUtils.getMergedAnnotationAttributes** 静态方法生成，并且是一个继承于 ***LinkedHashMap<String, Object>*** 的**有序 Map**，因为它既要使用 **Key-Value 的数据结构**来保存属性方法的 **名称** 和 **值**，还要确保 **属性方法的次序与 运行时反射加载的属性方法数组顺序[^1] 一致**。
+    &emsp;&emsp;观察 *StandardAnnotationMetadata* 类的 **`getAnnotationAttributes(String annotationName)`** 方法的返回类型为 **AnnotationAttributes**, 它由 **AnnotatedElementUtils.getMergedAnnotationAttributes** 静态方法生成，并且是一个继承于 ***LinkedHashMap<String, Object>*** 的**有序 Map**，因为它既要使用 **Key-Value 的数据结构**来保存属性方法的 **名称** 和 **值**，还要确保 **属性方法的次序与 运行时反射加载的属性方法数组顺序 [^1] 一致**。
 
     
 
@@ -2248,7 +2248,7 @@ Bean 定义注解
           if (rootAppContext != null) {
               servletContext.addListener(new ContextLoaderListener(rootAppContext));
           }
-    		...
+          ...
       }
   
       // 初始化根应用上下文的具体实现交由开发人员处理
@@ -2649,25 +2649,26 @@ Bean 定义注解
 ```java
 class ComponentScanAnnotationParser {
 	...
-	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
+
+    public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
 		...
-		Set<String> basePackages = new LinkedHashSet<>();
-		String[] basePackagesArray = componentScan.getStringArray("basePackages");
-		for (String pkg : basePackagesArray) {
-      // pkg = "" 时，StringUtils.tokenizeToStringArray 会进行忽略
-			String[] tokenized = StringUtils.tokenizeToStringArray(this.environment.resolvePlaceholders(pkg),
-					ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-			Collections.addAll(basePackages, tokenized);
-		}
-		for (Class<?> clazz : componentScan.getClassArray("basePackageClasses")) {
-			basePackages.add(ClassUtils.getPackageName(clazz));
-		}
-    // 扫描包集合还是为空，添加 @ComponentScan 注解所在类的包路径为扫描路径
-		if (basePackages.isEmpty()) {
-			basePackages.add(ClassUtils.getPackageName(declaringClass));
-		}
+        Set<String> basePackages = new LinkedHashSet<>();
+        String[] basePackagesArray = componentScan.getStringArray("basePackages");
+        for (String pkg : basePackagesArray) {
+            // pkg = "" 时，StringUtils.tokenizeToStringArray 会进行忽略
+            String[] tokenized = StringUtils.tokenizeToStringArray(this.environment.resolvePlaceholders(pkg),
+                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+            Collections.addAll(basePackages, tokenized);
+        }
+        for (Class<?> clazz : componentScan.getClassArray("basePackageClasses")) {
+            basePackages.add(ClassUtils.getPackageName(clazz));
+        }
+        // 扫描包集合还是为空，添加 @ComponentScan 注解所在类的包路径为扫描路径
+        if (basePackages.isEmpty()) {
+            basePackages.add(ClassUtils.getPackageName(declaringClass));
+        }
 		...
-	}
+    }
 }
 ```
 
@@ -2675,35 +2676,36 @@ class ComponentScanAnnotationParser {
 
 ```java
 public abstract class StringUtils {
-  // ComponentScanAnnotationParser 调用此方法获取包路径数组
-  public static String[] tokenizeToStringArray(@Nullable String str, String delimiters) {
-    // 委托此方法处理
-		return tokenizeToStringArray(str, delimiters, true, true);
-	}
-	// 真正处理方法
-	public static String[] tokenizeToStringArray(
-			@Nullable String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
+    // ComponentScanAnnotationParser 调用此方法获取包路径数组
+    public static String[] tokenizeToStringArray(@Nullable String str, String delimiters) {
+        // 委托此方法处理
+        return tokenizeToStringArray(str, delimiters, true, true);
+    }
 
-		if (str == null) {
-			return new String[0];
-		}
+    // 真正处理方法
+    public static String[] tokenizeToStringArray(
+            @Nullable String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
 
-		StringTokenizer st = new StringTokenizer(str, delimiters);
-		List<String> tokens = new ArrayList<>();
-		while (st.hasMoreTokens()) {
-      // token = ""
-			String token = st.nextToken();
-			if (trimTokens) {
-				token = token.trim();
-			}
-      // token = "" 不满足条件，不会添加到列表中
-			if (!ignoreEmptyTokens || token.length() > 0) {
-				tokens.add(token);
-			}
-		}
-    // 导致返回空列表
-		return toStringArray(tokens);
-	}
+        if (str == null) {
+            return new String[0];
+        }
+
+        StringTokenizer st = new StringTokenizer(str, delimiters);
+        List<String> tokens = new ArrayList<>();
+        while (st.hasMoreTokens()) {
+            // token = ""
+            String token = st.nextToken();
+            if (trimTokens) {
+                token = token.trim();
+            }
+            // token = "" 不满足条件，不会添加到列表中
+            if (!ignoreEmptyTokens || token.length() > 0) {
+                tokens.add(token);
+            }
+        }
+        // 导致返回空列表
+        return toStringArray(tokens);
+    }
 }
 ```
 
@@ -2775,37 +2777,39 @@ public class DefaultPackageBootstrap {
 ```java
 // 实现 DeferredImportSelector 接口，而此接口继承 ImportSelector
 public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-		BeanFactoryAware, EnvironmentAware, Ordered {
+        BeanFactoryAware, EnvironmentAware, Ordered {
 	...
-  // ImportSelector 接口方法实现
-	@Override
-	public String[] selectImports(AnnotationMetadata annotationMetadata) {
-		if (!isEnabled(annotationMetadata)) {
-			return NO_IMPORTS;
-		}
-    // 1. 加载所有自动装配元信息 META-INF/spring-autoconfigure-metadata.properties
-		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
-				.loadMetadata(this.beanClassLoader);
-    // 2. 获取当前标注类的所有注解方法属性信息
-		AnnotationAttributes attributes = getAttributes(annotationMetadata);
-    // 3. 获取所有候选的自动装配配置类列表 META-INF/spring.factories 中 EnableAutoConfiguration.class 的属性值列表
-		List<String> configurations = getCandidateConfigurations(annotationMetadata,
-				attributes);
-    // 4. 去除重复
-		configurations = removeDuplicates(configurations);
-    // 5. 获得需要排除的自动装配配置类集合
-		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
-		checkExcludedClasses(configurations, exclusions);
-    // 6. 失效被排除的自动装配类
-		configurations.removeAll(exclusions);
-    // 7. 根据过滤条件进一步排除不需要自动装配类
-		configurations = filter(configurations, autoConfigurationMetadata);
-    // 8. 触发自动装配导入事件
-		fireAutoConfigurationImportEvents(configurations, exclusions);
-    // 9. 返回最后需要自动装配的类全限定名称数组
-		return StringUtils.toStringArray(configurations);
-	}
-  ...
+
+    // ImportSelector 接口方法实现
+    @Override
+    public String[] selectImports(AnnotationMetadata annotationMetadata) {
+        if (!isEnabled(annotationMetadata)) {
+            return NO_IMPORTS;
+        }
+        // 1. 加载所有自动装配元信息 META-INF/spring-autoconfigure-metadata.properties
+        AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+                .loadMetadata(this.beanClassLoader);
+        // 2. 获取当前标注类的所有注解方法属性信息
+        AnnotationAttributes attributes = getAttributes(annotationMetadata);
+        // 3. 获取所有候选的自动装配配置类列表 META-INF/spring.factories 中 EnableAutoConfiguration.class 的属性值列表
+        List<String> configurations = getCandidateConfigurations(annotationMetadata,
+                attributes);
+        // 4. 去除重复
+        configurations = removeDuplicates(configurations);
+        // 5. 获得需要排除的自动装配配置类集合
+        Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+        checkExcludedClasses(configurations, exclusions);
+        // 6. 失效被排除的自动装配类
+        configurations.removeAll(exclusions);
+        // 7. 根据过滤条件进一步排除不需要自动装配类
+        configurations = filter(configurations, autoConfigurationMetadata);
+        // 8. 触发自动装配导入事件
+        fireAutoConfigurationImportEvents(configurations, exclusions);
+        // 9. 返回最后需要自动装配的类全限定名称数组
+        return StringUtils.toStringArray(configurations);
+    }
+    
+    ...
 }
 ```
 
@@ -2815,41 +2819,43 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
   ```java
   public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
-  		PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
-        
-     // 从 Bean 定义注册器中筛选出候补的配置类
-     public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-        List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
-        // 1. 拿到已注册的 Bean 定义名称数组
-       	String[] candidateNames = registry.getBeanDefinitionNames();
-        for (String beanName : candidateNames) {
-          BeanDefinition beanDef = registry.getBeanDefinition(beanName);
-          if (ConfigurationClassUtils.isFullConfigurationClass(beanDef) ||
-              ConfigurationClassUtils.isLiteConfigurationClass(beanDef)) {
-            ...
-          }
-          // 2. 判断当前 Bean 定义是否是配置类（符合 Full 或 Lite 模式，Spring Framework 5.0 已经包含甄别 @Import）
-          // 		@EnableAutoConfiguration 包含 @Import 所以被选中
-          else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
-            configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
-          }
-        }
-  			...
-  			// 3. 构建配置类解析器
-        ConfigurationClassParser parser = new ConfigurationClassParser(
-            this.metadataReaderFactory, this.problemReporter, this.environment,
-            this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+          PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
   
-        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
-        Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
-        do {
-          // 4. 解析器对 @EnableAutoConfiguration 所标注的类进行解析操作
-          parser.parse(candidates);
-          parser.validate();
+      // 从 Bean 定义注册器中筛选出候补的配置类
+      public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+          List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
+          // 1. 拿到已注册的 Bean 定义名称数组
+          String[] candidateNames = registry.getBeanDefinitionNames();
+          for (String beanName : candidateNames) {
+              BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+              if (ConfigurationClassUtils.isFullConfigurationClass(beanDef) ||
+                      ConfigurationClassUtils.isLiteConfigurationClass(beanDef)) {
+                  ...
+              }
+              // 2. 判断当前 Bean 定义是否是配置类（符合 Full 或 Lite 模式，Spring Framework 5.0 已经包含甄别 @Import）
+              //      @EnableAutoConfiguration 包含 @Import 所以被选中
+              else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+                  configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
+              }
+          }
           ...
-        }
-        while (!candidates.isEmpty());
-  			...
+  
+          // 3. 构建配置类解析器
+          ConfigurationClassParser parser = new ConfigurationClassParser(
+                  this.metadataReaderFactory, this.problemReporter, this.environment,
+                  this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+  
+          Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+          Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
+          do {
+              // 4. 解析器对 @EnableAutoConfiguration 所标注的类进行解析操作
+              parser.parse(candidates);
+              parser.validate();
+              ...
+          }
+          while (!candidates.isEmpty());
+          
+          ...
       }
   }
   ```
@@ -2862,166 +2868,164 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
   ```java
   class ConfigurationClassParser {
-    // 【方法 1】
-    public void parse(Set<BeanDefinitionHolder> configCandidates) {
-      // 先声明一个列表，用来收集解析过程中的 DeferredImportSelector 实现类
-  		this.deferredImportSelectors = new LinkedList<>();
-      // 遍历候选配置类，进行解析
-  		for (BeanDefinitionHolder holder : configCandidates) {
-  			BeanDefinition bd = holder.getBeanDefinition();
-  				...
-          // 此处的解析逻辑最终都转到【方法 2】 
-  				if (bd instanceof AnnotatedBeanDefinition) {
-  					parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
-  				}
-  				else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
-  					parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
-  				}
-  				else {
-  					parse(bd.getBeanClassName(), holder.getBeanName());
-  				}
-  				...
-  		}
-  		// 处理收集到的 DeferredImportSelector 实现类，参考【方法 4】
-  		processDeferredImportSelectors();
-  	}
-    
-    // 【方法 2】
-    protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) {
-  		// 解析其他注解的方法在此省略
-      ...
-  		// 由于 DeferredImportSelector 实现类被 @Import 引入，着重观察对该注解的解析操作
-      // 【注意】ImportSelector 契约就是被 @Import 引入，脱落它的 ImportSelector 不会被生命周期回调
-  		processImports(configClass, sourceClass, getImports(sourceClass), true);
+      // 【方法 1】
+      public void parse(Set<BeanDefinitionHolder> configCandidates) {
+          // 先声明一个列表，用来收集解析过程中的 DeferredImportSelector 实现类
+          this.deferredImportSelectors = new LinkedList<>();
+          // 遍历候选配置类，进行解析
+          for (BeanDefinitionHolder holder : configCandidates) {
+              BeanDefinition bd = holder.getBeanDefinition();
+              ...
+              // 此处的解析逻辑最终都转到【方法 2】 
+              if (bd instanceof AnnotatedBeanDefinition) {
+                  parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
+              } else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+                  parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+              } else {
+                  parse(bd.getBeanClassName(), holder.getBeanName());
+              }
+              ...
+          }
+          // 处理收集到的 DeferredImportSelector 实现类，参考【方法 4】
+          processDeferredImportSelectors();
+      }
+  
+      // 【方法 2】
+      protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) {
+          // 解析其他注解的方法在此省略
+          ...
+          // 由于 DeferredImportSelector 实现类被 @Import 引入，着重观察对该注解的解析操作
+          // 【注意】ImportSelector 契约就是被 @Import 引入，脱落它的 ImportSelector 不会被生命周期回调
+          processImports(configClass, sourceClass, getImports(sourceClass), true);
   		...
-  	}
-    
-    // 【方法 3】
-    private void processImports(ConfigurationClass configClass, SourceClass currentSourceClass,
-  			Collection<SourceClass> importCandidates, boolean checkForCircularImports) {
+      }
+  
+      // 【方法 3】
+      private void processImports(ConfigurationClass configClass, SourceClass currentSourceClass,
+                                  Collection<SourceClass> importCandidates, boolean checkForCircularImports) {
   		...
           // 配置类上所有导入类集合
-  				for (SourceClass candidate : importCandidates) {
-            // 获取导入类型为 ImportSelector 的类
-  					if (candidate.isAssignable(ImportSelector.class)) {
-  						Class<?> candidateClass = candidate.loadClass();
-  						ImportSelector selector = BeanUtils.instantiateClass(candidateClass, ImportSelector.class);
-  						ParserStrategyUtils.invokeAwareMethods(
-  								selector, this.environment, this.resourceLoader, this.registry);
-              // 进一步如果是 DeferredImportSelector 类型，封装后放入 deferredImportSelectors 集合，延迟到【方法 4】再处理
-  						if (this.deferredImportSelectors != null && selector instanceof DeferredImportSelector) {
-  							this.deferredImportSelectors.add(
-  									new DeferredImportSelectorHolder(configClass, (DeferredImportSelector) selector));
-  						}
-  						else {
-  							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
-  							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames);
-                // 非 DeferredImportSelector 类型，直接进行导入处理（说明 DeferredImportSelector 更低的优先级，为自定义组件的覆盖做基础）
-  							processImports(configClass, currentSourceClass, importSourceClasses, false);
-  						}
-  					}
+          for (SourceClass candidate : importCandidates) {
+              // 获取导入类型为 ImportSelector 的类
+              if (candidate.isAssignable(ImportSelector.class)) {
+                  Class<?> candidateClass = candidate.loadClass();
+                  ImportSelector selector = BeanUtils.instantiateClass(candidateClass, ImportSelector.class);
+                  ParserStrategyUtils.invokeAwareMethods(
+                          selector, this.environment, this.resourceLoader, this.registry);
+                  // 进一步如果是 DeferredImportSelector 类型，封装后放入 deferredImportSelectors 集合，延迟到【方法 4】再处理
+                  if (this.deferredImportSelectors != null && selector instanceof DeferredImportSelector) {
+                      this.deferredImportSelectors.add(
+                              new DeferredImportSelectorHolder(configClass, (DeferredImportSelector) selector));
+                  } else {
+                      String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
+                      Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames);
+                      // 非 DeferredImportSelector 类型，直接进行导入处理（说明 DeferredImportSelector 更低的优先级，为自定义组件的覆盖做基础）
+                      processImports(configClass, currentSourceClass, importSourceClasses, false);
+                  }
+              }
   			...
-  	}
-      
-  }
+          }
+  
+      }
   ```
-
+  
   &emsp;&emsp;将收集到的 ***DeferredImportSelectorHolder*** 进行分组：
-
-  ```java
+  
+```java
   class ConfigurationClassParser {
     // 【方法 1】
-    public void parse(Set<BeanDefinitionHolder> configCandidates) {
-      // 1. 先声明一个列表，用来收集解析过程中的 DeferredImportSelector 实现类
-  		this.deferredImportSelectors = new LinkedList<>();
-      ...
-  		// 处理收集到的 DeferredImportSelector 实现类，参考【方法 4】
-  		processDeferredImportSelectors();
-  	}
-      
-    // 【方法 4】
-    private void processDeferredImportSelectors() {
-  		List<DeferredImportSelectorHolder> deferredImports = this.deferredImportSelectors;
-  		// 不同 DeferredImportSelector 间进行排序
-  		deferredImports.sort(DEFERRED_IMPORT_COMPARATOR);
-      // 根据 group 对不同的 DeferredImportSelector 进行分组封装为 DeferredImportSelectorGrouping 组
-      // 相同 group 中的 DeferredImportSelectorGrouping 对象，允许包含多个 DeferredImportSelectorHolder
-  		Map<Object, DeferredImportSelectorGrouping> groupings = new LinkedHashMap<>();
-      // 配置类元数据 -> 配置类 的索引 Map
-  		Map<AnnotationMetadata, ConfigurationClass> configurationClasses = new HashMap<>();
-  		for (DeferredImportSelectorHolder deferredImport : deferredImports) {
-        // 按 DeferredImportSelector 定义的 group 类别，对不同的 DeferredImportSelector 进行分组封装 
-  			Class<? extends Group> group = deferredImport.getImportSelector().getImportGroup();
-        // 分组 Map 中不存在当前 group 时，创建分组，并拿到分组对象，存在则直接拿到分组对象
-  			DeferredImportSelectorGrouping grouping = groupings.computeIfAbsent(
-  					(group == null ? deferredImport : group),
-  					(key) -> new DeferredImportSelectorGrouping(createGroup(group)));
-        // 将当前 deferredImport 追加到分组对象中
-  			grouping.add(deferredImport);
-        // 收集 配置类元数据 -> 配置类 的索引
-  			configurationClasses.put(deferredImport.getConfigurationClass().getMetadata(),
-  					deferredImport.getConfigurationClass());
-  		}
-     	// 一次对每个 DeferredImportSelectorGrouping 进行操作
-  		for (DeferredImportSelectorGrouping grouping : groupings.values()) {
-  			// 委托 DeferredImportSelectorGrouping 获取 DeferredImportSelector 的导入对象列表，遍历进行导入
-        // *******【方法 5】grouping.getImports() 是筛选、排序等业务逻辑的关键 ******
-        grouping.getImports().forEach((entry) -> {
-  				ConfigurationClass configurationClass = configurationClasses.get(
-  						entry.getMetadata());
-  				try {
-            // 依次进行导入注册 Bean 定义
-  					processImports(configurationClass, asSourceClass(configurationClass),
-  							asSourceClasses(entry.getImportClassName()), false);
-  				}
+      public void parse(Set<BeanDefinitionHolder> configCandidates) {
+          // 1. 先声明一个列表，用来收集解析过程中的 DeferredImportSelector 实现类
+          this.deferredImportSelectors = new LinkedList<>();
+          ...
+          // 处理收集到的 DeferredImportSelector 实现类，参考【方法 4】
+          processDeferredImportSelectors();
+      }
+  
+      // 【方法 4】
+      private void processDeferredImportSelectors() {
+          List<DeferredImportSelectorHolder> deferredImports = this.deferredImportSelectors;
+          // 不同 DeferredImportSelector 间进行排序
+          deferredImports.sort(DEFERRED_IMPORT_COMPARATOR);
+          // 根据 group 对不同的 DeferredImportSelector 进行分组封装为 DeferredImportSelectorGrouping 组
+          // 相同 group 中的 DeferredImportSelectorGrouping 对象，允许包含多个 DeferredImportSelectorHolder
+          Map<Object, DeferredImportSelectorGrouping> groupings = new LinkedHashMap<>();
+          // 配置类元数据 -> 配置类 的索引 Map
+          Map<AnnotationMetadata, ConfigurationClass> configurationClasses = new HashMap<>();
+          for (DeferredImportSelectorHolder deferredImport : deferredImports) {
+              // 按 DeferredImportSelector 定义的 group 类别，对不同的 DeferredImportSelector 进行分组封装 
+              Class<? extends Group> group = deferredImport.getImportSelector().getImportGroup();
+              // 分组 Map 中不存在当前 group 时，创建分组，并拿到分组对象，存在则直接拿到分组对象
+              DeferredImportSelectorGrouping grouping = groupings.computeIfAbsent(
+                      (group == null ? deferredImport : group),
+                      (key) -> new DeferredImportSelectorGrouping(createGroup(group)));
+              // 将当前 deferredImport 追加到分组对象中
+              grouping.add(deferredImport);
+              // 收集 配置类元数据 -> 配置类 的索引
+              configurationClasses.put(deferredImport.getConfigurationClass().getMetadata(),
+                      deferredImport.getConfigurationClass());
+          }
+          // 一次对每个 DeferredImportSelectorGrouping 进行操作
+          for (DeferredImportSelectorGrouping grouping : groupings.values()) {
+              // 委托 DeferredImportSelectorGrouping 获取 DeferredImportSelector 的导入对象列表，遍历进行导入
+              // *******【方法 5】grouping.getImports() 是筛选、排序等业务逻辑的关键 ******
+              grouping.getImports().forEach((entry) -> {
+                  ConfigurationClass configurationClass = configurationClasses.get(
+                          entry.getMetadata());
+                  try {
+                      // 依次进行导入注册 Bean 定义
+                      processImports(configurationClass, asSourceClass(configurationClass),
+                              asSourceClasses(entry.getImportClassName()), false);
+                  }
   				...
-  			});
-  		}
-  	}
-    
-    // 内部类
-    private static class DeferredImportSelectorGrouping {
+              });
+          }
+      }
   
-  		private final DeferredImportSelector.Group group;
-  		private final List<DeferredImportSelectorHolder> deferredImports = new ArrayList<>();
-  		// 分组的组对象
-  		DeferredImportSelectorGrouping(Group group) {
-  			this.group = group;
-  		}
-  		// 将解析的到的 DeferredImportSelectorHolder 放入分组中的列表
-  		public void add(DeferredImportSelectorHolder deferredImport) {
-  			this.deferredImports.add(deferredImport);
-  		}
+      // 内部类
+      private static class DeferredImportSelectorGrouping {
   
-  		// 【方法 5】
-  		public Iterable<Group.Entry> getImports() {
-        // 遍历该分组中的所有 DeferredImportSelectorHolder
-  			for (DeferredImportSelectorHolder deferredImport : this.deferredImports) {
-          // 委托组对象 group 处理 DeferredImportSelectorHolder
-  				this.group.process(deferredImport.getConfigurationClass().getMetadata(),
-  						deferredImport.getImportSelector());
-  			}
-        // 将 group 处理完毕的组实体返回给【方法 4】进行最后导入
-  			return this.group.selectImports();
-  		}
-  	}
-      
+          private final DeferredImportSelector.Group group;
+          private final List<DeferredImportSelectorHolder> deferredImports = new ArrayList<>();
+  
+          // 分组的组对象
+          DeferredImportSelectorGrouping(Group group) {
+              this.group = group;
+          }
+  
+          // 将解析的到的 DeferredImportSelectorHolder 放入分组中的列表
+          public void add(DeferredImportSelectorHolder deferredImport) {
+              this.deferredImports.add(deferredImport);
+          }
+  
+          // 【方法 5】
+          public Iterable<Group.Entry> getImports() {
+              // 遍历该分组中的所有 DeferredImportSelectorHolder
+              for (DeferredImportSelectorHolder deferredImport : this.deferredImports) {
+                  // 委托组对象 group 处理 DeferredImportSelectorHolder
+                  this.group.process(deferredImport.getConfigurationClass().getMetadata(),
+                          deferredImport.getImportSelector());
+              }
+              // 将 group 处理完毕的组实体返回给【方法 4】进行最后导入
+              return this.group.selectImports();
+          }
+      }
   }
-  ```
+```
 
   &emsp;&emsp;由【方法 5】可知，解析收集的 ***DeferredImportSelectorHolder*** 交由 ***DeferredImportSelector.Group*** 接口实现类进行处理，而自动装配导入类 *AutoConfigurationImportSelector* 是 *DeferredImportSelector* 实现类，前者覆盖了接口默认方法 `getImportGroup()` 返回 *DeferredImportSelector.Group* 接口实现类为 ***AutoConfigurationGroup***：
 
   ```java
-  public class AutoConfigurationImportSelector
-  		implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-  		BeanFactoryAware, EnvironmentAware, Ordered {
-    ...
-  	@Override
-  	public Class<? extends Group> getImportGroup() {
-      // 指定 DeferredImportSelector.Group 的实现类为 AutoConfigurationGroup
-  		return AutoConfigurationGroup.class;
-  	}
-    ...
+public class AutoConfigurationImportSelector
+          implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
+          BeanFactoryAware, EnvironmentAware, Ordered {
+      ...
+      @Override
+      public Class<? extends Group> getImportGroup() {
+          // 指定 DeferredImportSelector.Group 的实现类为 AutoConfigurationGroup
+          return AutoConfigurationGroup.class;
+      }
+      ...
   }
   ```
 
@@ -3037,19 +3041,19 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
   ```java
   private static class AutoConfigurationGroup implements DeferredImportSelector.Group,
-  			BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
+          BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
       // 导入配置类名称为 key, @EnableAutoConfiguration 所在配置类的元注解为 value 的索引缓存对象    
-      private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();    
-      
-  		@Override
-  		public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
-        // 执行 ImportSelector 接口的 selectImports 方法拿到导入配置类数组
-  			String[] imports = deferredImportSelector.selectImports(annotationMetadata);
-  			for (String importClassName : imports) {
-          // 建立导入配置类名称及元注解信息的索引
-  				this.entries.put(importClassName, annotationMetadata);
-  			}
-  		}
+      private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();
+  
+      @Override
+      public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
+          // 执行 ImportSelector 接口的 selectImports 方法拿到导入配置类数组
+          String[] imports = deferredImportSelector.selectImports(annotationMetadata);
+          for (String importClassName : imports) {
+              // 建立导入配置类名称及元注解信息的索引
+              this.entries.put(importClassName, annotationMetadata);
+          }
+      }
   }
   ```
 
@@ -3058,36 +3062,36 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   ```java
   // 实现 DeferredImportSelector 接口，而此接口继承 ImportSelector
   public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-  		BeanFactoryAware, EnvironmentAware, Ordered {
+          BeanFactoryAware, EnvironmentAware, Ordered {
   	...
-    // ImportSelector 接口方法实现
-  	@Override
-  	public String[] selectImports(AnnotationMetadata annotationMetadata) {
-  		if (!isEnabled(annotationMetadata)) {
-  			return NO_IMPORTS;
-  		}
-      // 1. 加载所有自动装配元信息 META-INF/spring-autoconfigure-metadata.properties
-  		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
-  				.loadMetadata(this.beanClassLoader);
-      // 获取当前标注类的所有注解方法属性信息
-  		AnnotationAttributes attributes = getAttributes(annotationMetadata);
-      // 2. 获取所有候选的自动装配配置类列表 META-INF/spring.factories 中 EnableAutoConfiguration.class 的属性值列表
-  		List<String> configurations = getCandidateConfigurations(annotationMetadata,
-  				attributes);
-      // 去除重复
-  		configurations = removeDuplicates(configurations);
-      // 3. 获得需要排除的自动装配配置类集合
-  		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
-  		checkExcludedClasses(configurations, exclusions);
-      // 失效被排除的自动装配类
-  		configurations.removeAll(exclusions);
-      // 4. 根据过滤条件进一步排除不需要自动装配类
-  		configurations = filter(configurations, autoConfigurationMetadata);
-      // 5. 触发自动装配导入事件
-  		fireAutoConfigurationImportEvents(configurations, exclusions);
-      // 返回最后需要自动装配的类全限定名称数组
-  		return StringUtils.toStringArray(configurations);
-  	}
+      // ImportSelector 接口方法实现
+      @Override
+      public String[] selectImports(AnnotationMetadata annotationMetadata) {
+          if (!isEnabled(annotationMetadata)) {
+              return NO_IMPORTS;
+          }
+          // 1. 加载所有自动装配元信息 META-INF/spring-autoconfigure-metadata.properties
+          AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+                  .loadMetadata(this.beanClassLoader);
+          // 获取当前标注类的所有注解方法属性信息
+          AnnotationAttributes attributes = getAttributes(annotationMetadata);
+          // 2. 获取所有候选的自动装配配置类列表 META-INF/spring.factories 中 EnableAutoConfiguration.class 的属性值列表
+          List<String> configurations = getCandidateConfigurations(annotationMetadata,
+                  attributes);
+          // 去除重复
+          configurations = removeDuplicates(configurations);
+          // 3. 获得需要排除的自动装配配置类集合
+          Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+          checkExcludedClasses(configurations, exclusions);
+          // 失效被排除的自动装配类
+          configurations.removeAll(exclusions);
+          // 4. 根据过滤条件进一步排除不需要自动装配类
+          configurations = filter(configurations, autoConfigurationMetadata);
+          // 5. 触发自动装配导入事件
+          fireAutoConfigurationImportEvents(configurations, exclusions);
+          // 返回最后需要自动装配的类全限定名称数组
+          return StringUtils.toStringArray(configurations);
+      }
     ...
   }
   ```
@@ -3103,56 +3107,56 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
      ```java
      final class AutoConfigurationMetadataLoader {
      
-     	protected static final String PATH = "META-INF/spring-autoconfigure-metadata.properties";
-     	
-       // 1. 从 classpath 路径中加载 META-INF/spring-autoconfigure-metadata.properties，封装为 AutoConfigurationMetadata
-     	public static AutoConfigurationMetadata loadMetadata(ClassLoader classLoader) {
-     		return loadMetadata(classLoader, PATH);
-     	}
+         protected static final String PATH = "META-INF/spring-autoconfigure-metadata.properties";
      
-     	static AutoConfigurationMetadata loadMetadata(ClassLoader classLoader, String path) {
-     			...
-     			Enumeration<URL> urls = (classLoader != null ? classLoader.getResources(path)
-     					: ClassLoader.getSystemResources(path));
-     			Properties properties = new Properties();
-     			while (urls.hasMoreElements()) {
-             // 2. 将 classpath 路径中多个 spring-autoconfigure-metadata.properties 整合为单个 properties
-     				properties.putAll(PropertiesLoaderUtils.loadProperties(new UrlResource(urls.nextElement())));
-     			}
-           // 3. 将整合的 properties 封装为 AutoConfigurationMetadata
-     			return loadMetadata(properties);
-     	}
-     	
-       // 4. 目前封装的 AutoConfigurationMetadata 实现类为 PropertiesAutoConfigurationMetadata
-     	static AutoConfigurationMetadata loadMetadata(Properties properties) {
-     		return new PropertiesAutoConfigurationMetadata(properties);
-     	}
-     	
-       // 5. 该类提供对 properties 里的数据进行读取并转换类型操作
-     	private static class PropertiesAutoConfigurationMetadata implements AutoConfigurationMetadata {
+         // 1. 从 classpath 路径中加载 META-INF/spring-autoconfigure-metadata.properties，封装为 AutoConfigurationMetadata
+         public static AutoConfigurationMetadata loadMetadata(ClassLoader classLoader) {
+             return loadMetadata(classLoader, PATH);
+         }
      
-     		private final Properties properties;
+         static AutoConfigurationMetadata loadMetadata(ClassLoader classLoader, String path) {
+             ...
+             Enumeration<URL> urls = (classLoader != null ? classLoader.getResources(path)
+                     : ClassLoader.getSystemResources(path));
+             Properties properties = new Properties();
+             while (urls.hasMoreElements()) {
+                 // 2. 将 classpath 路径中多个 spring-autoconfigure-metadata.properties 整合为单个 properties
+                 properties.putAll(PropertiesLoaderUtils.loadProperties(new UrlResource(urls.nextElement())));
+             }
+             // 3. 将整合的 properties 封装为 AutoConfigurationMetadata
+             return loadMetadata(properties);
+         }
      
-     		PropertiesAutoConfigurationMetadata(Properties properties) {
-     			this.properties = properties;
-     		}
+         // 4. 目前封装的 AutoConfigurationMetadata 实现类为 PropertiesAutoConfigurationMetadata
+         static AutoConfigurationMetadata loadMetadata(Properties properties) {
+             return new PropertiesAutoConfigurationMetadata(properties);
+         }
+     
+         // 5. 该类提供对 properties 里的数据进行读取并转换类型操作
+         private static class PropertiesAutoConfigurationMetadata implements AutoConfigurationMetadata {
+     
+             private final Properties properties;
+     
+             PropertiesAutoConfigurationMetadata(Properties properties) {
+                 this.properties = properties;
+             }
      		...
-         // 为后续获取某个自动装配类的 Order 排序值
-     		@Override
-     		public Integer getInteger(String className, String key) {
-     			return getInteger(className, key, null);
-     		}
-         // 1. 为后续获取某个自动装配类排序需要用到的相对配置类集合, 例如：
-         //     getSet("A", "AutoConfigureBefore")，表示 A 必须在哪些配置类之前装载 
-         //		 getSet("A", "AutoConfigureAfter")，表示 A 必须在哪些配置类之后装载
-         // 2. 为后续自动装配类是否要被排除的条件
-         //		 getSet("A", "ConditionalOnClass"), 表示 A 必须在哪些类存在的情况下才自动装配
-     		@Override
-     		public Set<String> getSet(String className, String key) {
-     			return getSet(className, key, null);
-     		}
-         ...
-     	}
+             // 为后续获取某个自动装配类的 Order 排序值
+             @Override
+             public Integer getInteger(String className, String key) {
+                 return getInteger(className, key, null);
+             }
+             // 1. 为后续获取某个自动装配类排序需要用到的相对配置类集合, 例如：
+             //		getSet("A", "AutoConfigureBefore")，表示 A 必须在哪些配置类之前装载 
+             //		getSet("A", "AutoConfigureAfter")，表示 A 必须在哪些配置类之后装载
+             // 2. 为后续自动装配类是否要被排除的条件
+             //		getSet("A", "ConditionalOnClass"), 表示 A 必须在哪些类存在的情况下才自动装配
+             @Override
+             public Set<String> getSet(String className, String key) {
+                 return getSet(className, key, null);
+             }
+             ...
+         }
      }
      ```
 
@@ -3189,49 +3193,49 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
      ```java
      public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-     		BeanFactoryAware, EnvironmentAware, Ordered {   
-           
-       // 1. 从元注解中提取 @EnableAutoConfiguration 注解的属性方法信息  
-      	protected AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-         // 注意：这一步很关键，元注解中可能有很多注解，这里只获取名称为 @EnableAutoConfiguration 的注解的属性方法
-         //      防止有别的注解也有同名的 exclude 或 excludeName 属性
-     		String name = getAnnotationClass().getName();
-     		AnnotationAttributes attributes = AnnotationAttributes
-     				.fromMap(metadata.getAnnotationAttributes(name, true));
-     		return attributes;
-     	}
-     	// 2. 从元注解中只提取注解 @EnableAutoConfiguration 的属性方法信息
-     	protected Class<?> getAnnotationClass() {
-     		return EnableAutoConfiguration.class;
-     	}
-           
-       // 3. 获得排除自动装配类集合，参数 attributes 即为步骤 1 返回的 @EnableAutoConfiguration 属性方法信息
-       protected Set<String> getExclusions(AnnotationMetadata metadata,
-     			AnnotationAttributes attributes) {
-     		Set<String> excluded = new LinkedHashSet<>();
-         // 获取 exclude 属性方法中需排除的配置类，已转成类的全限定名字符串列表
-     		excluded.addAll(asList(attributes, "exclude"));
-         // 获取 exclude 属性方法中需排除的配置类全限定名字符串列表
-     		excluded.addAll(Arrays.asList(attributes.getStringArray("excludeName")));
-         // 获取环境变量中排除类全限定名列表
-     		excluded.addAll(getExcludeAutoConfigurationsProperty());
-         // 将三者列表汇总返回
-     		return excluded;
-     	}
-     	
-       // 4. 读取外部化配置
-     	private List<String> getExcludeAutoConfigurationsProperty() {
-     		if (getEnvironment() instanceof ConfigurableEnvironment) {
-     			Binder binder = Binder.get(getEnvironment());
-           // PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE = "spring.autoconfigure.exclude"
-           // 从外部环境变量中获取该参数设置的排除自动装配配置类全限定名列表
-     			return binder.bind(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, String[].class)
-     					.map(Arrays::asList).orElse(Collections.emptyList());
-     		}
-     		String[] excludes = getEnvironment()
-     				.getProperty(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, String[].class);
-     		return (excludes != null ? Arrays.asList(excludes) : Collections.emptyList());
-     	}
+             BeanFactoryAware, EnvironmentAware, Ordered {
+     
+         // 1. 从元注解中提取 @EnableAutoConfiguration 注解的属性方法信息  
+         protected AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
+             // 注意：这一步很关键，元注解中可能有很多注解，这里只获取名称为 @EnableAutoConfiguration 的注解的属性方法
+             //      防止有别的注解也有同名的 exclude 或 excludeName 属性
+             String name = getAnnotationClass().getName();
+             AnnotationAttributes attributes = AnnotationAttributes
+                     .fromMap(metadata.getAnnotationAttributes(name, true));
+             return attributes;
+         }
+         // 2. 从元注解中只提取注解 @EnableAutoConfiguration 的属性方法信息
+         protected Class<?> getAnnotationClass() {
+             return EnableAutoConfiguration.class;
+         }
+     
+         // 3. 获得排除自动装配类集合，参数 attributes 即为步骤 1 返回的 @EnableAutoConfiguration 属性方法信息
+         protected Set<String> getExclusions(AnnotationMetadata metadata,
+                                             AnnotationAttributes attributes) {
+             Set<String> excluded = new LinkedHashSet<>();
+             // 获取 exclude 属性方法中需排除的配置类，已转成类的全限定名字符串列表
+             excluded.addAll(asList(attributes, "exclude"));
+             // 获取 exclude 属性方法中需排除的配置类全限定名字符串列表
+             excluded.addAll(Arrays.asList(attributes.getStringArray("excludeName")));
+             // 获取环境变量中排除类全限定名列表
+             excluded.addAll(getExcludeAutoConfigurationsProperty());
+             // 将三者列表汇总返回
+             return excluded;
+         }
+     
+         // 4. 读取外部化配置
+         private List<String> getExcludeAutoConfigurationsProperty() {
+             if (getEnvironment() instanceof ConfigurableEnvironment) {
+                 Binder binder = Binder.get(getEnvironment());
+                 // PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE = "spring.autoconfigure.exclude"
+                 // 从外部环境变量中获取该参数设置的排除自动装配配置类全限定名列表
+                 return binder.bind(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, String[].class)
+                         .map(Arrays::asList).orElse(Collections.emptyList());
+             }
+             String[] excludes = getEnvironment()
+                     .getProperty(PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE, String[].class);
+             return (excludes != null ? Arrays.asList(excludes) : Collections.emptyList());
+         }
      }
      ```
 
@@ -3245,42 +3249,42 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
      ```java
      public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-     		BeanFactoryAware, EnvironmentAware, Ordered {
-       // 过滤方法，需借助第一步加载的 autoConfigurationMetadata 元数据
-     	private List<String> filter(List<String> configurations,
-     			AutoConfigurationMetadata autoConfigurationMetadata) {
-     		String[] candidates = StringUtils.toStringArray(configurations);
-     		boolean[] skip = new boolean[candidates.length];
-     		boolean skipped = false;
-         // 1. 获得自动配置导入过滤器列表，依次执行过滤方法
-     		for (AutoConfigurationImportFilter filter : getAutoConfigurationImportFilters()) {
-     			invokeAwareMethods(filter);
-           // 过滤器的 match 方法，返回每个候选类是否符合加载要求的 布尔数组
-     			boolean[] match = filter.match(candidates, autoConfigurationMetadata);
-     			for (int i = 0; i < match.length; i++) {
-     				if (!match[i]) {
-     					skip[i] = true;
-     					skipped = true;
-     				}
-     			}
-     		}
-     		if (!skipped) {
-     			return configurations;
-     		}
-     		List<String> result = new ArrayList<>(candidates.length);
-     		for (int i = 0; i < candidates.length; i++) {
-     			if (!skip[i]) {
-             // 当且仅当不需跳过的的才加入过滤后的列表
-     				result.add(candidates[i]);
-     			}
-     		}
-         // 返回过滤后的候选配置类
-     		return new ArrayList<>(result);
-     	}
-     	// 2. Spring 工厂机制加载 AutoConfigurationImportFilter 的过滤器配置
-     	protected List<AutoConfigurationImportFilter> getAutoConfigurationImportFilters() {
-     		return SpringFactoriesLoader.loadFactories(AutoConfigurationImportFilter.class, this.beanClassLoader);
-     	}
+             BeanFactoryAware, EnvironmentAware, Ordered {
+         // 过滤方法，需借助第一步加载的 autoConfigurationMetadata 元数据
+         private List<String> filter(List<String> configurations,
+                                     AutoConfigurationMetadata autoConfigurationMetadata) {
+             String[] candidates = StringUtils.toStringArray(configurations);
+             boolean[] skip = new boolean[candidates.length];
+             boolean skipped = false;
+             // 1. 获得自动配置导入过滤器列表，依次执行过滤方法
+             for (AutoConfigurationImportFilter filter : getAutoConfigurationImportFilters()) {
+                 invokeAwareMethods(filter);
+                 // 过滤器的 match 方法，返回每个候选类是否符合加载要求的 布尔数组
+                 boolean[] match = filter.match(candidates, autoConfigurationMetadata);
+                 for (int i = 0; i < match.length; i++) {
+                     if (!match[i]) {
+                         skip[i] = true;
+                         skipped = true;
+                     }
+                 }
+             }
+             if (!skipped) {
+                 return configurations;
+             }
+             List<String> result = new ArrayList<>(candidates.length);
+             for (int i = 0; i < candidates.length; i++) {
+                 if (!skip[i]) {
+                     // 当且仅当不需跳过的的才加入过滤后的列表
+                     result.add(candidates[i]);
+                 }
+             }
+             // 返回过滤后的候选配置类
+             return new ArrayList<>(result);
+         }
+         // 2. Spring 工厂机制加载 AutoConfigurationImportFilter 的过滤器配置
+         protected List<AutoConfigurationImportFilter> getAutoConfigurationImportFilters() {
+             return SpringFactoriesLoader.loadFactories(AutoConfigurationImportFilter.class, this.beanClassLoader);
+         }
      }
      ```
 
@@ -3297,127 +3301,127 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
      ```java
      @Order(Ordered.HIGHEST_PRECEDENCE)
      class OnClassCondition extends SpringBootCondition
-     		implements AutoConfigurationImportFilter, BeanFactoryAware, BeanClassLoaderAware {
-     	
-       @Override
-     	public boolean[] match(String[] autoConfigurationClasses,
-     			AutoConfigurationMetadata autoConfigurationMetadata) {
+             implements AutoConfigurationImportFilter, BeanFactoryAware, BeanClassLoaderAware {
+     
+         @Override
+         public boolean[] match(String[] autoConfigurationClasses,
+                                AutoConfigurationMetadata autoConfigurationMetadata) {
      		...
-         // 1. 委托 getOutcomes 方法获取过滤结果数组 ConditionOutcome[]
-     		ConditionOutcome[] outcomes = getOutcomes(autoConfigurationClasses, autoConfigurationMetadata);
-     		boolean[] match = new boolean[outcomes.length];
-     		for (int i = 0; i < outcomes.length; i++) {
-           // 某个类在过滤结果为空或匹配为真即需要自动装配
-     			match[i] = (outcomes[i] == null || outcomes[i].isMatch());
+             // 1. 委托 getOutcomes 方法获取过滤结果数组 ConditionOutcome[]
+             ConditionOutcome[] outcomes = getOutcomes(autoConfigurationClasses, autoConfigurationMetadata);
+             boolean[] match = new boolean[outcomes.length];
+             for (int i = 0; i < outcomes.length; i++) {
+                 // 某个类在过滤结果为空或匹配为真即需要自动装配
+                 match[i] = (outcomes[i] == null || outcomes[i].isMatch());
      			...
-     		}
-         // 将结果数组返回
-     		return match;
-     	}
-       
-       // 2. 对候选配置类集合进行条件判断断定获得结果数组
-     	private ConditionOutcome[] getOutcomes(String[] autoConfigurationClasses,
-     			AutoConfigurationMetadata autoConfigurationMetadata) {
-         // 分成两半
-     		int split = autoConfigurationClasses.length / 2;
-         // 前半部分交给另外线程处理，其实也是对内部类 StandardOutcomesResolver 处理器的异步封装
-     		OutcomesResolver firstHalfResolver = createOutcomesResolver(
-     				autoConfigurationClasses, 0, split, autoConfigurationMetadata);
-         // 后半部分由当前线程使用内部类 StandardOutcomesResolver 处理器处理
-     		OutcomesResolver secondHalfResolver = new StandardOutcomesResolver(
-     				autoConfigurationClasses, split, autoConfigurationClasses.length,
-     				autoConfigurationMetadata, this.beanClassLoader);
-         // 调用 StandardOutcomesResolver 的 resolveOutcomes 方法
-     		ConditionOutcome[] secondHalf = secondHalfResolver.resolveOutcomes();
-     		ConditionOutcome[] firstHalf = firstHalfResolver.resolveOutcomes();
-     		ConditionOutcome[] outcomes = new ConditionOutcome[autoConfigurationClasses.length];
-     		// 将两部分结果合并返回
-         System.arraycopy(firstHalf, 0, outcomes, 0, firstHalf.length);
-     		System.arraycopy(secondHalf, 0, outcomes, split, secondHalf.length);
-     		return outcomes;
-     	}
-       
-       // 3. 内部类 StandardOutcomesResolver 处理器
-     	private final class StandardOutcomesResolver implements OutcomesResolver {
-         ...
-     		@Override
-     		public ConditionOutcome[] resolveOutcomes() {
-           // resolveOutcomes 又交由 getOutcomes 处理
-     			return getOutcomes(this.autoConfigurationClasses, this.start, this.end,
-     					this.autoConfigurationMetadata);
-     		}
-     		 
-     		private ConditionOutcome[] getOutcomes(String[] autoConfigurationClasses,
-     				int start, int end, AutoConfigurationMetadata autoConfigurationMetadata) {
-     			ConditionOutcome[] outcomes = new ConditionOutcome[end - start];
-     			for (int i = start; i < end; i++) {
-     				String autoConfigurationClass = autoConfigurationClasses[i];
-             // 4. 从元数据中获取当前候选配置类的 ConditionalOnClass 属性配置集合
-     				Set<String> candidates = autoConfigurationMetadata.getSet(autoConfigurationClass, "ConditionalOnClass");
-     				if (candidates != null) {
-               // 将属性方法的类集合继续交给下面的方法 5 处理
-     					outcomes[i - start] = getOutcome(candidates);
-     				}
-     			}
-     			return outcomes;
-     		}
-         // 5. 将当前配置类所需依赖的类结合传入此方法处理
-     		private ConditionOutcome getOutcome(Set<String> candidates) {
-     			...
-     				// 依赖类集合交给外部类的 getMatches 方法做判断，返回没找到来的类名称集合
-             List<String> missing = getMatches(candidates, MatchType.MISSING, this.beanClassLoader);
-           	// 一旦候选配置类依赖的类集合有任意一个没找到，即返回条件未满足结果
-     				if (!missing.isEmpty()) {
-     					return ConditionOutcome.noMatch(
-     							ConditionMessage.forCondition(ConditionalOnClass.class)
-     									.didNotFind("required class", "required classes")
-     									.items(Style.QUOTE, missing));
-     				}
-     			...
-     			return null;
-     		}
-     	}
-       // 6. 外部类的 getMatches 方法进行处理
-       private List<String> getMatches(Collection<String> candidates, MatchType matchType, ClassLoader classLoader) {
-     		List<String> matches = new ArrayList<>(candidates.size());
-     		for (String candidate : candidates) {
-           // 遍历每个依赖的类，交给内部枚举类 MatchType.MISSING 进行匹配
-     			if (matchType.matches(candidate, classLoader)) {
-     				matches.add(candidate);
-     			}
-     		}
-     		return matches;
-     	}
-       // 内部枚举类
-       private enum MatchType {
+             }
+             // 将结果数组返回
+             return match;
+         }
      
-           PRESENT {
+         // 2. 对候选配置类集合进行条件判断断定获得结果数组
+         private ConditionOutcome[] getOutcomes(String[] autoConfigurationClasses,
+                                                AutoConfigurationMetadata autoConfigurationMetadata) {
+             // 分成两半
+             int split = autoConfigurationClasses.length / 2;
+             // 前半部分交给另外线程处理，其实也是对内部类 StandardOutcomesResolver 处理器的异步封装
+             OutcomesResolver firstHalfResolver = createOutcomesResolver(
+                     autoConfigurationClasses, 0, split, autoConfigurationMetadata);
+             // 后半部分由当前线程使用内部类 StandardOutcomesResolver 处理器处理
+             OutcomesResolver secondHalfResolver = new StandardOutcomesResolver(
+                     autoConfigurationClasses, split, autoConfigurationClasses.length,
+                     autoConfigurationMetadata, this.beanClassLoader);
+             // 调用 StandardOutcomesResolver 的 resolveOutcomes 方法
+             ConditionOutcome[] secondHalf = secondHalfResolver.resolveOutcomes();
+             ConditionOutcome[] firstHalf = firstHalfResolver.resolveOutcomes();
+             ConditionOutcome[] outcomes = new ConditionOutcome[autoConfigurationClasses.length];
+             // 将两部分结果合并返回
+             System.arraycopy(firstHalf, 0, outcomes, 0, firstHalf.length);
+             System.arraycopy(secondHalf, 0, outcomes, split, secondHalf.length);
+             return outcomes;
+         }
+     
+         // 3. 内部类 StandardOutcomesResolver 处理器
+         private final class StandardOutcomesResolver implements OutcomesResolver {
              ...
-           },
-     
-           MISSING {
-     				// 交由此 MISSING 覆盖方法处理
              @Override
-             public boolean matches(String className, ClassLoader classLoader) {
-               // 7. 判断是否依赖的类
-               return !isPresent(className, classLoader);
+             public ConditionOutcome[] resolveOutcomes() {
+                 // resolveOutcomes 又交由 getOutcomes 处理
+                 return getOutcomes(this.autoConfigurationClasses, this.start, this.end,
+                         this.autoConfigurationMetadata);
              }
-           };
-         	// 8. 通过类装载机制判断依赖的类是否存在
-           private static boolean isPresent(String className, ClassLoader classLoader) {
-             if (classLoader == null) {
-               classLoader = ClassUtils.getDefaultClassLoader();
+     
+             private ConditionOutcome[] getOutcomes(String[] autoConfigurationClasses,
+                                                    int start, int end, AutoConfigurationMetadata autoConfigurationMetadata) {
+                 ConditionOutcome[] outcomes = new ConditionOutcome[end - start];
+                 for (int i = start; i < end; i++) {
+                     String autoConfigurationClass = autoConfigurationClasses[i];
+                     // 4. 从元数据中获取当前候选配置类的 ConditionalOnClass 属性配置集合
+                     Set<String> candidates = autoConfigurationMetadata.getSet(autoConfigurationClass, "ConditionalOnClass");
+                     if (candidates != null) {
+                         // 将属性方法的类集合继续交给下面的方法 5 处理
+                         outcomes[i - start] = getOutcome(candidates);
+                     }
+                 }
+                 return outcomes;
              }
-             try {
-               forName(className, classLoader);
-               return true;
+             // 5. 将当前配置类所需依赖的类结合传入此方法处理
+             private ConditionOutcome getOutcome(Set<String> candidates) {
+     			...
+                 // 依赖类集合交给外部类的 getMatches 方法做判断，返回没找到来的类名称集合
+                 List<String> missing = getMatches(candidates, MatchType.MISSING, this.beanClassLoader);
+                 // 一旦候选配置类依赖的类集合有任意一个没找到，即返回条件未满足结果
+                 if (!missing.isEmpty()) {
+                     return ConditionOutcome.noMatch(
+                             ConditionMessage.forCondition(ConditionalOnClass.class)
+                                     .didNotFind("required class", "required classes")
+                                     .items(Style.QUOTE, missing));
+                 }
+     			...
+                 return null;
              }
-             catch (Throwable ex) {
-               return false;
+         }
+         // 6. 外部类的 getMatches 方法进行处理
+         private List<String> getMatches(Collection<String> candidates, MatchType matchType, ClassLoader classLoader) {
+             List<String> matches = new ArrayList<>(candidates.size());
+             for (String candidate : candidates) {
+                 // 遍历每个依赖的类，交给内部枚举类 MatchType.MISSING 进行匹配
+                 if (matchType.matches(candidate, classLoader)) {
+                     matches.add(candidate);
+                 }
              }
-           }
-       }
-     }  
+             return matches;
+         }
+         // 内部枚举类
+         private enum MatchType {
+     
+             PRESENT {
+                 ...
+             },
+     
+             MISSING {
+                 // 交由此 MISSING 覆盖方法处理
+                 @Override
+                 public boolean matches(String className, ClassLoader classLoader) {
+                     // 7. 判断是否依赖的类
+                     return !isPresent(className, classLoader);
+                 }
+             };
+             // 8. 通过类装载机制判断依赖的类是否存在
+             private static boolean isPresent(String className, ClassLoader classLoader) {
+                 if (classLoader == null) {
+                     classLoader = ClassUtils.getDefaultClassLoader();
+                 }
+                 try {
+                     forName(className, classLoader);
+                     return true;
+                 }
+                 catch (Throwable ex) {
+                     return false;
+                 }
+             }
+         }
+     }
      ```
 
      &emsp;&emsp;由上面八个方法的调用可知，判断某个自动装载配置类是否要被过滤，就看其所配置的元数据属性 **ConditionalOnClass** 设置的依赖类是否在当前应用中存在，如果不存在那么该自动装载配置类将被过滤不进行装载。至此候选装配类列表仅存在需要被自动装配的配置类了，接下来在返回给 ***AutoConfigurationGroup*** 进行排序之前，还将 **需要被装配的配置类** 和 **手动剔除的配置类** 封装成自动装配事件交由监听器处理。
@@ -3430,25 +3434,25 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
      ```java
      public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
-     		BeanFactoryAware, EnvironmentAware, Ordered {
-     	// 触发自动装配事件
-       private void fireAutoConfigurationImportEvents(List<String> configurations,
-     			Set<String> exclusions) {
-         // Spring 工厂加载机制获取 AutoConfigurationImportListener 监听器列表
-     		List<AutoConfigurationImportListener> listeners = getAutoConfigurationImportListeners();
-     		if (!listeners.isEmpty()) {
-     			AutoConfigurationImportEvent event = new AutoConfigurationImportEvent(this, configurations, exclusions);
-     			// 依次触发调用监听器的 onAutoConfigurationImportEvent 方法
-           for (AutoConfigurationImportListener listener : listeners) {
-     				invokeAwareMethods(listener);
-     				listener.onAutoConfigurationImportEvent(event);
-     			}
-     		}
-     	}
-     	// 获取监听器列表
-     	protected List<AutoConfigurationImportListener> getAutoConfigurationImportListeners() {
-     		return SpringFactoriesLoader.loadFactories(AutoConfigurationImportListener.class,this.beanClassLoader);
-     	}  
+             BeanFactoryAware, EnvironmentAware, Ordered {
+         // 触发自动装配事件
+         private void fireAutoConfigurationImportEvents(List<String> configurations,
+                                                        Set<String> exclusions) {
+             // Spring 工厂加载机制获取 AutoConfigurationImportListener 监听器列表
+             List<AutoConfigurationImportListener> listeners = getAutoConfigurationImportListeners();
+             if (!listeners.isEmpty()) {
+                 AutoConfigurationImportEvent event = new AutoConfigurationImportEvent(this, configurations, exclusions);
+                 // 依次触发调用监听器的 onAutoConfigurationImportEvent 方法
+                 for (AutoConfigurationImportListener listener : listeners) {
+                     invokeAwareMethods(listener);
+                     listener.onAutoConfigurationImportEvent(event);
+                 }
+             }
+         }
+         // 获取监听器列表
+         protected List<AutoConfigurationImportListener> getAutoConfigurationImportListeners() {
+             return SpringFactoriesLoader.loadFactories(AutoConfigurationImportListener.class,this.beanClassLoader);
+         }
      }
      ```
 
@@ -3464,42 +3468,44 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
   ```java
   private static class AutoConfigurationGroup implements DeferredImportSelector.Group,
-  			BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
+          BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
       // 导入配置类名称为 key, @EnableAutoConfiguration 所在配置类的元注解为 value 的索引缓存对象    
-      private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();    
-      
-  		@Override
-  		public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
-        // 1. 委托 AutoConfigurationImportSelector 类获取所需导入的候选配置类名数组完成
-  			String[] imports = deferredImportSelector.selectImports(annotationMetadata);
-  			for (String importClassName : imports) {
-          // 2. 建立导入配置类名称及元注解信息的索引
-  				this.entries.put(importClassName, annotationMetadata);
-  			}
-  		}
-      
+      private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();
+  
+      @Override
+      public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
+          // 1. 委托 AutoConfigurationImportSelector 类获取所需导入的候选配置类名数组完成
+          String[] imports = deferredImportSelector.selectImports(annotationMetadata);
+          for (String importClassName : imports) {
+              // 2. 建立导入配置类名称及元注解信息的索引
+              this.entries.put(importClassName, annotationMetadata);
+          }
+      }
+  
       // 3. 执行该方法完成最终排序，并将排序后的候选配置类封装成 Iterable<Entry> 给 ConfigurationClassParser 进行解析注册
       @Override
-  		public Iterable<Entry> selectImports() {
-        // 利用 sortAutoConfigurations 方法排序，然后封装成可迭代 Iterable<Entry> 对象返回
-  			return sortAutoConfigurations().stream()
-  					.map((importClassName) -> new Entry(this.entries.get(importClassName),
-  							importClassName))
-  					.collect(Collectors.toList());
-  		}
-  		// 4. 排序方法
-  		private List<String> sortAutoConfigurations() {
-  			List<String> autoConfigurations = new ArrayList<>(this.entries.keySet());
-  			...
-        // 此处又重新读取了一遍自动配置元数据文件，即 META-INF/spring-autoconfigure-metadata.properties
-        // 里面包含排序的信息：	绝对排序的属性 AutoConfigureOrder
-        // 									 相对排序的 AutoConfigureAfter、AutoConfigureBefore
-  			AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
-        // 交由 AutoConfigurationSorter 提取排序元信息做最后的排序操作
-  			return new AutoConfigurationSorter(getMetadataReaderFactory(),
-  					autoConfigurationMetadata).getInPriorityOrder(autoConfigurations);
-  		}
-  	}
+      public Iterable<Entry> selectImports() {
+          // 利用 sortAutoConfigurations 方法排序，然后封装成可迭代 Iterable<Entry> 对象返回
+          return sortAutoConfigurations().stream()
+                  .map((importClassName) -> new Entry(this.entries.get(importClassName),
+                          importClassName))
+                  .collect(Collectors.toList());
+      }
+      // 4. 排序方法
+      private List<String> sortAutoConfigurations() {
+          List<String> autoConfigurations = new ArrayList<>(this.entries.keySet());
+          
+          ...
+  
+          // 此处又重新读取了一遍自动配置元数据文件，即 META-INF/spring-autoconfigure-metadata.properties
+          // 里面包含排序的信息：	
+          //      绝对排序的属性 AutoConfigureOrder
+          //      相对排序的 AutoConfigureAfter、AutoConfigureBefore
+          AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
+          // 交由 AutoConfigurationSorter 提取排序元信息做最后的排序操作
+          return new AutoConfigurationSorter(getMetadataReaderFactory(),
+                  autoConfigurationMetadata).getInPriorityOrder(autoConfigurations);
+      }
   }
   ```
 
@@ -3508,25 +3514,25 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   ```java
   class AutoConfigurationSorter {
   	...
-  	// 5. 排序逻辑
-  	public List<String> getInPriorityOrder(Collection<String> classNames) {
-      // 将待排序候选类、自动装配元数据信息、元数据读取工厂类封装成 classes
-  		AutoConfigurationClasses classes = new AutoConfigurationClasses(
-  				this.metadataReaderFactory, this.autoConfigurationMetadata, classNames);
-  		List<String> orderedClassNames = new ArrayList<>(classNames);
-  		// 5.1 先按类全限定名进行字母顺序排序
-  		Collections.sort(orderedClassNames);
-  		// 5.2 在从自动装配元数据信息提取绝对定位属性 @AutoConfigureOrder 进行绝对位置排序
-  		orderedClassNames.sort((o1, o2) -> {
-  			int i1 = classes.get(o1).getOrder();
-  			int i2 = classes.get(o2).getOrder();
-  			return Integer.compare(i1, i2);
-  		});
-  		// 5.3 最后从自动装配元数据信息提取属性 @AutoConfigureBefore @AutoConfigureAfter 进行相对位置排序
-  		orderedClassNames = sortByAnnotation(classes, orderedClassNames);
-      // 返回排序后的结果列表
-  		return orderedClassNames;
-  	}
+      // 5. 排序逻辑
+      public List<String> getInPriorityOrder(Collection<String> classNames) {
+          // 将待排序候选类、自动装配元数据信息、元数据读取工厂类封装成 classes
+          AutoConfigurationClasses classes = new AutoConfigurationClasses(
+                  this.metadataReaderFactory, this.autoConfigurationMetadata, classNames);
+          List<String> orderedClassNames = new ArrayList<>(classNames);
+          // 5.1 先按类全限定名进行字母顺序排序
+          Collections.sort(orderedClassNames);
+          // 5.2 在从自动装配元数据信息提取绝对定位属性 @AutoConfigureOrder 进行绝对位置排序
+          orderedClassNames.sort((o1, o2) -> {
+              int i1 = classes.get(o1).getOrder();
+              int i2 = classes.get(o2).getOrder();
+              return Integer.compare(i1, i2);
+          });
+          // 5.3 最后从自动装配元数据信息提取属性 @AutoConfigureBefore @AutoConfigureAfter 进行相对位置排序
+          orderedClassNames = sortByAnnotation(classes, orderedClassNames);
+          // 返回排序后的结果列表
+          return orderedClassNames;
+      }
   }
   ```
 
@@ -3563,69 +3569,69 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   ```java
   public abstract class AutoConfigurationPackages {
   
-  	private static final Log logger = LogFactory.getLog(AutoConfigurationPackages.class);
+      private static final Log logger = LogFactory.getLog(AutoConfigurationPackages.class);
   
-  	private static final String BEAN = AutoConfigurationPackages.class.getName();
+      private static final String BEAN = AutoConfigurationPackages.class.getName();
   
   
-  	public static boolean has(BeanFactory beanFactory) {
-  		return beanFactory.containsBean(BEAN) && !get(beanFactory).isEmpty();
-  	}
+      public static boolean has(BeanFactory beanFactory) {
+          return beanFactory.containsBean(BEAN) && !get(beanFactory).isEmpty();
+      }
   
-  	public static List<String> get(BeanFactory beanFactory) {
-  		try {
-  			return beanFactory.getBean(BEAN, BasePackages.class).get();
-  		}
-  		catch (NoSuchBeanDefinitionException ex) {
-  			throw new IllegalStateException(
-  					"Unable to retrieve @EnableAutoConfiguration base packages");
-  		}
-  	}
-  	
-    // 内部类 Registrar 实现 ImportBeanDefinitionRegistrar 接口
-    static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
+      public static List<String> get(BeanFactory beanFactory) {
+          try {
+              return beanFactory.getBean(BEAN, BasePackages.class).get();
+          }
+          catch (NoSuchBeanDefinitionException ex) {
+              throw new IllegalStateException(
+                      "Unable to retrieve @EnableAutoConfiguration base packages");
+          }
+      }
   
-  		@Override
-      // 1. 由解析器调用该方法
-  		public void registerBeanDefinitions(AnnotationMetadata metadata,
-  				BeanDefinitionRegistry registry) {
-        // 转调外部类的注册方法，将 @AutoConfigurationPackage 所标注的类的原信息构建内部类 PackageImport 的对象
-  			register(registry, new PackageImport(metadata).getPackageName());
-  		}
+      // 内部类 Registrar 实现 ImportBeanDefinitionRegistrar 接口
+      static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
+  
+          @Override
+          // 1. 由解析器调用该方法
+          public void registerBeanDefinitions(AnnotationMetadata metadata,
+                                              BeanDefinitionRegistry registry) {
+              // 转调外部类的注册方法，将 @AutoConfigurationPackage 所标注的类的原信息构建内部类 PackageImport 的对象
+              register(registry, new PackageImport(metadata).getPackageName());
+          }
   		...
-  	}
-    
-    // 内部类 PackageImport
-    private static final class PackageImport {
-  		private final String packageName;
-  		PackageImport(AnnotationMetadata metadata) {
-        // 2. 可以看到提取出 @AutoConfigurationPackage 所标注的类所在的包路径
-  			this.packageName = ClassUtils.getPackageName(metadata.getClassName());
-  		}
+      }
+  
+      // 内部类 PackageImport
+      private static final class PackageImport {
+          private final String packageName;
+          PackageImport(AnnotationMetadata metadata) {
+              // 2. 可以看到提取出 @AutoConfigurationPackage 所标注的类所在的包路径
+              this.packageName = ClassUtils.getPackageName(metadata.getClassName());
+          }
   		...
-  	}
-    
-    // 3. 把 @AutoConfigurationPackage 所标注的类所在的包路径注册记录到一个特殊的 Bean 中
-    //			该 Bean 类型为 BasePackages
-    //      该 Bean 名称为 AutoConfigurationPackages.class.getName()
-    // 		如果 @AutoConfigurationPackage 被标注在多个类上，那么这些类所在的包名会被记录到此 Bean 中
-  	public static void register(BeanDefinitionRegistry registry, String... packageNames) {
-  		if (registry.containsBeanDefinition(BEAN)) {
-  			BeanDefinition beanDefinition = registry.getBeanDefinition(BEAN);
-  			ConstructorArgumentValues constructorArguments = beanDefinition
-  					.getConstructorArgumentValues();
-  			constructorArguments.addIndexedArgumentValue(0,
-  					addBasePackages(constructorArguments, packageNames));
-  		}
-  		else {
-  			GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-  			beanDefinition.setBeanClass(BasePackages.class);
-  			beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0,
-  					packageNames);
-  			beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-  			registry.registerBeanDefinition(BEAN, beanDefinition);
-  		}
-  	}
+      }
+  
+      // 3. 把 @AutoConfigurationPackage 所标注的类所在的包路径注册记录到一个特殊的 Bean 中
+      //		该 Bean 类型为 BasePackages
+      //      该 Bean 名称为 AutoConfigurationPackages.class.getName()
+      // 		如果 @AutoConfigurationPackage 被标注在多个类上，那么这些类所在的包名会被记录到此 Bean 中
+      public static void register(BeanDefinitionRegistry registry, String... packageNames) {
+          if (registry.containsBeanDefinition(BEAN)) {
+              BeanDefinition beanDefinition = registry.getBeanDefinition(BEAN);
+              ConstructorArgumentValues constructorArguments = beanDefinition
+                      .getConstructorArgumentValues();
+              constructorArguments.addIndexedArgumentValue(0,
+                      addBasePackages(constructorArguments, packageNames));
+          }
+          else {
+              GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+              beanDefinition.setBeanClass(BasePackages.class);
+              beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0,
+                      packageNames);
+              beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+              registry.registerBeanDefinition(BEAN, beanDefinition);
+          }
+      }
   }
   ```
 
@@ -3654,37 +3660,37 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   &emsp;&emsp;观察内建的 `META-INF/spring.factories` 文件里键名为 **org.springframework.boot.autoconfigure.EnableAutoConfiguration** 的自动配置类全限定名，可以发现 package 基本模式为：
 
   ```
-  org.springframework.boot.autoconfigure		-> 根包名
-  	|- ${module-package}										-> 模块名 
-  		|- *AutoConfiguration									-> 自动装配 Class
-  		|- ${sub-module-package}							-> 子模块包名
-  			|- ...
-  			
+  org.springframework.boot.autoconfigure  -> 根包名
+      |- ${module-package}                -> 模块名
+          |- *AutoConfiguration           -> 自动装配 Class
+          |- ${sub-module-package}        -> 子模块包名
+              |- ...
+          
   例如：
-  	 org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
-  	 
-  	 根包名：org.springframework.boot.autoconfigure
-  	 模块名：data.jpa
-  	 自动装配类名：JpaRepositoriesAutoConfiguration
+      org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      
+      根包名：org.springframework.boot.autoconfigure
+      模块名：data.jpa
+      自动装配类名：JpaRepositoriesAutoConfiguration
   ```
 
   &emsp;&emsp;那么按这个规则，可以给出自定义 package 命名规则：
 
   ```
-  ${root-package}										-> 根包名
-  	|- autoconfigure								-> 固定名	
-  	|- ${module-package}						-> 模块名 
-  		|- *AutoConfiguration					-> 自定义自动装配 Class
-  		|- ${sub-module-package}			-> 子模块包名
-  			|- ...
-  			
+  ${root-package}                         -> 根包名
+      |- autoconfigure                    -> 固定名
+          |- ${module-package}            -> 模块名
+              |- *AutoConfiguration       -> 自定义自动装配 Class
+              |- ${sub-module-package}    -> 子模块包名
+                  |- ...
+  
   例如：
-  	org.reion.autoconfigure.example.module.ExampleAutoConfiguration
-  	
-  	根包名：org.reion
-  	固定名：autoconfigure
-  	模块名：example.module
-  	自动装配类名：ExampleAutoConfiguration
+      org.reion.autoconfigure.example.module.ExampleAutoConfiguration
+  
+      根包名：org.reion
+      固定名：autoconfigure
+      模块名：example.module
+      自动装配类名：ExampleAutoConfiguration
   ```
 
 * 自定义 Spring Boot Starter 命名规则
@@ -3862,43 +3868,43 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 class ConfigurationClassBeanDefinitionReader {
 
 	...
-	// 条件注解评估器
-  private final ConditionEvaluator conditionEvaluator;
+    // 条件注解评估器
+    private final ConditionEvaluator conditionEvaluator;
 
-	public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
-		TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
-		for (ConfigurationClass configClass : configurationModel) {
-      // 遍历候选配置类列表，对每个配置类注册 BeanDefinition
-			loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
-		}
-	}
+    public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
+        TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
+        for (ConfigurationClass configClass : configurationModel) {
+            // 遍历候选配置类列表，对每个配置类注册 BeanDefinition
+            loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
+        }
+    }
 
-	private void loadBeanDefinitionsForConfigurationClass(
-			ConfigurationClass configClass, TrackedConditionEvaluator trackedConditionEvaluator) {
-		// 1. 【候选配置类】此处委托 TrackedConditionEvaluator 提取配置类上的所有条件注解，并判断是否满足
-    //      TrackedConditionEvaluator 最终还是委托 ConditionEvaluator 进行判断
-		if (trackedConditionEvaluator.shouldSkip(configClass)) {
+    private void loadBeanDefinitionsForConfigurationClass(
+            ConfigurationClass configClass, TrackedConditionEvaluator trackedConditionEvaluator) {
+        // 1. 【候选配置类】此处委托 TrackedConditionEvaluator 提取配置类上的所有条件注解，并判断是否满足
+        //      TrackedConditionEvaluator 最终还是委托 ConditionEvaluator 进行判断
+        if (trackedConditionEvaluator.shouldSkip(configClass)) {
 			...
-		}
+        }
 		...
-		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
-      // 处理 @Bean 注解的方法
-			loadBeanDefinitionsForBeanMethod(beanMethod);
-		}
+        for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+            // 处理 @Bean 注解的方法
+            loadBeanDefinitionsForBeanMethod(beanMethod);
+        }
 		...
-	}
-  
-  private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
-		ConfigurationClass configClass = beanMethod.getConfigurationClass();
-		MethodMetadata metadata = beanMethod.getMetadata();
-		String methodName = metadata.getMethodName();
-		// 2. 【@Bean 注解的方法】委托 ConditionEvaluator 提取方法上的所有条件注解，并判断是否满足
-		if (this.conditionEvaluator.shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN)) {
-			configClass.skippedBeanMethods.add(methodName);
-			return;
-		}
+    }
+
+    private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
+        ConfigurationClass configClass = beanMethod.getConfigurationClass();
+        MethodMetadata metadata = beanMethod.getMetadata();
+        String methodName = metadata.getMethodName();
+        // 2. 【@Bean 注解的方法】委托 ConditionEvaluator 提取方法上的所有条件注解，并判断是否满足
+        if (this.conditionEvaluator.shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN)) {
+            configClass.skippedBeanMethods.add(methodName);
+            return;
+        }
 		...
-	}
+    }
 }
 ```
 
@@ -3964,15 +3970,15 @@ class ConfigurationClassBeanDefinitionReader {
      public class FormatterAutoConfiguration {
      
          @Bean
-       	// 利用 @ConditionalOnMissingClass 指定 ObjectMapper 不存在时，装载默认格式化器 DefaultFormatter
+         // 利用 @ConditionalOnMissingClass 指定 ObjectMapper 不存在时，装载默认格式化器 DefaultFormatter
          @ConditionalOnMissingClass(value = "com.fasterxml.jackson.databind.ObjectMapper")
          public Formatter defaultFormatter() {
              return new DefaultFormatter();
          }
      
          @Bean
-       	// 利用 @ConditionalOnClass 指定 ObjectMapper 存在时，装载 JsonFormatter
-       	// 这里使用 name 属性是为了与上面对应方便阅读，其实使用 value = ObjectMapper.class 可以避免手动拼写全限定名错误的低级失误
+         // 利用 @ConditionalOnClass 指定 ObjectMapper 存在时，装载 JsonFormatter
+         // 这里使用 name 属性是为了与上面对应方便阅读，其实使用 value = ObjectMapper.class 可以避免手动拼写全限定名错误的低级失误
          @ConditionalOnClass(name = "com.fasterxml.jackson.databind.ObjectMapper")
          public Formatter jsonFormatter() {
              return new JsonFormatter();
@@ -4070,11 +4076,11 @@ class ConfigurationClassBeanDefinitionReader {
      public class JsonFormatter implements Formatter {
      
          private final ObjectMapper objectMapper;
-     		// 自己实例化 ObjectMapper 构造
+         // 自己实例化 ObjectMapper 构造
          public JsonFormatter() {
              this(new ObjectMapper());
          }
-     		// 上下文获得 ObjectMapper 构造
+         // 上下文获得 ObjectMapper 构造
          public JsonFormatter(ObjectMapper objectMapper) {
              this.objectMapper = objectMapper;
          }
@@ -4142,7 +4148,7 @@ class ConfigurationClassBeanDefinitionReader {
                          formatter.format(data));
              });
      
-             //  关闭当前上下文
+             // 关闭当前上下文
              context.close();
          }
      }
@@ -4165,24 +4171,24 @@ class ConfigurationClassBeanDefinitionReader {
   @Conditional(OnPropertyCondition.class)
   public @interface ConditionalOnProperty {
   
-  	// name 的别名，与 name 不能同时出现
-  	String[] value() default {};
+      // name 的别名，与 name 不能同时出现
+      String[] value() default {};
   
-  	// 属性前缀名
-  	String prefix() default "";
+      // 属性前缀名
+      String prefix() default "";
   
-  	// 需要判断的属性名列表，如果设定了前缀，那么每个属性名为：prifix+name[i]
-    // 如果属性名含多个单词，使用 ‘-’ 分隔，设置多个属性名，将校验每一个属性名的值是否符合条件, 需结合 matchIfMissing 设置绝对最终结果
-    // 	matchIfMissing = true 时：环境中未设置的属性默认为 true, 此时只要所有设置的属性与期望的一致最终结果为 true
-    //  matchIfMissing = false 时: 此时即使所有设置的属性与期望值一致，缺失未设置的为 false 导致最终结果为 false
-  	String[] name() default {};
+      // 需要判断的属性名列表，如果设定了前缀，那么每个属性名为：prifix+name[i]
+      // 如果属性名含多个单词，使用 ‘-’ 分隔，设置多个属性名，将校验每一个属性名的值是否符合条件, 需结合 matchIfMissing 设置绝对最终结果
+      // 	matchIfMissing = true 时：环境中未设置的属性默认为 true, 此时只要所有设置的属性与期望的一致最终结果为 true
+      //  matchIfMissing = false 时: 此时即使所有设置的属性与期望值一致，缺失未设置的为 false 导致最终结果为 false
+      String[] name() default {};
   
-  	// 指定属性期望值，不设置该属性时，非 'false' 的属性值都能使条件成立
-    // 【特别注意】最好不要设置此属性为 'false', 如果设置，被判断的属性恰好为 ‘false’ 时还符合条件，有点反逻辑
-  	String havingValue() default "";
+      // 指定属性期望值，不设置该属性时，非 'false' 的属性值都能使条件成立
+      // 【特别注意】最好不要设置此属性为 'false', 如果设置，被判断的属性恰好为 ‘false’ 时还符合条件，有点反逻辑
+      String havingValue() default "";
   
-  	// 指定属性在环境中未找到时，条件是否成立，默认不成立
-  	boolean matchIfMissing() default false;
+      // 指定属性在环境中未找到时，条件是否成立，默认不成立
+      boolean matchIfMissing() default false;
   }
   ```
 
@@ -4198,7 +4204,7 @@ class ConfigurationClassBeanDefinitionReader {
   // name = "enabled" 表示：匹配属性名为 formatter.enabled 的属性
   // havingValue = "true" 表示：期望匹配值
   // matchIfMissing = true 表示：当属性配置不存在时，同样视作匹配
-  @ConditionalOnProperty(prefix = "formatter", name = "enabled", havingValue = "true", matchIfMissing = true) 
+  @ConditionalOnProperty(prefix = "formatter", name = "enabled", havingValue = "true", matchIfMissing = true)
   public class FormatterAutoConfiguration {
   	...
   }
@@ -4245,9 +4251,9 @@ class ConfigurationClassBeanDefinitionReader {
   @Documented
   @Conditional(OnResourceCondition.class)
   public @interface ConditionalOnResource {
-  	// 资源路径数组，当所有指定资源都存在时，条件成立
-    // 	资源路径支持 Spring 占位符
-  	String[] resources() default {};
+      // 资源路径数组，当所有指定资源都存在时，条件成立
+      // 资源路径支持 Spring 占位符
+      String[] resources() default {};
   }
   ```
 
@@ -4281,17 +4287,17 @@ class ConfigurationClassBeanDefinitionReader {
   @Documented
   @Conditional(OnWebApplicationCondition.class)
   public @interface ConditionalOnWebApplication {
-  	// Web 类型子类型枚举，默认 ANY 表示任意子类型
-  	Type type() default Type.ANY;
+      // Web 类型子类型枚举，默认 ANY 表示任意子类型
+      Type type() default Type.ANY;
   
-  	enum Type {
-      // 任意子类型，SERVLET 或 REACTIVE
-  		ANY,
-      // 指定 SERVLET 类型
-  		SERVLET,
-      // 指定 REACTIVE 类型
-  		REACTIVE
-  	}
+      enum Type {
+          // 任意子类型，SERVLET 或 REACTIVE
+          ANY,
+          // 指定 SERVLET 类型
+          SERVLET,
+          // 指定 REACTIVE 类型
+          REACTIVE
+      }
   }
   ```
 
@@ -4303,7 +4309,7 @@ class ConfigurationClassBeanDefinitionReader {
   @Documented
   @Conditional(OnWebApplicationCondition.class)
   public @interface ConditionalOnNotWebApplication {
-  	// 没有属性方法，只要标识该注解就排除 Web 类型（SERVLET、REACTIVE）外，全部符合
+      // 没有属性方法，只要标识该注解就排除 Web 类型（SERVLET、REACTIVE）外，全部符合
   }
   ```
 
