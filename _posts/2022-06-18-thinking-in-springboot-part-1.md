@@ -318,7 +318,7 @@ String[] scanBasePackages() default {};
 
 &emsp;&emsp;有别于 @Bean、@Componet 等注解，**被 @Configuration 注解的类是被 CGLIB 增强的对象，使得在增强类中被 @Bean 注解的属性及方法被引用或调用时，得到的对象时同一个实例**。官方称这种在 @Configuration 下声明的 @Bean 为 ***完全模式（Full）***，相反在非 @Configuration 标注的普通类下声明的 @Bean 为 ***轻量模式（Lite）*** 。了解此机制对某些场景 Bean 行为不符合预期时可以进行解释，例如：类中某个方法明明声明了事务 @Transaction，但在此类中直接调用时发生异常不回滚，多半是采用了轻量模式的方法调用，应该采用 CGLIB 增强的对象进行方法调用。
 
-> 处理 @Configuration 注解的类的 CGLIB 提升，详见 [**Spring @Enable 模块驱动原理**](#Spring @Enable 模块驱动)
+> 处理 @Configuration 注解的类的 CGLIB 提升，详见 [**Spring @Enable 模块驱动原理**](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#spring-enable-%E6%A8%A1%E5%9D%97%E9%A9%B1%E5%8A%A8)
 
 ### 理解自动配置机制
 
