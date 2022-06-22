@@ -190,10 +190,10 @@ Servlet 规范	|	Tomcat	|	Jetty	|	Undertow
 @ConditionalOnClass({ HttpServer.class })
 static class EmbeddedNetty {
 
-	@Bean
-	public NettyReactiveWebServerFactory nettyReactiveWebServerFactory() {
-		return new NettyReactiveWebServerFactory();
-	}
+    @Bean
+    public NettyReactiveWebServerFactory nettyReactiveWebServerFactory() {
+        return new NettyReactiveWebServerFactory();
+    }
 
 }
 
@@ -203,10 +203,10 @@ static class EmbeddedNetty {
 @ConditionalOnClass({ org.apache.catalina.startup.Tomcat.class })
 static class EmbeddedTomcat {
 
-	@Bean
-	public TomcatReactiveWebServerFactory tomcatReactiveWebServerFactory() {
-		return new TomcatReactiveWebServerFactory();
-	}
+    @Bean
+    public TomcatReactiveWebServerFactory tomcatReactiveWebServerFactory() {
+        return new TomcatReactiveWebServerFactory();
+    }
 
 }
 
@@ -305,11 +305,11 @@ public class ReactiveWebServerFactoryAutoConfiguration {
 &emsp;&emsp;@SpringBootApplication 注解属性方法中，很多被 @AliasFor 注解标注，它用于桥接其他注解的属性，例如：
 
 ```java
-/* 
+/*
  * 属性 scanBasePackages 是桥接 ComponentScan 注解的 basePackages 属性
  * 称这种桥接为设置别名
  * 值得注意：如果此属性没被设置，默认扫描包路径为此注解被标注的类所在的包路径
- * /
+ */
 @AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
 String[] scanBasePackages() default {};
 ```
