@@ -4,18 +4,18 @@ title: Nand2Tetris Projects Introduction
 categories: Nand2Tetris Jack Java
 tags: Nand2Tetris Jack VM
 excerpt: My source code introduction about Nand2Tetris Project
-image: http://nand2tetris.org/imgs/cover.jpg
+image: https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/nand2tetris/nand2tetris.png
 description: My source code introduction about Nand2Tetris Project
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
 licences: gpl, cc
 repo: nand2tetris
 ---
-  
+<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/nand2tetris/nand2tetris.png" alt="nand2teris" style="zoom:80%;" />
 
 *The Elements of Computing Systems: Building a Modern Computer from First Principles*
 
  > I have been wondering how modern computers were built and saw [*Shimon Schocken*](http://shimonschocken.com/)'s presentation at [TED](https://www.youtube.com/watch?v=iE7YRHxwoDs), which introduced a course for students to build a modern computer that describes how modern computers are built from basic gate circuits. Each chapter introduces a project, one by one to complete these projects, you can construct a 16-bit Hack computer hardware emulator, based on this emulator, developed assembler and stacking virtual machine, designed Jack advanced programming language, As well as its compiler. Using the Java language to complete the various chapters of the project, and published to GitHub.
- 
+
 ### Contents
 
 * Resource
@@ -82,7 +82,6 @@ For more detail: <http://www.nand2tetris.org/software.php>
 	
 	* [DeMultiplexor](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/DMux.hdl) [^3]
 	
-	
 * Multi-Bit [^4] of Basic Gates (16 bit)
 	* [Multi-Bit Not](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Not16.hdl)
 	
@@ -91,7 +90,6 @@ For more detail: <http://www.nand2tetris.org/software.php>
 	* [Multi-Bit Or](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Or16.hdl)
 	
 	* [Multi-Bit Multiplexor](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Mux16.hdl)
-	
 	
 * Multi-Way [^5] of Basic Gates
 	* [8-Way Or](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Or8Way.hdl)
@@ -105,7 +103,7 @@ For more detail: <http://www.nand2tetris.org/software.php>
 	* [8-Way Demultiplexor](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/DMux8Way.hdl)
 
 
-	
+​	
 #### Boolean Arithmetic
 
 * Adders
@@ -213,7 +211,7 @@ For more detail: <http://www.nand2tetris.org/software.php>
 		* Pushes and adds two constants [SimpleAdd.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/StackArithmetic/SimpleAdd/SimpleAdd.vm)
 		
 		* Executes a sequence of arithimetic and logical operations on the stack. [StackTest.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/StackArithmetic/StackTest/StackTest.vm)
-			
+		
 	* Memory Access
 		
 		* Executes pop and push operations using the virtual memory segments. [BasicTest.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/MemoryAccess/BasicTest/BasicTest.vm)
@@ -241,7 +239,7 @@ For more detail: <http://www.nand2tetris.org/software.php>
 		* Computes 1+2+...+n and pushes the result onto the stack. [BasicLoop.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/08/ProgramFlow/BasicLoop/BasicLoop.vm)
 		
 		* Fibonacci [FibonacciSeries.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm)
-			
+		
 	* Test Programs for Function Calling Commands
 		
 		* Performs a simple calculation and returns the result. [SimpleFunction.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/08/FunctionCalls/SimpleFunction/SimpleFunction.vm)
@@ -371,7 +369,7 @@ For more detail: <http://www.nand2tetris.org/software.php>
 	* [MemoryTest](https://github.com/ReionChan/nand2tetris/tree/master/projects/12/MemoryTest)
 	
 * [Sys.jack](https://github.com/ReionChan/nand2tetris/blob/master/projects/12/Sys.jack) 
- 
+
 	* [SysTest](https://github.com/ReionChan/nand2tetris/tree/master/projects/12/SysTest)
 
 
@@ -404,8 +402,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 [^1]: MIT Press, By [`Noam Nisan`](http://www.cs.huji.ac.il/~noam/) and [`Shimon Schocken`](http://shimonschocken.com/)
 
 [^2]: [Multiplexor](https://en.wikipedia.org/wiki/Multiplexer) is a device that selects one of several analog or digital input signals and forwards the selected input into a single line.
-	
+
 [^3]: Demultiplexor take one data input and a number of selection inputs, and they have several outputs. 	
 [^4]: `Multiple-Bit` Computer hardware is typically designed to operate on multi-bit arrays called “buses.” For example,a basic requirement of a 32-bit computer is to be able to compute (bit-wise) an And function on two given 32-bit buses.
-	
+
 [^5]: `Multiple-Way` accept multiple inputs

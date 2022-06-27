@@ -9,14 +9,14 @@ description: 读 《计算机系统要素-从零开始构建现代计算机》�
 keywords: Nand2Tetris, nand2tetris, Jack, jack, VM, vm, Reion Chan, reionchan
 licences: gpl, cc
 repo: nand2tetris
---- 
+---
 
-![](https://ga-beacon.appspot.com/UA-102629055-1/nand2tetris/index?pixel)  
- 
+<img src="https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/nand2tetris/nand2tetris.png" alt="nand2teris" style="zoom:80%;" /> 
+
  《计算机系统要素-从零开始构建现代计算机》[^1]
 
  > 之前一直有想了解现代计算机是如何构建起来的，偶然间看到[`Shimon Schocken`](http://shimonschocken.com/)在[TED](https://www.youtube.com/watch?v=iE7YRHxwoDs)的一期演讲，介绍其为学生开发了一套逐步构建现代计算机的课程，该课程让大家了解现代计算机如何从基本门电路开始慢慢被构建。全书以项目为单元，逐一完成这些项目，即可构造出一个16位的Hack计算机硬件，在此硬件之上，开发出汇编编译器、堆栈式虚拟机，针对虚拟机设计出高级编程语言Jack，同时开发出相应的Jack语言编译器。真是相见恨晚，细读的同时根据规范采用Java语言完成了各个章节项目，故而有了此GitHub上的项目代码。
- 
+
 ### 目录
 
 * 资源
@@ -82,7 +82,6 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 	
 	* [DMux 解复用器](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/DMux.hdl) [^4]
 	
-	
 * 多位 [^5] 基本门 (16位)
 	* [Not16 16-位非门](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Not16.hdl)
 	
@@ -91,7 +90,6 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 	* [Or16 16-位或门](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Or16.hdl)
 	
 	* [Mux16 16-位2路复用器](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Mux16.hdl)
-	
 	
 * 多通道 [^6] 逻辑门
 	* [Or8Way 8路或门](https://github.com/ReionChan/nand2tetris/blob/master/projects/01/Or8Way.hdl)
@@ -206,7 +204,7 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 		* 压入并相加两个常量 [SimpleAdd.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/StackArithmetic/SimpleAdd/SimpleAdd.vm)
 		
 		* 执行一系列堆栈上的运算、逻辑操作 [StackTest.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/StackArithmetic/StackTest/StackTest.vm)
-			
+		
 	* 内存访问
 		
 		* 使用虚拟内存段执行pop和push操作 [BasicTest.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/07/MemoryAccess/BasicTest/BasicTest.vm)
@@ -230,9 +228,7 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 * 测试程序
 
 	* 程序控制流命令测试程序
-		
-		* 计算1+2+...+n，结果压入堆栈 [BasicLoop.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/08/ProgramFlow/BasicLoop/BasicLoop.vm)
-		
+
 		* 斐波拉契数列 [FibonacciSeries.vm](https://github.com/ReionChan/nand2tetris/blob/master/projects/08/ProgramFlow/FibonacciSeries/FibonacciSeries.vm)
 			
 	* 函数调用命令测试程序
@@ -361,7 +357,7 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 	* [MemoryTest](https://github.com/ReionChan/nand2tetris/tree/master/projects/12/MemoryTest)测试程序
 	
 * [Sys.jack](https://github.com/ReionChan/nand2tetris/blob/master/projects/12/Sys.jack) 操作系统启动类
- 
+
 	* [SysTest](https://github.com/ReionChan/nand2tetris/tree/master/projects/12/SysTest)测试程序
 
 
@@ -397,15 +393,15 @@ VM仿真器 | 仿真书中描述的虚拟机的运作，用来运行测试使用
 本程序包含一个GUN 通用公共授权[GNU GPLv3](./LICENSE)。如果没有，请访问<http://www.gnu.org/licenses/>
 
 ### 脚注
-	
+
 [^1]: 周维、宋磊、陈曦翻译，电子工业出版社出版
 
 [^2]: MIT Press, By [`Noam Nisan`](http://www.cs.huji.ac.il/~noam/) and [`Shimon Schocken`](http://shimonschocken.com/)
 
 [^3]: [Multiplexor 多路复用器](https://en.wikipedia.org/wiki/Multiplexer)，即：多路模拟信号通过选择位确定哪一路进行输出，多路串行共享输出线路
-	
+
 [^4]: Demultiplexor 解复用器，与多路复用器相反，将单路模拟信号通过选择位确定输出到多条输出位的其中一条线路
-	
+
 [^5]: `多位` 输入、输出线路一次能够接纳、输出的比特位数
-	
+
 [^6]: `多通道` 输入线路的条数

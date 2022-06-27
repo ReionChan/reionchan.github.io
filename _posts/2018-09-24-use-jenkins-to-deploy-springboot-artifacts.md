@@ -9,7 +9,7 @@ keywords: Jenkins, Springboot, Git，CI, CD, Deploy, artifacts, Java, jar
 licences: cc
 ---
 <br/>
-![Jenkins](https://camo.githubusercontent.com/fe0c9ecc354db49a376fa2a68f26bebdc75df14d/68747470733a2f2f6a656e6b696e732e696f2f73697465732f64656661756c742f66696c65732f6a656e6b696e735f6c6f676f2e706e67)
+![Jenkins](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jenkins/jenkis-logo.png)
 
 ---
 > &emsp;&emsp;Jenkins 是一款开源自动化服务器，通过提供众多插件来构建、部署及自动化任何项目。
@@ -55,7 +55,7 @@ licences: cc
 	- 取消自动安装复选框
 
 &emsp;&emsp; 点击保存即可完成全局工具配置。
- 
+
 ### 插件安装及配置
 
 &emsp;&emsp; 在初始化页面安装完官方推荐的插件后，需要额外安装如下几个插件：
@@ -69,7 +69,7 @@ licences: cc
 ### SSH 配置
 
 &emsp;&emsp; 假设目前有 Git 源代码版本控制服务器 A ，以及现在运行 Jenkins 的服务器 B ，并同时将 B 服务器当做 Spring Boot 应用服务器。那么我们需要把 B 服务器的公钥复制到 A 服务器 **<span style="color:red">Git 账户</span>** 路径下的文件 `~/.ssh/authorized_keys` 中，从而使 B 服务器免密从源代码服务器 A 下载源代码。  
-  
+
 * B 服务器生成密钥对
 	
 	```sh
@@ -99,7 +99,7 @@ licences: cc
 		JFLLKJSkjsldkjflkjLSJflkjLLKflkjLL
 		kjsldkjflkjLLKJSkjslSJDFKSD==
 		-----END RSA PRIVATE KEY-----
-		```  
+		```
 
 	- Passphrase：`gitPassword` （根据实际情况填）
 	- ID：`Git ID` （凭据标识ID）
@@ -116,7 +116,7 @@ licences: cc
 * 跳转的界面中，依次填入：
 	- 描述：（项目的描述）
 	- **丢弃旧的构建 （重要）**  
-	Jenkins 默认保留每次构建的信息，一直累计将造成磁盘空间不足，所以配置此项尤其重要。  
+		Jenkins 默认保留每次构建的信息，一直累计将造成磁盘空间不足，所以配置此项尤其重要。  
 		* 策略	`Log Rotation`
 			- 保持构建的天数 `根据实际情况设置`
 			- 保持构建的最大个数 `根据实际情况设置`
@@ -146,7 +146,7 @@ licences: cc
 		
 			```sh
 			/path/deploy.sh
-			```  
+			```
 		（根据实际情况填写，本例采用让其执行外部 shell 部署脚本，脚本详情参看 [**附录Ⅰ**](#%E9%99%84%E5%BD%95%E2%85%B0)）
 		* 点击保存
 		
@@ -155,7 +155,7 @@ licences: cc
 
 ```sh
 java -Dhudson.util.ProcessTree.disable=true -jar jenkins.war
-```	
+```
 
 * 详情参考：[ProcessTreeKiller](https://wiki.jenkins.io/display/JENKINS/ProcessTreeKiller)		
 
@@ -208,6 +208,6 @@ echo 启动 demo-b-1.0-SNAPSHOT.jar
 nohup java -jar $DEPLOY_DIR/demo-b-1.0-SNAPSHOT.jar >/dev/null 2>&1 &
 echo ---------- 启动服务完毕 --------------
 ```
-			
+
 
 
