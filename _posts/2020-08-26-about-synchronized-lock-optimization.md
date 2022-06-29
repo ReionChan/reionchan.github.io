@@ -107,7 +107,7 @@ licences: cc
 
 - 优点：避免线程切换
 - 缺点：等待期间占用 CPU 资源
- 
+
 ### 轻量级锁
 &emsp;&emsp;采用原子性的 [CAS](https://reionchan.github.io/2017/02/01/corejava-v1-note-part2/#%E5%8E%9F%E5%AD%90%E6%80%A7) 进行加解锁操作，加锁失败时自旋等待，成功则将 Mark Word 覆盖成指向线程栈中的 **Lock Record** 指针，此记录中同样含有原 Mark Word 记录的备份信息。CAS 调用不需系统级别调用，故称为轻量级锁。
 
@@ -120,7 +120,7 @@ licences: cc
 - 优点：只需初始化时进行一次 CAS 操作，之后加解锁都无需 CAS 操作
 - 缺点：只能单线程无竞争时使用，一旦有其他线程就必须撤销转到轻量级。
 
-## 锁转态转移
+## 锁状态转移
 
 &emsp;&emsp;在给新建的对象分配内存时，其对象头信息会按照下图所示的进行分配，同时随着线程的竞争发送锁状态的转化：
 
@@ -128,7 +128,7 @@ licences: cc
 	<image src="https://wiki.openjdk.java.net/download/attachments/11829266/Synchronization.gif?version=4&modificationDate=1208918680000&api=v2"></image>
 </p>
 
-### 状态转步骤
+### 状态转移步骤
 
 &emsp;&emsp;具体锁转移的过程如下：
 
@@ -328,17 +328,17 @@ project
         //      避免 identityHashCode 方法调用，直接膨胀为轻量级锁
         out.println(String.format(LINE_SEPARATOR, "System.identityHashCode 方法调用"));
         out.println(Integer.toHexString(stu1.hashCode()));
-
+	
         //【未加锁，不可偏向】
         out.println(String.format(LINE_SEPARATOR, "未加锁，不可偏向"));
         out.println(ClassLayout.parseInstance(stu1).toPrintable());
-
+	
         //【轻量级锁】
         synchronized (stu1) {
             out.println(String.format(LINE_SEPARATOR, "轻量锁"));
             out.println(ClassLayout.parseInstance(stu1).toPrintable());
         }
-
+	
         //【未加锁，不可偏向】
         out.println(String.format(LINE_SEPARATOR, "未加锁，不可偏向"));
         out.println(ClassLayout.parseInstance(stu1).toPrintable());
@@ -402,26 +402,26 @@ project
     public void testBias2ThinLock() throws InterruptedException {
         // 调用偏向锁方法，生成可偏向的 stu1 对象
         testBiasedLock();
-
+	
         // 生成新线程，申请对象 stu1 锁
         out.println("当前线程：" + Thread.currentThread());
         Runnable runnable = () -> {
             out.println("\n进入线程：" + Thread.currentThread());
             out.println(String.format(LINE_SEPARATOR, "未请求锁，可偏向"));
             out.println(ClassLayout.parseInstance(stu1).toPrintable());
-
+	
             //【偏向锁 -膨胀-> 轻量级锁】
             synchronized (stu1) {
                 out.println(String.format(LINE_SEPARATOR, "已加锁，膨胀为轻量级锁"));
                 out.println(ClassLayout.parseInstance(stu1).toPrintable());
             }
-
+	
             //【未加锁，不可偏向】
             out.println(String.format(LINE_SEPARATOR, "未加锁，不可偏向"));
             out.println(ClassLayout.parseInstance(stu1).toPrintable());
             out.println("\n退出线程：" + Thread.currentThread());
         };
-
+	
         Thread thread = new Thread(runnable);
         thread.start();
         thread.join();
@@ -431,7 +431,7 @@ project
 
 	```
 	当前线程：Thread[main,5,main]
-
+	
 	进入线程：Thread[Thread-1,5,main]
 	
 	<<============= 未请求锁，可偏向 ==============>>
@@ -486,11 +486,11 @@ project
         // 调用 testBias2ThinLock，使 stu1 经历 偏向锁 -> 轻量锁 过程
         // 最终使 stu1 成为 未加锁不可偏
         testBias2ThinLock();
-
+	
         Runnable runnable = () -> {
             Thread current = Thread.currentThread();
             out.println("\n进入线程：" + current);
-
+	
             //【轻量级锁】
             for (int i = 0; i<2; i++) {
                 try {
@@ -505,14 +505,14 @@ project
             }
             out.println("\n退出线程：" + Thread.currentThread());
         };
-
+	
         Thread t1 = new Thread(runnable);
         Thread t2 = new Thread(runnable);
         t1.start();
         t2.start();
         t1.join();
         t2.join();
-
+	
         // 结束竞争后对象状态
         out.println(String.format(LINE_SEPARATOR, Thread.currentThread()) + "\n" + ClassLayout.parseInstance(stu1).toPrintable());
     }
@@ -592,7 +592,7 @@ project
 	     20     4                    (loss due to the next object alignment)
 	Instance size: 24 bytes
 	Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
-
+	
 	```
 
 #### 轻量级锁 -> 重量级锁 (高频型)
@@ -608,11 +608,11 @@ project
         // 调用 testBias2ThinLock，使 stu1 经历 偏向锁 -> 轻量锁 过程
         // 最终使 stu1 成为 未加锁不可偏
         testBias2ThinLock();
-
+	
         Runnable runnable = () -> {
             Thread current = Thread.currentThread();
             out.println("\n进入线程：" + current);
-
+	
             //【轻量级锁】
             for (int i = 0; i < 2; i++) {
                 try {
@@ -627,14 +627,14 @@ project
             }
             out.println("\n退出线程：" + Thread.currentThread());
         };
-
+	
         Thread t1 = new Thread(runnable);
         Thread t2 = new Thread(runnable);
         t1.start();
         t2.start();
         t1.join();
         t2.join();
-
+	
         // 结束竞争后对象状态
         out.println(String.format(LINE_SEPARATOR, Thread.currentThread()) + "\n" + ClassLayout.parseInstance(stu1).toPrintable());
     }
@@ -744,12 +744,12 @@ project
         // 调用 testBias2ThinLock，使 stu1 经历 偏向锁 -> 轻量锁 过程
         // 最终使 stu1 成为 未加锁不可偏
         testBias2ThinLock();
-
+	
         // 长期持有对象锁，在另一个线程开始竞争时，观察锁膨胀过程
         Runnable runnable = () -> {
             Thread current = Thread.currentThread();
             out.println("\n进入线程：" + current);
-
+	
             //【轻量级锁】
             synchronized (stu1) {
                 int counter = 0;
@@ -763,15 +763,15 @@ project
                     out.println(String.format(LINE_SEPARATOR, current + " 锁内") + "\n" + ClassLayout.parseInstance(stu1).toPrintable());
                 }
             }
-
+	
             out.println("\n退出线程：" + current);
         };
-
+	
         // 睡眠 2.5 秒后，开始竞争锁
         Runnable runnable2 = () -> {
             Thread current = Thread.currentThread();
             out.println("\n进入线程：" + current);
-
+	
             //【轻量级锁】
             try {
                 out.println(String.format(LINE_SEPARATOR, current + "睡眠...") + "\n\n");
@@ -779,21 +779,21 @@ project
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
+	
             // 2.5 秒后参与竞争
             out.println(String.format(LINE_SEPARATOR, current + "参与竞争...") + "\n\n");
             synchronized (stu1) {
                 out.println(String.format(LINE_SEPARATOR, current) + "\n" + ClassLayout.parseInstance(stu1).toPrintable());
             }
         };
-
+	
         Thread t1 = new Thread(runnable);
         Thread t2 = new Thread(runnable2);
         t1.start();
         t2.start();
         t1.join();
         t2.join();
-
+	
     }
 	```
 	
@@ -801,7 +801,7 @@ project
 
 	```
 	进入线程：Thread[Thread-2,5,main]
-
+	
 	进入线程：Thread[Thread-3,5,main]
 	
 	<<============= Thread[Thread-3,5,main]睡眠... ==============>>
@@ -905,11 +905,11 @@ project
         // 调用 testBias2ThinLock，使 stu1 经历 偏向锁 -> 轻量锁 过程
         // 最终使 stu1 成为 未加锁不可偏
         testBias2ThinLock();
-
+	
         Runnable runnable = () -> {
             Thread current = Thread.currentThread();
             out.println("\n进入线程：" + current);
-
+	
             // 随机产生 10 之内的循环追加数，模拟双线程中，一个线程完成后，剩下的线程单独执行时锁降级
             int maxRound = new Random().nextInt(10);
             //【轻量级锁】
@@ -927,14 +927,14 @@ project
             }
             out.println("\n退出线程：" + Thread.currentThread());
         };
-
+	
         Thread t1 = new Thread(runnable);
         Thread t2 = new Thread(runnable);
         t1.start();
         t2.start();
         t1.join();
         t2.join();
-
+	
         // 结束竞争后对象状态
         out.println(String.format(LINE_SEPARATOR, Thread.currentThread()) + "\n" + ClassLayout.parseInstance(stu1).toPrintable());
     }
