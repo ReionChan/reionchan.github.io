@@ -2031,18 +2031,18 @@ Bean 定义注解
     class ConfigurationClassEnhancer {
         ...
         // 创建增强器
-    	private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader classLoader) {
-    		Enhancer enhancer = new Enhancer();
-    		enhancer.setSuperclass(configSuperClass);
+        private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader classLoader) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(configSuperClass);
             // 注意：生成的代理类只实现了 EnhancedConfiguration 接口, 而 Spring AOP 利用 CGLIB 时，代理类会实现 SpringProxy 接口
-    		enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
-    		enhancer.setUseFactory(false);
-    		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-    		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
-    		enhancer.setCallbackFilter(CALLBACK_FILTER);
-    		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
-    		return enhancer;
-    	}
+            enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
+            enhancer.setUseFactory(false);
+            enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+            enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
+            enhancer.setCallbackFilter(CALLBACK_FILTER);
+            enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
+            return enhancer;
+        }
         ...
     }
     ```
