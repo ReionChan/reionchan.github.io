@@ -2007,7 +2007,7 @@ Bean 定义注解
                 configBeanDefs.put(beanName, (AbstractBeanDefinition) beanDef);
             }
         }
-        
+        // 配置类增强器
         ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer(beanFactory);
         for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
             AbstractBeanDefinition beanDef = entry.getValue();
@@ -2025,7 +2025,29 @@ Bean 定义注解
     }
     ```
     
+    &emsp;&emsp;Spring 对 *@Configuration* 增强所采用的增强器为 ***ConfigurationClassEnhancer***：
     
+    ```java
+    class ConfigurationClassEnhancer {
+        ...
+        // 创建增强器
+    	private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader classLoader) {
+    		Enhancer enhancer = new Enhancer();
+    		enhancer.setSuperclass(configSuperClass);
+            // 注意：生成的代理类只实现了 EnhancedConfiguration 接口, 而 Spring AOP 利用 CGLIB 时，代理类会实现 SpringProxy 接口
+    		enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
+    		enhancer.setUseFactory(false);
+    		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
+    		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
+    		enhancer.setCallbackFilter(CALLBACK_FILTER);
+    		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
+    		return enhancer;
+    	}
+        ...
+    }
+    ```
+    
+    &emsp;&emsp;Spring 对 *@Configuration* 注解类的增强虽然也利用了 CGLIB 技术，但它与 Spring AOP 区别在于，它没有实现标识接口 ***SpringProxy***。虽然二者最终的代理类的名称都会出现 **EnchancerBySpringCGLIB**，但通过 *ConfigurationClassEnhancer* 增强的类，在判断是否是 Spring AOP 代理类时，返回结果为 `false`，例如：调用方法 `AopUtils.isAopProxy(Object)`。
 
 &emsp;&emsp;&emsp;综上所述， **@Enable 模块驱动实现原理** 的**主要过程**已经全部描述完毕，其主要由 ***ConfigurationClassPostProcessor*** 负责筛选 @Component 类、@Configuration 类、@Bean 方法类的 **Bean 定义（*BeanDefinition*）**，然后通过 ***ConfigurationClassParser*** 从候选的 Bean 定义中解析出 ***ConfigurationClass*** 集合，随后被 ***ConfigurationClassBeanDefinitionReader*** 转化并注册为 *BeanDefinition*，以上过程由【阶段一】*ConfigurationClassPostProcessor* 实现接口 BeanDefinitionRegistryPostProcessor 的方法完成。接下来把所有符合 Full 模式的 BeanDefinition **进行 CGLIB 增强**，此过程由【阶段二】*ConfigurationClassPostProcessor* 实现接口 BeanFactoryPostProcessor 的方法完成。
 
