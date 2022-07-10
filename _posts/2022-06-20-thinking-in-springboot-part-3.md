@@ -3198,12 +3198,15 @@ public class SpringApplication {
 * Page 71 Jetty 版本
 
   - Servlet 规范 Jetty 容器版本支持
+    
+    
+    
     | Servlet 规范 | Tomcat | Jetty                                                        | Undertow |
     | ------------ | ------ | ------------------------------------------------------------ | -------- |
     | 4.0          | 9.x    | <font color='red'> ~~9.x~~ </font> <font color='green'>10.x</font> | 2.x      |
     | 3.1          | 8.x    | <font color='red'>~~8.x~~</font> <font color='green'>9.x</font> | 1.x      |
     | 3.0          | 7.x    | <font color='red'>~~7.x~~</font> <font color='green'>8.x</font> | N/A      |
-  
+
   * **资料参考**
     * [Jetty Versions](https://www.eclipse.org/jetty/download.php)
 
@@ -3363,7 +3366,7 @@ public class SpringApplication {
     | 同步     | <font color='red'>~~public~~</font> <font color='green'>任意</font> |
     | 异步     | <font color='red'>~~同上~~</font> <font color='green'>非 private</font> |
 
-    原因参考：[*@EventListener* 实现监听的原理](#)
+    原因参考：[*@EventListener* 实现监听的原理](https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3/#springapplication-%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5)
 
     
 
@@ -3378,7 +3381,7 @@ public class SpringApplication {
     | *@EventListener* 异步方法 | <font color='red'>~~public~~</font> <font color='green'>非 private</font> | <font color='red'>~~Order~~</font> <font color='green'>@Order</font> |
     | *ApplicationListener*     | public                                                       | <font color='red'>~~Order 或 Ordered~~</font> <font color='green'>@Order 或 Ordered</font> |
 
-    原因参考：[*@EventListener* 实现监听的原理](#)
+    原因参考：[*@EventListener* 实现监听的原理](https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3/#springapplication-%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5)
 
     
 
@@ -3395,7 +3398,7 @@ public class SpringApplication {
 
     
 
-    原因参考：[*@EventListener* 实现监听的原理](#)
+    原因参考：[*@EventListener* 实现监听的原理](https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3/#springapplication-%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5)
 
     
 
