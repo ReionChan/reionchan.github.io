@@ -3198,13 +3198,12 @@ public class SpringApplication {
 * Page 71 Jetty 版本
 
   - Servlet 规范 Jetty 容器版本支持
-
-		| Servlet 规范 | Tomcat | Jetty                                                        | Undertow |
-  | ------------ | ------ | ------------------------------------------------------------ | -------- |
-  | 4.0          | 9.x    | <font color='red'> ~~9.x~~ </font> <font color='green'>10.x</font> | 2.x      |
-  | 3.1          | 8.x    | <font color='red'>~~8.x~~</font> <font color='green'>9.x</font> | 1.x      |
-  | 3.0          | 7.x    | <font color='red'>~~7.x~~</font> <font color='green'>8.x</font> | N/A      |
-
+    | Servlet 规范 | Tomcat | Jetty                                                        | Undertow |
+    | ------------ | ------ | ------------------------------------------------------------ | -------- |
+    | 4.0          | 9.x    | <font color='red'> ~~9.x~~ </font> <font color='green'>10.x</font> | 2.x      |
+    | 3.1          | 8.x    | <font color='red'>~~8.x~~</font> <font color='green'>9.x</font> | 1.x      |
+    | 3.0          | 7.x    | <font color='red'>~~7.x~~</font> <font color='green'>8.x</font> | N/A      |
+  
   * **资料参考**
     * [Jetty Versions](https://www.eclipse.org/jetty/download.php)
 
@@ -3218,12 +3217,12 @@ public class SpringApplication {
     | @Role       | 替换 XML <font color='red'>~~元素~~</font> <font color='green'>属性</font>&lt;bean role="..."&gt; | 3.1      |
   
   
-    - 第六个表格
+  - 第六个表格
   
-      | Java 注解      | 场景说明                                                     | 起始版本 |
-      | -------------- | ------------------------------------------------------------ | -------- |
-      | @PostConstruct | 替换 XML <font color='red'>~~元素~~</font> <font color='green'>属性</font>&lt;bean init-method="..."&gt; 或 InitializingBean | 2.5      |
-      | @PreDestroy    | 替换 XML <font color='red'>~~元素~~</font> <font color='green'>属性</font>&lt;bean destroy-method="..."&gt; 或 DisposableBean | 2.5      |
+    | Java 注解      | 场景说明                                                     | 起始版本 |
+    | -------------- | ------------------------------------------------------------ | -------- |
+    | @PostConstruct | 替换 XML <font color='red'>~~元素~~</font> <font color='green'>属性</font>&lt;bean init-method="..."&gt; 或 InitializingBean | 2.5      |
+    | @PreDestroy    | 替换 XML <font color='red'>~~元素~~</font> <font color='green'>属性</font>&lt;bean destroy-method="..."&gt; 或 DisposableBean | 2.5      |
   
 * Page 159 排版
 
