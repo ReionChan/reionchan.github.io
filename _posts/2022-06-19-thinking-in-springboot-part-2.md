@@ -4451,4 +4451,4 @@ class ConfigurationClassBeanDefinitionReader {
 
 ## 脚注
 
-[^1]: 原文描述 “属性方法声明” 存在歧义，详细解释参考下篇勘误中有关 [Page 209 描述歧义](#https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3/#%E8%84%9A%E6%B3%A8) 部分。
+[^1]: 原文描述 “属性方法声明” 存在歧义，详细解释参考下篇勘误中有关 <a href='https://reionchan.github.io/2022/06/20/thinking-in-springboot-part-3/#%E5%8B%98%E8%AF%AF'>Page 209 描述歧义</a> 部分。
