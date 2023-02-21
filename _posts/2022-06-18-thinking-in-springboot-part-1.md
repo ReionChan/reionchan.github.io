@@ -11,7 +11,7 @@ licences: cc
 ---
 <br/>
 
-<img src="https://spring.io/images/spring-logo-9146a4d3298760c2e7e49595184e1975.svg" alt="Spring Logo" width="800"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Spring_Framework_Logo_2018.svg" alt="Spring Logo" width="800"/>
 
 ---
 > &emsp;&emsp;Spring Boot 具有一套固化的视图，该视图用于构建生产级别的应用。
