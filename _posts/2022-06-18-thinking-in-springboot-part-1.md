@@ -8,6 +8,7 @@ image: https://www.image.com
 description: SpringBoot 一些关键特性的原理及设计思想
 keywords: Spring SpringBoot Thinking 编程思想 六大特性 总览 Spring Boot 理解规约大于配置
 licences: cc
+repo: thinking-in-spring-boot-samples
 ---
 <br/>
 

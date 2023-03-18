@@ -8,6 +8,7 @@ image: https://www.image.com
 description: SpringBoot 一些关键特性的原理及设计思想
 keywords: Spring SpringBoot Thinking SpringApplication 初始化 监听器 配置 事件 配置源
 licences: cc
+repo: thinking-in-spring-boot-samples
 ---
 <br/>
 

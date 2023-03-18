@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Servlet 容器 —— Tomcat 
+title: Servlet 容器 —— Tomcat 架构及原理
 categories: Tomcat
 excerpt: 详解 Tomcat 的架构及运行原理
 image: https://tomcat.apache.org/res/images/tomcat.png

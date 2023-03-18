@@ -8,6 +8,7 @@ image: https://www.image.com
 description: SpringBoot 一些关键特性的原理及设计思想
 keywords: Spring SpringBoot Thinking 注解驱动 原理 条件装配 Spring Boot Web 自动装配 Enable 模块驱动 
 licences: cc
+repo: thinking-in-spring-boot-samples
 ---
 <br/>
 
