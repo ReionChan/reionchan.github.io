@@ -7,6 +7,7 @@ image: https://tomcat.apache.org/res/images/tomcat.png
 description: 详解 Tomcat 的架构及运行原理
 keywords: Tomcat Servlet Web Server
 licences: cc
+repo: tomcat
 ---
 
 <br/>
@@ -743,7 +744,7 @@ public class Catalina {
 
 ### start 启动阶段
 
-&emsp;&emsp;启动阶段包含两个重要启动流程： **Catalina Servlet 容器**和 **Coyote 连接器**的启动。容器的启动过程已经在 ***Servlet 容器启动*** 小节有过详细的讲解，至于连接器的启动过程由于涉及不同协议的连接器实现不同，这里只针对将选取 **Http11NioProtocol** 这个以 HTTP1.1 协议的 NIO 实现为例来讲解对抽象层启动的具体实现过程。从图中可以看出，连接器模块的启动是在容器启动完成后，所有映射关系都已收集完毕后开始启动。
+&emsp;&emsp;启动阶段包含两个重要启动流程： **Catalina Servlet 容器**和 **Coyote 连接器**的启动。容器的启动过程已经在 [***Servlet 容器启动***](https://reionchan.github.io/2023/03/19/servlet-container-tomcat/#servlet-%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8) 小节有过详细的讲解，至于连接器的启动过程由于涉及不同协议的连接器实现不同，这里只针对将选取 **Http11NioProtocol** 这个以 HTTP1.1 协议的 NIO 实现为例来讲解对抽象层启动的具体实现过程。从图中可以看出，连接器模块的启动是在容器启动完成后，所有映射关系都已收集完毕后开始启动。
 
 &emsp;&emsp;首先，连接器组件 **Connector** 由管理它的 **Service** 的启动方法联动启动，而它的启动方法中又联动它关联的 **ProtocolHandler** 组件的启动。
 
@@ -1170,7 +1171,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
    }
    ```
 
-   &emsp;&emsp;到此，请求就递交给 Servlet 容器 Engine 处理，之后的处理过程就如上面 ***Catalina Servlet 容器*** 小节所描述的那样最终交给映射的 Servlet 处理。 
+   &emsp;&emsp;到此，请求就递交给 Servlet 容器 Engine 处理，之后的处理过程就如上面 [***Catalina Servlet 容器***](https://reionchan.github.io/2023/03/19/servlet-container-tomcat/#catalina-servlet-%E5%AE%B9%E5%99%A8) 小节所描述的那样最终交给映射的 Servlet 处理。 
 
 ## 推荐阅读
 
