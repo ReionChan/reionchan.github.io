@@ -2165,7 +2165,7 @@ Bean 定义注解
 
 - Web 自动装配原理
 
-  &emsp;&emsp;Spring Framework 并不具备 “Web 自动装配” 原生能力，而是借助 **Servlet 3.0** 技术的两大特性：***ServletContext* 配置方法** 及 **运行时插**。
+  &emsp;&emsp;Spring Framework 并不具备 “Web 自动装配” 原生能力，而是借助 **Servlet 3.0** 技术的两大特性：***ServletContext* 配置方法** 及 **运行时插拔**。
 
   
 
