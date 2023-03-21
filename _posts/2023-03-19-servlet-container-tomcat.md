@@ -5,7 +5,7 @@ categories: Tomcat
 excerpt: 详解 Tomcat 的架构及运行原理
 image: https://tomcat.apache.org/res/images/tomcat.png
 description: 详解 Tomcat 的架构及运行原理
-keywords: Tomcat Servlet Web Server
+keywords: Tomcat Servlet Web Server architecture
 licences: cc
 repo: tomcat
 ---
@@ -1106,7 +1106,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
            while (!getErrorState().isError() && keepAlive && !isAsync() && upgradeToken == null &&
                    sendfileState == SendfileState.DONE && !endpoint.isPaused()) {
                try {
-                   // 解析请求头                
+                   // 解析请求行 METHOD URI PROTOCOL                
                    if (!inputBuffer.parseRequestLine(keptAlive)) {
                    }
                } catch (IOException e) {
