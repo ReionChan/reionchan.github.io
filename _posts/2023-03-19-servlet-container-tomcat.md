@@ -1175,6 +1175,10 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
 
 ## 推荐阅读
 
+## 参考资料
+
+* [Apache Tomcat 8 Architecture](https://tomcat.apache.org/tomcat-8.5-doc/architecture/overview.html)
+
 ## 脚注
 
 [^1]: 详情参阅： <a href='https://stackoverflow.com/questions/32985051/what-are-the-tomcat-component-what-is-catalina-and-coyote'>what-is-catalina-and-coyote</a> 。
