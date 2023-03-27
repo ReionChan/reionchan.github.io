@@ -2179,7 +2179,7 @@ Bean 定义注解
 
     &emsp;&emsp;上面的配置方法所属的类 *ServletContext* 实例会被容器两处回调暴露给开发者，分别为 ***ServletContextListener* 的 `contextInitialized()` 方法** 以及 ***ServletContainerInitializer* 的 `onStartup()` 方法**。
 
-    &emsp;&emsp;*ServletContextListener* 主要用作监听 *ServletContext* 的生命周期事件，包含 “初始化” 和 “销毁” 两个事件，其中的 `contextInitialized()` 就是初始化事件监听方法。可以通过实现该监听器接口，并将其注册到 ServletContext 中，执行初始化生命周期方法时，执行配置方法的目的。
+    &emsp;&emsp;*ServletContextListener* 主要用作监听 *ServletContext* 的生命周期事件，包含 “初始化” 和 “销毁” 两个事件，其中的 `contextInitialized()` 就是 ServletContext 初始化时被触发执行的方法，它的参数为 ServletContextEvent 类型，包含 ServletContext 实例对象。通过实现 ServletContextListener 监听器接口的该初始化方法，达到执行配置方法的目的。
 
     &emsp;&emsp;*ServletContainerInitializer* 被容器启动时回调 `onStartup(Set<Class>, ServletContext)`，第一个参数可以由注解 *@HandlesType* 指定关心的类型，所指定的类型的子类（含抽象类）将成为该 Set 集合。容器启动时通过 ***SPI*** 技术查找 *ServletContainerInitializer* 服务接口的实现类并进行调用，而 Spring Framework 对该接口的实现类为 ***SpringServletContainerInitializer***，参见：
 
