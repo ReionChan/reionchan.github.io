@@ -95,7 +95,7 @@ Spring Boot 具有一套固化的视图，该视图用于构建生产级别的�
 
 ### 理解 spring-boot-starter-parent 与 spring-boot-dependencies
 
-- `spring-boot-parent` 具体内容，请查阅 [版本 2.2.13.RELEASE](https://search.maven.org/artifact/org.springframework.boot/spring-boot-starter-parent/2.2.13.RELEASE/pom)，可以看出其父 POM 声明：
+- `spring-boot-starter-parent` 具体内容，请查阅 [版本 2.2.13.RELEASE](https://search.maven.org/artifact/org.springframework.boot/spring-boot-starter-parent/2.2.13.RELEASE/pom)，可以看出其父 POM 声明：
 
 	```xml
 	  <!-- 注意：此处为父 POM 的声明 -->
