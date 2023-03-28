@@ -761,7 +761,7 @@ public interface SmartApplicationListener extends ApplicationListener<Applicatio
          | -> ContextRefreshedEvent	上下文就绪事件
          | -> ContextStartedEvent	上下文启动事件
          | -> ContextStoppedEvent	上下文停止事件
-         | -> ContextClosedEvent		上下文关闭事件
+         | -> ContextClosedEvent	上下文关闭事件
      ```
 
      &emsp;&emsp;跟踪 *ContextRefreshedEvent* 构造方法调用堆栈，发现是在 *AbstractApplicationContext* 的方法 `finishRefresh` 中创建，并且创建完立刻调用发布方法 `publishEvent` 进行事件发布，而该方法由接口 *ApplicationEventPublisher* 定义，并也在此类实现。
@@ -1517,7 +1517,7 @@ public interface SmartApplicationListener extends ApplicationListener<Applicatio
 
      
 
-     &emsp;&emsp;默认情况下，注解形式的监听器的方法参数可以直接使用该对象类型也能实现监听，而接口方式的监听器由于监听的参数必须是事件类型，所以无法得到支持。但是，由上文可知，泛型事件其实是封装为 *PayloadApplicationEvent* 事件，而泛型事件对象被赋值给 payload 属性，所以接口形式 `onApplicationEvent` 可以通过监听 *PayloadApplicationEvent* 事件，然后通过 `payload` 的到非时间类型的对象。（将上面注释的监听器实现方法替换已有的代码，就能实现非时间类型对象的监听）
+     &emsp;&emsp;默认情况下，注解形式的监听器的方法参数可以直接使用该对象类型也能实现监听，而接口方式的监听器由于监听的参数必须是事件类型，所以无法得到支持。但是，由上文可知，泛型事件其实是封装为 *PayloadApplicationEvent* 事件，而泛型事件对象被赋值给 payload 属性，所以接口形式 `onApplicationEvent` 可以通过监听 *PayloadApplicationEvent* 事件，然后通过 `payload` 得到非事件类型的对象。（将上面 UserEventListener 中注释的监听器实现方法替换已有的代码，就能实现非事件类型对象的监听）
 
      
 
