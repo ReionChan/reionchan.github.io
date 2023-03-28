@@ -2786,7 +2786,7 @@ public class DefaultApplicationArguments implements ApplicationArguments {
 
    - 设置 Spring 应用上下文 *ConfigurableEnvironment*
 
-     &emsp;&emsp;原本 Spring 应用上下文初始化生成 *ConfigurableEnvironment* 是在生命周期方法 `refresh()` 中的字方法 `prepareRefresh()`中，之所以 Spring Boot 将其初始化提前至上面提及的 **准备 ConfigurableEnvironment** 步骤，是因为 Spring Boot 中很多配置属性源（*PropertySource*）的装载优先级很高，如果延迟到 Spring 生命周期中完成时依托的 *BeanFactoryPostProcessor* 在众多该类型的处理器中保持最高优先级比较困难。所以提前初始化后，通过此步骤的 `setEnvironment` 方法注入上下文中。
+     &emsp;&emsp;原本 Spring 应用上下文初始化生成 *ConfigurableEnvironment* 是在生命周期方法 `refresh()` 中的子方法 `prepareRefresh()`中，之所以 Spring Boot 将其初始化提前至上面提及的 **准备 ConfigurableEnvironment** 步骤，是因为 Spring Boot 中很多配置属性源（*PropertySource*）的装载优先级很高，如果延迟到 Spring 生命周期中完成时依托的 *BeanFactoryPostProcessor* 在众多该类型的处理器中保持最高优先级比较困难。所以提前初始化后，通过此步骤的 `setEnvironment` 方法注入上下文中。
 
      
 
@@ -2796,7 +2796,7 @@ public class DefaultApplicationArguments implements ApplicationArguments {
 
    
 
-   - 运用 Spring 应用上下文初始化器
+   - 执行所有 Spring 应用上下文初始化器
 
      &emsp;&emsp;*SpringApplication* 构造阶段收集的初始化器列表 `initializers`，该列表为实现 *ApplicationContextInitializer* 接口的实例集合。 根据接口名称可知它是在上下文还未调用 `refresh()` 方法时，对该上下文做一些调整初始化等操作。此处是统一在此进行回调接口定义的初始化方法，这也算是另外一个允许程序扩展的，较上面使用子类覆盖形式的上下文后置处理方法而言，接口形式更灵活。可以通过 **Spring 工厂加载机制** 增加自定义的初始化器实现对上下文的调整操作。内建的初始化器包含：
 
@@ -2817,7 +2817,7 @@ public class DefaultApplicationArguments implements ApplicationArguments {
 
    - 执行 *SpringApplicationRunListener* 上下文就绪方法回调
 
-     &emsp;&emsp;此方法在此前讨论 Spring Boot 事件广播器时已有说明，在 1.4 版本之前广播器是通过此回调方法进行广播器注册到上下文的 BeanFactory 中达到与 Spring 上下文的广播器共享实例目的。在 1.4 之后此回调方法默认是空方法，没有任何操作，当然这也是留给程序进行扩展的一处时机点。
+     &emsp;&emsp;此方法在此前讨论 Spring Boot 事件广播器时已有说明，在 1.4 版本之前广播器是通过此回调方法进行广播器注册到上下文的 BeanFactory 中达到与 Spring 上下文共享广播器实例。在 1.4 之后此回调方法默认是空方法，没有任何操作，当然这也是留给程序进行扩展的一处时机点。
 
      
 
