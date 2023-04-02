@@ -111,7 +111,7 @@ repo: thinking-in-spring-boot-samples
 
 | Spring 注解 | 场景说明                                                     | 起始版本 |
 | ----------- | ------------------------------------------------------------ | -------- |
-| @Indexed    | 引入 `spring-context-indexer` 依赖后，编译时将 @Indexed 和 @Component 及派生注解标注的类<br>放入 `META-INF\spring.components` 文件中，启动时直接读取文件中组件类<br>从而替代扫 Spring 模式注解描操作，提升 Spring 启动效率。 | 5.0      |
+| @Indexed    | 引入 `spring-context-indexer` 依赖后，编译时将 @Indexed 和 @Component 及派生注解标注的类<br>放入 `META-INF\spring.components` 文件中。启动时直接读取文件中组件类，替代 Spring 模式注解<br>扫描操作，提升 Spring 启动效率。<br> | 5.0      |
 
 注意：
 
