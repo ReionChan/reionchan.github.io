@@ -131,7 +131,7 @@ repo: thinking-in-spring-boot-samples
 
 &emsp;&emsp;@Component 模式注解用来**定义能被 Spring 容器托管的通用组件角色**。换言之，任何被其标注的组件均是 Bean 扫描的候选对象。
 
-##### 理解 @Component 派生性及原理
+##### **理解 @Component 派生性及原理**
 
 * **派生性**
 
@@ -540,7 +540,7 @@ repo: thinking-in-spring-boot-samples
 
 > [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample)
 
-##### 多层次 @Component 派生性及原理
+##### **多层次 @Component 派生性及原理**
 
 &emsp;&emsp;通过上一小节可知，Spring Framework 2.5 仅支持单层次派生，那 3.0 版本会如何呢？我们修改 [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample) 的 [pom.xml](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/pom.xml) 中 Spring 的版本，并同时将 @NameRepository 从直接派生 @Component 修改为直接派生 @Repository，而 @Repository 是直接派生的 @Component，所以来验证 3.0 版本是否支持两层次的派生。
 
@@ -778,7 +778,7 @@ public class TransactionalServiceAnnotationMetadataBootstrap {
 
 &emsp;&emsp;本小节将通过对比 **纯 Java 反射 API** 、*AnnotationMetadata* 的另一个实现类 ***StandardAnnotationMetadata（ 基于Java反射 ）*** 两种方式获取类的注解属性信息，来进一步验证 *AnnotationMetadata* 抽象带来的便利性。另外将理解 Spring 注解属性的抽象类 ***AnnotationAttributes*** 以及注解属性的 ***覆盖机制*** 和 ***别名机制***。
 
-##### 理解 Spring 注解元信息抽象 ***AnnotationMetadata***
+##### 理解 Spring 注解元信息抽象 *AnnotationMetadata*
 
 获取类 *TransactionalService* 注解所有属性信息（纯 Java 反射 API 版本）
 
@@ -876,9 +876,7 @@ public class TransactionalServiceStandardAnnotationMetadataBootstrap {
 
 
 
-##### 理解 Spring 注解属性抽象 ***AnnotationAttributes***
-
-
+##### 理解 Spring 注解属性抽象 *AnnotationAttributes*
 
 &emsp;&emsp;观察 *StandardAnnotationMetadata* 类的 **`getAnnotationAttributes(String annotationName)`** 方法的返回类型为 **AnnotationAttributes**, 它由 **AnnotatedElementUtils.getMergedAnnotationAttributes** 静态方法生成，并且是一个继承于 ***LinkedHashMap<String, Object>*** 的**有序 Map**，因为它既要使用 **Key-Value 的数据结构**来保存属性方法的 **名称** 和 **值**，还要确保 **属性方法的次序与 运行时反射加载的属性方法数组顺序 [^1] 一致**。
 
@@ -1395,7 +1393,7 @@ public class TransactionalServiceStandardAnnotationMetadataBootstrap {
    
    
 
-#### @Enable 模块驱动原理
+#### **@Enable 模块驱动原理**
 
 &emsp;&emsp;&emsp;从自定义 *@Enable* 了解到，自定义的激活注解 *@EnableHelloWorld*、*@EnableServer* 要需**手动标注**在**能被 Spring 容器运行时注册的 Spring 模式组件 Bean** （即：被 ***@Component*** 或 **派生至 *@Component*** 的注解标注的 Bean）之上。之所以要强调 **Spring 容器运行时注册** 是想说明激活注解标注的类具备如下特点：
 
@@ -2091,7 +2089,7 @@ public class SpringWebMvcServletInitializer extends AbstractAnnotationConfigDisp
 
 > [HelloWorldController 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-webmvc-3.2.x-sample)
 
-#### Web 自动装配原理
+#### **Web 自动装配原理**
 
 &emsp;&emsp;Spring Framework 并不具备 “Web 自动装配” 原生能力，而是借助 **Servlet 3.0** 技术的两大特性：***ServletContext* 配置方法** 及 **运行时插拔**。
 
@@ -2350,7 +2348,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer exten
 
 
 
-#### 配置条件装配原理
+#### **配置条件装配原理**
 
 &emsp;&emsp;按照 Bean 注册方式来划分，一个类被注册成为容器 Bean 通过**注解驱动方式**、**编程方式（上下文直接注册）**、**XML 配置方式**。Spring 对这几种方式都增加了对 *@Profile* 或 xml 元素属性 *profile* 的条件判断处理，从而支持配置条件装配。
 
@@ -2715,7 +2713,7 @@ public class DefaultPackageBootstrap {
 
   
 
-### Spring Boot 自动装配原理
+### **Spring Boot 自动装配原理**
 
 &emsp;&emsp;既然 Spring Boot 自动装配也遵照 *@Enable* 模块驱动的实现逻辑，那么将重点关注其 *@Import* 导入的类 ***AutoConfigurationImportSelector***：
 
@@ -3803,7 +3801,7 @@ public class AutoConfigurationImportSelector
   >
   > [FormatterBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-boot-2.0-samples/auto-configuration-sample/src/main/java/thinking/in/spring/boot/samples/auto/configuration/bootstrap/FormatterBootstrap.java)
 
-### Spring Boot 条件化自动装配
+### **Spring Boot 条件化自动装配**
 
 &emsp;&emsp;Spring Boot 实现条件化自动装配，其底层还是利用派生 Spring Framework 引入的 *@Conditional* 条件注解来实现。自动化条件装配的候选类都是被 *@Configuration* 注解的类，这些配置类解析之后被 ***ConfigurationClassBeanDefinitionReader*** 的方法 `loadBeanDefinitions(Set<ConfigurationClass>)` 进行 Bean 定义的注册。在注册中会分别处理 **候选配置类** 和 类中被 ***@Bean* 注解的方法** 上的 ***@Conditional* 派生注解**，将其转交给 ***ConditionEvaluator*** 判断是否满足条件，而该条件评估器底层逻辑就是收集 *@Conditional* 派生注解所指定的 ***Condition*** 接口实现类，统一调用该接口声明的 `matches` 方法，具体可参考 [Spring 条件装配对 *@Conditional* 条件装配原理 的阐述](https://reionchan.github.io/2022/06/19/thinking-in-springboot-part-2/#spring-%E6%9D%A1%E4%BB%B6%E8%A3%85%E9%85%8D)。
 
