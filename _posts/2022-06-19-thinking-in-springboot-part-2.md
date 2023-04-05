@@ -32,7 +32,7 @@ repo: thinking-in-spring-boot-samples
 | :------- | :------------------- | :----------------------------------------------------------- |
 | 启蒙时代 | Spring Framework 1.x | 1.2.0 开始支持注解，但 XML 配置方式还是唯一选择。            |
 | 过渡时代 | Spring Framework 2.x | 2.5 引入 @Autowired @Qualifier @Component<br> Spring MVC 模式注解，开始面向注解驱动编程。<br>由于缺乏注解驱动的应用上下文，故尚未完全替换 XML 配置驱动。 |
-| 黄金时代 | Spring Framework 3.x | 全面制裁泛型、变量参数及模式注解派生层次。<br> 新增 AnnotationConfigApplicationContext 注解驱动上下文注册 @Configuration 配置类<br>加以 @ComponentScan @Bean @DependsOn @Lazy @Primary @Import 等注解，摆脱 XML 配置驱动。<br>Environment、PropertySources 接口抽象出的统一配置 API 为日后的外部化配置奠定根基。<br>借由 @Enable 模块驱动特性，更进一步拥抱注解驱动编程。<br>@Profile 是的应用上下文具备条件化的 Bean 定义能力。注解井喷式增长可谓黄金时代！ |
+| 黄金时代 | Spring Framework 3.x | 全面支持泛型、类型参数及模式注解派生层次。<br> 新增 AnnotationConfigApplicationContext 注解驱动上下文注册 @Configuration 配置类<br>加以 @ComponentScan @Bean @DependsOn @Lazy @Primary @Import 等注解，摆脱 XML 配置驱动。<br>Environment、PropertySources 接口抽象出的统一配置 API 为日后的外部化配置奠定根基。<br>借由 @Enable 模块驱动特性，更进一步拥抱注解驱动编程。<br>@Profile 使得应用上下文具备条件化的 Bean 定义能力。注解井喷式增长可谓黄金时代！ |
 | 完善时代 | Spring Framework 4.x | @Conditional 完善 @Profile 不能自定义条件判断的不足。<br>支持 Java 8 新特性，新增 @EventListener 使事件监听器新增注解方式实现。<br>@AliasFor 解除派生注解必须存在相同方法签名的束缚<br>@Lookup 查找 Bean 生成方法，进一步完善 Bean 依赖 |
 | 当下时代 | Spring Framework 5.x | 引入 @Indexed 减少扫描解析耗时、引入 JSR-305 适配注解，如： @NonNull @Nullable |
 
@@ -131,14 +131,13 @@ repo: thinking-in-spring-boot-samples
 
 &emsp;&emsp;@Component 模式注解用来**定义能被 Spring 容器托管的通用组件角色**。换言之，任何被其标注的组件均是 Bean 扫描的候选对象。
 
-- 理解 @Component 派生性及原理
+##### 理解 @Component 派生性及原理
 
-  **派生性**
+* **派生性**
 
   &emsp;&emsp;所谓派生性指被**元注解**注解修饰的注解**“继承”元注解的角色含义**。
 
   &emsp;&emsp;拿注解 @Repository 元注解不同版本的变更为例：
-
   ```java
   // Spring Framework 2.0 中 @Repository 注解定义
   
@@ -161,16 +160,18 @@ repo: thinking-in-spring-boot-samples
   }
   ```
 
-  &emsp;&emsp;不难看出 2.0 版本时，@Repository 仅仅只用来标识被标注的类为仓储类型。在 2.5 版本时，增加 @Component 元注解修饰，表明它同时具备受 Spring 容器管理的属性，拥有被扫描成候选组件对象的能力。	
+  &emsp;&emsp;不难看出 2.0 版本时，@Repository 仅仅只用来标识被标注的类为仓储类型。在 2.5 版本时，增加 @Component 元注解修饰，表明它同时具备受 Spring 容器管理的属性，拥有被扫描成候选组件对象的能力。
 
   
 
-  **派生性原理**
+* **派生性原理**
 
   &emsp;&emsp;既然 Spring Framework 2.5 开始，@Repository 具备被扫描为候选组件能力，那么可以从组件扫描的实现入手来探究它是如何获得派生至 @Component 的这项能力。由于 2.5 版本包扫描还是依托 XML 配置文件中的 `<context:component-scan>`  元素来扫描 @Component 组件，而从 Spring Framework 2.0 开始，XML 文档引入了 [*Extensible XML authoring*](https://docs.spring.io/spring-framework/docs/3.0.x/spring-framework-reference/html/extensible-xml.html) 机制来实现 XML 元素与 Bean 定义及解析器之间的扩展，那么就从元素  `<context:component-scan>` 的解析开始入手。本例采取 Spring Framework 2.5.6.SEC03 版本的 [spring-context](https://mvnrepository.com/artifact/org.springframework/spring-context/2.5.6.SEC03) 来进行源码分析。
 
-  1. 按照 [*Extensible XML authoring*](https://docs.spring.io/spring-framework/docs/3.0.x/spring-framework-reference/html/extensible-xml.html) 机制，查找命名空间`http://www.springframework.org/schema/context`  对应的处理类
+  
 
+  1. 按照 [*Extensible XML authoring*](https://docs.spring.io/spring-framework/docs/3.0.x/spring-framework-reference/html/extensible-xml.html) 机制，查找命名空间`http://www.springframework.org/schema/context`  对应的处理类
+  
      ```xml
      <beans xmlns="http://www.springframework.org/schema/beans"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -183,99 +184,100 @@ repo: thinking-in-spring-boot-samples
          <context:component-scan base-package="thinking.in.spring.boot.samples.spring25" />
      </beans>
      ```
-
-     由 `xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">` 可知：
-
-     
   
-     **命名空间**：`http://www.springframework.org/schema/context`
-
-     **XSD 文件**：`http://www.springframework.org/schema/context/spring-context.xsd`
-
+     由 `xsi:schemaLocatio` 属性可知：
      
-  
+     - **命名空间**：`http://www.springframework.org/schema/context`
+     
+     - **XSD 文件**：`http://www.springframework.org/schema/context/spring-context.xsd`
+     
+       
+     
      以 **XSD 文件** 为键在 `/META-INF/spring.schemas` 中找到映射值即为 xsd 文件本地保存的 classpath 路径：
-
+     
      ```properties
-     http\://www.springframework.org/schema/context/spring-context.xsd=org/springframework/context/config/spring-context-2.5.xsd
+     http://www.springframework.org/schema/context/spring-context.xsd=org/springframework/context/config/spring-context-2.5.xsd
      ```
-  
+     
      以 **命名空间** 在 `/META-INF/spring.handlers` 中找到映射值即为 context 元素处理类 *ContextNamespaceHandler* ：
-  
+     
      ```properties
-     http\://www.springframework.org/schema/context=org.springframework.context.config.ContextNamespaceHandler
+     http://www.springframework.org/schema/context=org.springframework.context.config.ContextNamespaceHandler
      ```
+     
+     
+  
   2. 找到属性 `component-scan` 解析器为 *ComponentScanBeanDefinitionParser* ：
   
      ```java
-     // context 元素处理器
-     public class ContextNamespaceHandler extends NamespaceHandlerSupport {
-         public void init() {
-           // component-scan 属性解析器类
-           this.registerJava5DependentParser("component-scan", "org.springframework.context.annotation.ComponentScanBeanDefinitionParser");
-         }
-     }
+      // context 元素处理器
+      public class ContextNamespaceHandler extends NamespaceHandlerSupport {
+       public void init() {
+         // component-scan 属性解析器类
+         this.registerJava5DependentParser("component-scan", "org.springframework.context.annotation.ComponentScanBeanDefinitionParser");
+       }
+      }
      ```
   3. 重点看解析方法中用来参与扫描的类 *ClassPathBeanDefinitionScanner* ：
   
      ```java
-     // component-scan 属性解析器类
-     public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
-     
-         private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
-     
-         // 解析方法
-         public BeanDefinition parse(Element element, ParserContext parserContext) {
-             String[] basePackages = StringUtils.commaDelimitedListToStringArray(element.getAttribute(BASE_PACKAGE_ATTRIBUTE));
-     
-             // 真正参与扫描的类 ClassPathBeanDefinitionScanner ①
-             ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
-             // 扫描具体方法 ④
-             Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
-             registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
-             
-             return null;
-         }
-     
-         protected ClassPathBeanDefinitionScanner configureScanner(ParserContext parserContext, Element element) {
-             XmlReaderContext readerContext = parserContext.getReaderContext();
-             // 采取默认过滤器
-             boolean useDefaultFilters = true;
-             // 创建 ClassPathBeanDefinitionScanner ②
-             ClassPathBeanDefinitionScanner scanner = createScanner(readerContext, useDefaultFilters);
-             scanner.setResourceLoader(readerContext.getResourceLoader());
-             // ...
-             return scanner;
-         }
-     
-         protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
-             // 构造 ClassPathBeanDefinitionScanner ③
-             return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters);
-         }
-     }
+   // component-scan 属性解析器类
+   public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
+   
+       private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
+   
+       // 解析方法
+       public BeanDefinition parse(Element element, ParserContext parserContext) {
+           String[] basePackages = StringUtils.commaDelimitedListToStringArray(element.getAttribute(BASE_PACKAGE_ATTRIBUTE));
+   
+           // 真正参与扫描的类 ClassPathBeanDefinitionScanner ①
+           ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
+           // 扫描具体方法 ④
+           Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
+           registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
+           
+           return null;
+       }
+   
+       protected ClassPathBeanDefinitionScanner configureScanner(ParserContext parserContext, Element element) {
+           XmlReaderContext readerContext = parserContext.getReaderContext();
+           // 采取默认过滤器
+           boolean useDefaultFilters = true;
+           // 创建 ClassPathBeanDefinitionScanner ②
+           ClassPathBeanDefinitionScanner scanner = createScanner(readerContext, useDefaultFilters);
+           scanner.setResourceLoader(readerContext.getResourceLoader());
+           // ...
+           return scanner;
+       }
+   
+       protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
+           // 构造 ClassPathBeanDefinitionScanner ③
+           return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters);
+       }
+   }
      ```
   
   4. 详细看 *ClassPathBeanDefinitionScanner* 中 构造方法 ③、扫描具体方法 ④ 详情：
   
      ```java
-     public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
-     
-         public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
-             // 调用父类生成默认扫描过滤器 ①
-             super(useDefaultFilters);
-             // ...
-         }
-     
-         // 扫描处理
-         protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
-             Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
-             for (int i = 0; i < basePackages.length; i++) {
-                 // 调用父类搜索可选组件方法 ②
-                 Set<BeanDefinition> candidates = findCandidateComponents(basePackages[i]);
-             }
-             return beanDefinitions;
-         }
-     }
+   public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
+   
+       public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
+           // 调用父类生成默认扫描过滤器 ①
+           super(useDefaultFilters);
+           // ...
+       }
+   
+       // 扫描处理
+       protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
+           Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
+           for (int i = 0; i < basePackages.length; i++) {
+               // 调用父类搜索可选组件方法 ②
+               Set<BeanDefinition> candidates = findCandidateComponents(basePackages[i]);
+           }
+           return beanDefinitions;
+       }
+   }
      ```
   
   5. 父类 *ClassPathScanningCandidateComponentProvider* 的 构造方法 ①，扫描处理方法 ②  ：
@@ -283,785 +285,743 @@ repo: thinking-in-spring-boot-samples
      ```java
      public class ClassPathScanningCandidateComponentProvider implements ResourceLoaderAware {
      
-     	protected static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
-     	
-       	// 构造方法 ①
-       	public ClassPathScanningCandidateComponentProvider(boolean useDefaultFilters) {
-     		if (useDefaultFilters) {
-     			// 默认构造过滤器，见具体方法 【CODE_1】
-     			registerDefaultFilters();
-     		}
-     	}
-       
-     	// 【CODE_1】 默认过滤器中默认搜索目标 Component.class 注解类
-     	protected void registerDefaultFilters() {
-     		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
-     	}
-       
-     	// 扫描处理方法 ② 
-     	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
-     		Set<BeanDefinition> candidates = new LinkedHashSet<BeanDefinition>();
-     		...
-     			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-     					resolveBasePackage(basePackage) + "/" + this.resourcePattern;
-     			
-     			Resource[] resources = this.resourcePatternResolver.getResources(packageSearchPath);
-           
-     			for (int i = 0; i < resources.length; i++) {
-     				Resource resource = resources[i];
-     				if (resource.isReadable()) {
-     					MetadataReader metadataReader = this.metadataReaderFactory.getMetadataReader(resource);
-     					// 【条件一】从元注解读取器中筛选是否是可选组件
-     					if (isCandidateComponent(metadataReader)) {
-     						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
-     						sbd.setResource(resource);
-     						sbd.setSource(resource);
-     						// 【条件二】从 Bean 定义类中进一步判断
-     						if (isCandidateComponent(sbd)) {
-     							// 都符合时, 才加入可选组件集合
-     							candidates.add(sbd);
-     						}
-     					}
-     				}
-           		}
-     		...
-     		return candidates;
-     	}
-       
-     	// 【条件一】从元注解读取器中筛选是否是可选组件
-     	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
-     		for (TypeFilter tf : this.excludeFilters) {
-     			if (tf.match(metadataReader, this.metadataReaderFactory)) {
-     				return false;
-     			}
-     		}
-         	// includeFilters 中包含 new AnnotationTypeFilter(Component.class)
-     		for (TypeFilter tf : this.includeFilters) {
-     			// AnnotationTypeFilter 类的 match 方法
-     			if (tf.match(metadataReader, this.metadataReaderFactory)) {
-     				return true;
-     			}
-     		}
-     		return false;
-     	}
-       
-     	// 【条件二】验证 Bean 定义中的候选对象是否是非接口、非抽象的独立对象（顶级类或内部静态类）
-     	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-     		return (beanDefinition.getMetadata().isConcrete() && beanDefinition.getMetadata().isIndependent());
-     	}
+      	protected static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
+      	
+      	// 构造方法 ①
+      	public ClassPathScanningCandidateComponentProvider(boolean useDefaultFilters) {
+      		if (useDefaultFilters) {
+      			// 默认构造过滤器，见具体方法 【CODE_1】
+      			registerDefaultFilters();
+      		}
+      	}
+      	   
+      	// 【CODE_1】 默认过滤器中默认搜索目标 Component.class 注解类
+      	protected void registerDefaultFilters() {
+      		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
+      	}
+      	   
+      	// 扫描处理方法 ② 
+      	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
+      		Set<BeanDefinition> candidates = new LinkedHashSet<BeanDefinition>();
+      		...
+      			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+      					resolveBasePackage(basePackage) + "/" + this.resourcePattern;
+      			
+      			Resource[] resources = this.resourcePatternResolver.getResources(packageSearchPath);
+      	   
+      			for (int i = 0; i < resources.length; i++) {
+      				Resource resource = resources[i];
+      				if (resource.isReadable()) {
+      					MetadataReader metadataReader = this.metadataReaderFactory.getMetadataReader(resource);
+      					// 【条件一】从元注解读取器中筛选是否是可选组件
+      					if (isCandidateComponent(metadataReader)) {
+      						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+      						sbd.setResource(resource);
+      						sbd.setSource(resource);
+      						// 【条件二】从 Bean 定义类中进一步判断
+      						if (isCandidateComponent(sbd)) {
+      							// 都符合时, 才加入可选组件集合
+      							candidates.add(sbd);
+      						}
+      					}
+      				}
+      	   		}
+      		...
+      		return candidates;
+      	}
+      	   
+      	// 【条件一】从元注解读取器中筛选是否是可选组件
+      	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
+      		for (TypeFilter tf : this.excludeFilters) {
+      			if (tf.match(metadataReader, this.metadataReaderFactory)) {
+      				return false;
+      			}
+      		}
+      	 	// includeFilters 中包含 new AnnotationTypeFilter(Component.class)
+      		for (TypeFilter tf : this.includeFilters) {
+      			// AnnotationTypeFilter 类的 match 方法
+      			if (tf.match(metadataReader, this.metadataReaderFactory)) {
+      				return true;
+      			}
+      		}
+      		return false;
+      	}
+      	   
+      	// 【条件二】验证 Bean 定义中的候选对象是否是非接口、非抽象的独立对象（顶级类或内部静态类）
+      	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
+      		return (beanDefinition.getMetadata().isConcrete() && beanDefinition.getMetadata().isIndependent());
+      	}
      }
      ```
-  
   6. 观察上面代码，可以发现 `new AnnotationTypeFilter(Component.class).match()` 过滤器决定扫描对象是否被候选，而 `match()` 方法由父类默认实现，转调模板方法 `matchSelf(MetadataReader metadataReader)`, 该方法被子类 *AnnotationTypeFilter* 重写，具体方法逻辑：
   
      ```java
-     public class AnnotationTypeFilter extends AbstractTypeHierarchyTraversingFilter {
-         // 搜索目标注解
-         private final Class<? extends Annotation> annotationType;
-         // 表示是否考虑元注解
-         private final boolean considerMetaAnnotations;
-     
-         // 由前面代码片段 【CODE_1】调用 new AnnotationTypeFilter(Component.class)
-         // 搜索目标注解：Component
-         // 是否考虑元注解：true
-         public AnnotationTypeFilter(Class<? extends Annotation> annotationType) {
-             this(annotationType, true);
-         }
-     
-         // 覆盖父类实现，进行最终判断
-         @Override
-         protected boolean matchSelf(MetadataReader metadataReader) {
-             // 影响最终判断逻辑的根源在于 MetadataReader 获取的 AnnotationMetadata 对象
-             AnnotationMetadata metadata = metadataReader.getAnnotationMetadata();
-             // 以下条件满足任意一个即可
-             // 1. metadata 中所有注解中是否包含 @Component 注解
-             // 2. metadata 中所有注解的元注解中是否包含 @Component 注解
-             return metadata.hasAnnotation(this.annotationType.getName()) ||
-                     (this.considerMetaAnnotations && metadata.hasMetaAnnotation(this.annotationType.getName()));
-         }
+      public class AnnotationTypeFilter extends AbstractTypeHierarchyTraversingFilter {
+       // 搜索目标注解
+       private final Class<? extends Annotation> annotationType;
+       // 表示是否考虑元注解
+       private final boolean considerMetaAnnotations;
+      
+       // 由前面代码片段 【CODE_1】调用 new AnnotationTypeFilter(Component.class)
+       // 搜索目标注解：Component
+       // 是否考虑元注解：true
+       public AnnotationTypeFilter(Class<? extends Annotation> annotationType) {
+           this(annotationType, true);
+       }
+      
+       // 覆盖父类实现，进行最终判断
+       @Override
+       protected boolean matchSelf(MetadataReader metadataReader) {
+           // 影响最终判断逻辑的根源在于 MetadataReader 获取的 AnnotationMetadata 对象
+           AnnotationMetadata metadata = metadataReader.getAnnotationMetadata();
+           // 以下条件满足任意一个即可
+           // 1. metadata 中所有注解中是否包含 @Component 注解
+           // 2. metadata 中所有注解的元注解中是否包含 @Component 注解
+           return metadata.hasAnnotation(this.annotationType.getName()) ||
+                   (this.considerMetaAnnotations && metadata.hasMetaAnnotation(this.annotationType.getName()));
+       }
      }
      ```
-     
-      
-     
+  
+  
   7. 重点分析 `AnnotationMetadata metadata = metadataReader.getAnnotationMetadata()` 注解元数据获取，由于接口 `MetadataReader` 在 2.5 版本只存在唯一实现 *SimpleMetadataReader* ，它的 `getAnnotationMetadata()` 方法如下所示 ：
   
      ```java
-     class SimpleMetadataReader implements MetadataReader {
-         // 交给 AnnotationMetadataReadingVisitor 来生成 AnnotationMetadata 信息
-         public AnnotationMetadata getAnnotationMetadata() {
-             AnnotationMetadataReadingVisitor visitor = new AnnotationMetadataReadingVisitor(this.classLoader);
-             this.classReader.accept(visitor, true);
-             return visitor;
-         }
-     }
+      class SimpleMetadataReader implements MetadataReader {
+       // 交给 AnnotationMetadataReadingVisitor 来生成 AnnotationMetadata 信息
+       public AnnotationMetadata getAnnotationMetadata() {
+           AnnotationMetadataReadingVisitor visitor = new AnnotationMetadataReadingVisitor(this.classLoader);
+           this.classReader.accept(visitor, true);
+           return visitor;
+       }
+      }
      ```
   
-     
+   
   
   8. 查看 *AnnotationMetadataReadingVisitor* 代码：
   
      ```java
-     class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
-     
-         // 类上的直接注解信息
-         private final Map<String, Map<String, Object>> attributesMap = new LinkedHashMap<String, Map<String, Object>>();
-         // 类上的直接注解的元注解信息
-         private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
-     
-         // ASM 方式回调读取当前扫描到的 class 上的注解信息方法
-         public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-             final String className = Type.getType(desc).getClassName();
-             final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
-             return new EmptyVisitor() {
-                 public void visit(String name, Object value) {
-                     // Explicitly defined annotation attribute value.
-                     attributes.put(name, value);
-                 }
-     
-                 public void visitEnd() {
-                     try {
-                         // 加载被注解类上的某个注解的 Class 对象，例如：Component.class
-                         Class annotationClass = classLoader.loadClass(className);
-                         // 获取注解中所有默认属性方法.
-                         Method[] annotationAttributes = annotationClass.getMethods();
-                         for (int i = 0; i < annotationAttributes.length; i++) {
-                             Method annotationAttribute = annotationAttributes[i];
-                             String attributeName = annotationAttribute.getName();
-                             Object defaultValue = annotationAttribute.getDefaultValue();
-                             if (defaultValue != null && !attributes.containsKey(attributeName)) {
-                                 // 收集注解的属性方法及默认值
-                                 attributes.put(attributeName, defaultValue);
-                             }
-                         }
-                         // 获取注解上的所有元注解，例如：注解在 Component.class 上的所有注解 ①
-                         Annotation[] metaAnnotations = annotationClass.getAnnotations();
-                         // 所有元注解类型集合
-                         Set<String> metaAnnotationTypeNames = new HashSet<String>();
-                         for (Annotation metaAnnotation : metaAnnotations) {
-                             metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
-                         }
-                         // 收集当前注解类名为 key 所有元注解类型为 value 的 Map
-                         metaAnnotationMap.put(className, metaAnnotationTypeNames);
-                     } catch (ClassNotFoundException ex) {
-                     }
-                     // 收集当前扫描到的 class 上的注解类名为 key 注解属性方法集合为 value 的 Map ②
-                     attributesMap.put(className, attributes);
-                 }
-             };
-         }
-     
-         // 判断类上的注解中，是否包含指定注解类型 
-         public boolean hasAnnotation(String annotationType) {
-             return this.attributesMap.containsKey(annotationType);
-         }
-     
-         // 判断类上的注解的元注解中，是否包含指定注解类型
-         public boolean hasMetaAnnotation(String metaAnnotationType) {
-             Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
-             for (Set<String> metaTypes : allMetaTypes) {
-                 if (metaTypes.contains(metaAnnotationType)) {
-                     return true;
-                 }
-             }
-             return false;
-         }
-     }
+      class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
+      
+       // 类上的直接注解信息
+       private final Map<String, Map<String, Object>> attributesMap = new LinkedHashMap<String, Map<String, Object>>();
+       // 类上的直接注解的元注解信息
+       private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
+      
+       // ASM 方式回调读取当前扫描到的 class 上的注解信息方法
+       public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
+           final String className = Type.getType(desc).getClassName();
+           final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+           return new EmptyVisitor() {
+               public void visit(String name, Object value) {
+                   // Explicitly defined annotation attribute value.
+                   attributes.put(name, value);
+               }
+      
+               public void visitEnd() {
+                   try {
+                       // 加载被注解类上的某个注解的 Class 对象，例如：Component.class
+                       Class annotationClass = classLoader.loadClass(className);
+                       // 获取注解中所有默认属性方法.
+                       Method[] annotationAttributes = annotationClass.getMethods();
+                       for (int i = 0; i < annotationAttributes.length; i++) {
+                           Method annotationAttribute = annotationAttributes[i];
+                           String attributeName = annotationAttribute.getName();
+                           Object defaultValue = annotationAttribute.getDefaultValue();
+                           if (defaultValue != null && !attributes.containsKey(attributeName)) {
+                               // 收集注解的属性方法及默认值
+                               attributes.put(attributeName, defaultValue);
+                           }
+                       }
+                       // 获取注解上的所有元注解，例如：注解在 Component.class 上的所有注解 ①
+                       Annotation[] metaAnnotations = annotationClass.getAnnotations();
+                       // 所有元注解类型集合
+                       Set<String> metaAnnotationTypeNames = new HashSet<String>();
+                       for (Annotation metaAnnotation : metaAnnotations) {
+                           metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
+                       }
+                       // 收集当前注解类名为 key 所有元注解类型为 value 的 Map
+                       metaAnnotationMap.put(className, metaAnnotationTypeNames);
+                   } catch (ClassNotFoundException ex) {
+                   }
+                   // 收集当前扫描到的 class 上的注解类名为 key 注解属性方法集合为 value 的 Map ②
+                   attributesMap.put(className, attributes);
+               }
+           };
+       }
+      
+       // 判断类上的注解中，是否包含指定注解类型 
+       public boolean hasAnnotation(String annotationType) {
+           return this.attributesMap.containsKey(annotationType);
+       }
+      
+       // 判断类上的注解的元注解中，是否包含指定注解类型
+       public boolean hasMetaAnnotation(String metaAnnotationType) {
+           Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
+           for (Set<String> metaTypes : allMetaTypes) {
+               if (metaTypes.contains(metaAnnotationType)) {
+                   return true;
+               }
+           }
+           return false;
+       }
+      }
      ```
-  
      
-  
      代码 ①  `annotationClass.getAnnotations()` 表明收集被扫描类的 **注解的上一层元注解**
-  
+     
      代码 ② `attributesMap.put(className, attributes)` 表明收集被扫描类的 **直接注解** 
-  
      
-  
-     经过抽丝剥茧，发现最终判断逻辑为只要符合下面两句其中一个即为可选组件：
-  
-     - `this.attributesMap.containsKey("org.springframework.stereotype.Component")`
-  
-       被标注类 *UserBean* 是否被 *@Component* **直接注解**，例如：
-  
-       ```java
-       // UserBean 被 @Component 直接注解，符合条件
-       @Component
-       public class UserBean {
-       }
-       ```
-  
-       
-  
-     - `metaTypes.contains("org.springframework.stereotype.Component")`
-  
-       被标注类 *UserBean* 是否被 *@Component* 间接注解（**注解的上一层元注解**），例如：
-  
-       ```java
-       // UserBean 被 @Repository 直接注解
-       // 而 @Repository 被元注解 @Component 修饰
-       // 故 UserBean 符合被 @Component 间接注解，符合条件
-       @Repository
-       public class UserBean {
-       }
-       
-       // @Repository 确实被 @Component 修饰
-       @Target({ElementType.TYPE})
-       @Retention(RetentionPolicy.RUNTIME)
-       @Documented
-       @Component
-       public @interface Repository {
-       }
-       ```
-  
-  &emsp;&emsp;综上所述，可以发现如下结论：
-  
-  1. **Spring Framework 2.5 仅能够实现单层次派生**
-  
-     例如：某个类要称为可扫描的候选组件，那该类要么**被 @Component 修饰**，要么**被 @Component 派生的注解修饰**。
-  
-  2. 利用 *ClassPathBeanDefinitionScanner* 和 *AnnotationTypeFilter* 能实现**不派生 @Component 的注解**扫描注册（**编程式**）
-  
-  3. 利用 `<context:component-scan>` 子元素 `<context:include-filter>` 也能实现不派生 @Component 的注解扫描注册（**配置式**）：
-  
-     ```xml
-     <!-- 
-         注意 @Component 具备两项语义：
-     		1. 可扫描成候选组件 
-     		2. value 指定 Bean 名称
-     	@StringRepository 不派生 @Component 但要达到相同功能就要将这两个语义修复
-     		1. <context:include-filter> 使其拥有可扫描成候选组件语义
-     		2. name-generator 属性使其 value 拥有指定 Bean 名称语义
-     -->
-     <context:component-scan base-package="thinking.in.spring.boot.samples.spring25"
-                             name-generator="thinking.in.spring.boot.samples.spring25.annotation.CustomerAnnotationBeanNameGenerator">
-         <!-- 此元素让 @StringRepository 具备可扫描性 -->
-         <context:include-filter type="annotation"
-                                 expression="thinking.in.spring.boot.samples.spring25.annotation.StringRepository"/>
-     </context:component-scan>
-     ```
+      
+     
+      经过抽丝剥茧，发现最终判断逻辑为只要符合下面两句其中一个即为可选组件：
+     
+      - `this.attributesMap.containsKey("org.springframework.stereotype.Component")`
+     
+        被标注类 *UserBean* 是否被 *@Component* **直接注解**，例如：
+     
+        ```java
+        // UserBean 被 @Component 直接注解，符合条件
+        @Component
+        public class UserBean {
+        }
+        ```
      
      
+      - `metaTypes.contains("org.springframework.stereotype.Component")`
+     
+        被标注类 *UserBean* 是否被 *@Component* 间接注解（**注解的上一层元注解**），例如：
+     
+        ```java
+        // UserBean 被 @Repository 直接注解
+        // 而 @Repository 被元注解 @Component 修饰
+        // 故 UserBean 符合被 @Component 间接注解，符合条件
+        @Repository
+        public class UserBean {
+        }
+        
+        // @Repository 确实被 @Component 修饰
+        @Target({ElementType.TYPE})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @Component
+        public @interface Repository {
+        }
+        ```
   
-  > [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample)
-  
-  
-  
-- 多层次 @Component 派生性及原理
 
-  
+综上所述，可以发现如下结论：
 
-  &emsp;&emsp;通过上一小节可知，Spring Framework 2.5 仅支持单层次派生，那 3.0 版本会如何呢？我们修改 [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample) 的 [pom.xml](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/pom.xml) 中 Spring 的版本，并同时将 @NameRepository 从直接派生 @Component 修改为直接派生 @Repository，而 @Repository 是直接派生的 @Component，所以来验证 3.0 版本是否支持两层次的派生。
+- **Spring Framework 2.5 仅能够实现单层次派生**
 
-  
+  例如：某个类要称为可扫描的候选组件，那该类要么**被 @Component 修饰**，要么**被 @Component 派生的注解修饰**。
 
-  修改 [pom.xml](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/pom.xml) 使得依赖的 Spring Framework 为 3.0
+- 利用 *ClassPathBeanDefinitionScanner* 和 *AnnotationTypeFilter* 能实现**不派生 @Component 的注解**扫描注册（**编程式**）
+
+- 利用 `<context:component-scan>` 子元素 `<context:include-filter>` 也能实现不派生 @Component 注解扫描注册（**配置式**）
 
   ```xml
-  <properties>
-      <!-- <spring.version>2.5.6.SEC03</spring.version> -->
-      <!-- 升级 Spring Framework 到 3.0.0.RELEASE  -->
-      <spring.version>3.0.0.RELEASE</spring.version>
-  </properties>
+  <!-- 
+      注意 @Component 具备两项语义：
+  		1. 可扫描成候选组件 
+  		2. value 指定 Bean 名称
+  	@StringRepository 不派生 @Component 但要达到相同功能就要将这两个语义修复
+  		1. <context:include-filter> 使其拥有可扫描成候选组件语义
+  		2. name-generator 属性使其 value 拥有指定 Bean 名称语义
+  -->
+  <context:component-scan base-package="thinking.in.spring.boot.samples.spring25"
+                          name-generator="thinking.in.spring.boot.samples.spring25.annotation.CustomerAnnotationBeanNameGenerator">
+      <!-- 此元素让 @StringRepository 具备可扫描性 -->
+      <context:include-filter type="annotation"
+                              expression="thinking.in.spring.boot.samples.spring25.annotation.StringRepository"/>
+  </context:component-scan>
   ```
 
-  调整 [@NameRepository](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/src/main/java/thinking/in/spring/boot/samples/spring25/annotation/StringRepository.java) 派生层级
+> [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample)
 
-  ```java
-  //@Component // 测试多层次 @Component派生、或自定义可扫描注解时，请将当前注释
-  @Repository // 测试多层次 @Component派生，请将当前反注释，并且将 spring-context 升级到 3.0.0.RELEASE
-  public @interface StringRepository {
-      String value() default "";
-  }
-  ```
+##### 多层次 @Component 派生性及原理
 
-  &emsp;&emsp;调整后项目可以正常运行，说明 Spring Framework 3.0 已经支持**双层派生**，通过上节可以知道能否支持几层，关键看 *AnnotationMetadataReadingVisitor* 对目标类上的注解的解析到底下探到几层，下面是 3.0 版本 *AnnotationMetadataReadingVisitor* 与 2.5 版本调整部分的代码片段：
+&emsp;&emsp;通过上一小节可知，Spring Framework 2.5 仅支持单层次派生，那 3.0 版本会如何呢？我们修改 [DerivedComponentAnnotationBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-2.5.6-sample) 的 [pom.xml](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/pom.xml) 中 Spring 的版本，并同时将 @NameRepository 从直接派生 @Component 修改为直接派生 @Repository，而 @Repository 是直接派生的 @Component，所以来验证 3.0 版本是否支持两层次的派生。
 
-  ```java
-  // 变更为 final 类
-  final class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
-  
-      // 新增直接注解集合
-      private final Set<String> annotationSet = new LinkedHashSet<String>();
-  
-      private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
-  
-      private final Map<String, Map<String, Object>> attributeMap = new LinkedHashMap<String, Map<String, Object>>();
-  
-      // 注解访问方式委托给 AnnotationAttributesReadingVisitor 类的 visitEnd() 方法
-      // 2.5 版本则是委托给 EmptyVisitor 类的 visitEnd() 方法
-      @Override
-      public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-          String className = Type.getType(desc).getClassName();
-          this.annotationSet.add(className);
-          return new AnnotationAttributesReadingVisitor(className, this.attributeMap, this.metaAnnotationMap, this.classLoader);
-      }
-  
-      // 2.5 是 this.attributesMap.containsKey(annotationType) 判断
-      public boolean hasAnnotation(String annotationType) {
-          return this.annotationSet.contains(annotationType);
-      }
-  
-      // 【影响派生层次的判断方法不变】证明主要改动是 this.metaAnnotationMap.values() 值的变化
-      public boolean hasMetaAnnotation(String metaAnnotationType) {
-          Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
-          for (Set<String> metaTypes : allMetaTypes) {
-              if (metaTypes.contains(metaAnnotationType)) {
-                  return true;
-              }
-          }
-          return false;
-      }
-  }
-  ```
+修改 [pom.xml](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/pom.xml) 使得依赖的 Spring Framework 为 3.0
 
-  &emsp;&emsp;对比发现，判断是否包含某个元注解的方法 `boolean hasMetaAnnotation(String metaAnnotationType)` 没有变动，跨两级派生判断是否包含 @Component 却返回为 `true`，只能是 `this.metaAnnotationMap.values()` 里确实出现了 @Component，而这个 Map 的值构建是在 *AnnotationAttributesReadingVisitor* 类的 `visitEnd()` 方法：
+```xml
+<properties>
+    <!-- <spring.version>2.5.6.SEC03</spring.version> -->
+    <!-- 升级 Spring Framework 到 3.0.0.RELEASE  -->
+    <spring.version>3.0.0.RELEASE</spring.version>
+</properties>
+```
 
-  ```java
-  final class AnnotationAttributesReadingVisitor implements AnnotationVisitor {
-  
-      private final String annotationType;
-  
-      private final Map<String, Map<String, Object>> attributesMap;
-  
-      private final Map<String, Set<String>> metaAnnotationMap;
-  
-      private final Map<String, Object> localAttributes = new LinkedHashMap<String, Object>();
-  
-      public void visitEnd() {
-          this.attributesMap.put(this.annotationType, this.localAttributes);
-          try {
-              // 当前需解析上层元注解的注解 class，本例为 StringRepository.class
-              Class<?> annotationClass = this.classLoader.loadClass(this.annotationType);
-              // Check declared default values of attributes in the annotation type.
-              Method[] annotationAttributes = annotationClass.getMethods();
-              for (Method annotationAttribute : annotationAttributes) {
-                  String attributeName = annotationAttribute.getName();
-                  Object defaultValue = annotationAttribute.getDefaultValue();
-                  if (defaultValue != null && !this.localAttributes.containsKey(attributeName)) {
-                      this.localAttributes.put(attributeName, defaultValue);
-                  }
-              }
-              // 该注解上的元注解名称集合，本例为 StringRepository 上的元注解集合
-              Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
-              // 与 2.5 版本单层 for 循环相比，3.0 采取双层 for 循环
-              // 很明显，下探层数为两级, 本例为：
-              //		1. 第一层 for 解析 StringRepository 的元注解，得到 Repository
-              // 		2. 第二层 for 解析 Repository 的元注解，得到 Component
-              for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
-                  metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
-                  if (!this.attributesMap.containsKey(metaAnnotation.annotationType().getName())) {
-                      this.attributesMap.put(metaAnnotation.annotationType().getName(),
-                              AnnotationUtils.getAnnotationAttributes(metaAnnotation, true));
-                  }
-                  for (Annotation metaMetaAnnotation : metaAnnotation.annotationType().getAnnotations()) {
-                      metaAnnotationTypeNames.add(metaMetaAnnotation.annotationType().getName());
-                  }
-              }
-              if (this.metaAnnotationMap != null) {
-                  this.metaAnnotationMap.put(this.annotationType, metaAnnotationTypeNames);
-              }
-          } catch (ClassNotFoundException ex) {
-              // Class not found - can't determine meta-annotations.
-          }
-      }
-  }
-  ```
-  
-  &emsp;&emsp;由此证明，Spring Framework 3.0 版本支持两层次的派生, 并且由于采取双层 for 循环解析的原因，也仅仅只支持两层派生。 通过项目 [HierarchicalDerivedComponentAnnotationBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-3.0.x-sample) 修改 3.x 的不同版本，进一步发现：
+调整 [@NameRepository](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-2.5.6-sample/src/main/java/thinking/in/spring/boot/samples/spring25/annotation/StringRepository.java) 派生层级
 
-  
+```java
+//@Component // 测试多层次 @Component派生、或自定义可扫描注解时，请将当前注释
+@Repository // 测试多层次 @Component派生，请将当前反注释，并且将 spring-context 升级到 3.0.0.RELEASE
+public @interface StringRepository {
+    String value() default "";
+}
+```
 
-  > Spring Framework 3.x 都只支持两层次派生，从 4.0 版本后支持多层次（两级以上）派生。 
+&emsp;&emsp;调整后项目可以正常运行，说明 Spring Framework 3.0 已经支持**双层派生**，通过上节可以知道能否支持几层，关键看 *AnnotationMetadataReadingVisitor* 对目标类上的注解的解析到底下探到几层，下面是 3.0 版本 *AnnotationMetadataReadingVisitor* 与 2.5 版本调整部分的代码片段：
 
-  
+```java
+// 变更为 final 类
+final class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
 
-  通过查看 4.0 版本源代码，发现解析元注解已从双层 for 循环变更为**递归实现**，从而实现多层次派生。
+    // 新增直接注解集合
+    private final Set<String> annotationSet = new LinkedHashSet<String>();
 
-  ```java
-  final class AnnotationAttributesReadingVisitor extends RecursiveAnnotationAttributesVisitor {
-  
-      private final String annotationType;
-  
-      private final MultiValueMap<String, AnnotationAttributes> attributesMap;
-  
-      private final Map<String, Set<String>> metaAnnotationMap;
-  
-  
-      @Override
-      public void doVisitEnd(Class<?> annotationClass) {
-          super.doVisitEnd(annotationClass);
-          List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
-          if (attributes == null) {
-              this.attributesMap.add(this.annotationType, this.attributes);
-          } else {
-              attributes.add(0, this.attributes);
-          }
-          Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
-          for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
-              // 将每个元注解递归解析上层元注解
-              recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
-          }
-          if (this.metaAnnotationMap != null) {
-              this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
-          }
-      }
-  
-      private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
-          if (visited.add(annotation.annotationType().getName())) {
-              // Only do further scanning for public annotations; we'd run into IllegalAccessExceptions
-              // otherwise, and don't want to mess with accessibility in a SecurityManager environment.
-              if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
-                  this.attributesMap.add(annotation.annotationType().getName(),
-                          AnnotationUtils.getAnnotationAttributes(annotation, true, true));
-                  for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
-                      // 此处递归收集元注解
-                      recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
-                  }
-              }
-          }
-      }
-  }
-  ```
-  
-  
+    private final Map<String, Set<String>> metaAnnotationMap = new LinkedHashMap<String, Set<String>>();
 
-- Spring 组合注解
+    private final Map<String, Map<String, Object>> attributeMap = new LinkedHashMap<String, Map<String, Object>>();
 
-  
+    // 注解访问方式委托给 AnnotationAttributesReadingVisitor 类的 visitEnd() 方法
+    // 2.5 版本则是委托给 EmptyVisitor 类的 visitEnd() 方法
+    @Override
+    public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
+        String className = Type.getType(desc).getClassName();
+        this.annotationSet.add(className);
+        return new AnnotationAttributesReadingVisitor(className, this.attributeMap, this.metaAnnotationMap, this.classLoader);
+    }
 
-  &emsp;&emsp;*组合注解* (Composed Annotations) 是指某个注解 “元标注” 一个或多个其他注解，目的在于**将关联的注解行为组合成单个自定义注解**。
+    // 2.5 是 this.attributesMap.containsKey(annotationType) 判断
+    public boolean hasAnnotation(String annotationType) {
+        return this.annotationSet.contains(annotationType);
+    }
 
-  
-
-  &emsp;&emsp;Spring 组合注解中的元注解允许是 **Spring 模式注解**与其他 **Spring 功能注解** 的任意组合。Spring 通过 ***AnnotationMetadata*** 接口对外暴露组合注解中包含的元注解信息，经过之前对 *@Component* 派生性原理分析可知，该接口的实现类为 ***AnnotationMetadataReadingVisitor*** 并且在 Spring Framework 4.0 开始关联 ***AnnotationAttributesReadingVisitor*** 类得以实现递归查找多层次元注解信息，并将其保存在 *AnnotationMetadataReadingVisitor* 的 `metaAnnotationMap` 属性字段中。
-
-  
-
-  围绕 ***AnnotationMetadata*** 接口相关类图，如下所示：
-
-  
-
-  <img src="https://raw.githubusercontent.com/ReionChan/thinking-in-spring-boot-samples/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/resources/annotation-metadata.svg" alt="annotation-metadata"/>
-
-  
-
-  &emsp;&emsp;由类图可知，要获取指定 **class 全限定名** 的 **AnnotationMetadata 注解元信息**，可以由 *CachingMetadataReaderFactory* 获取  *SimpleMeatdataReader* 元数据读取器，从而获得 *AnnotationMetadata* 接口实例，继而可以获取该 class 的 **类元数据信息（ClassMetadata）**、**注解元信息（AnnotationMetadata）** 等多种信息。
-
-  
-
-  > ***AnnotationMetadata API***  提供整套完善的访问类元信息的能力，为 Spring **走向注解驱动编程奠定良好的基础**。
-
-  
-
-  项目 [spring-framework-5.0.x-sample](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-5.0.x-sample) 中的 [TransactionalServiceAnnotationMetadataBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceAnnotationMetadataBootstrap.java) 示例演示了获取该类的注解信息：
-
-  ```java
-  @TransactionalService
-  public class TransactionalServiceAnnotationMetadataBootstrap {
-  
-      public static void main(String[] args) throws IOException {
-          // @TransactionalService 标注在当前类 TransactionalServiceAnnotationMetadataBootstrap
-          String className = TransactionalServiceAnnotationMetadataBootstrap.class.getName();
-          // 构建 MetadataReaderFactory 实例
-          MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
-          // 读取 @TransactionService MetadataReader 信息
-          MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(className);
-          // 读取 @TransactionService AnnotationMetadata 信息
-          AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
-  
-          annotationMetadata.getAnnotationTypes().forEach(annotationType -> {
-  
-              Set<String> metaAnnotationTypes = annotationMetadata.getMetaAnnotationTypes(annotationType);
-  
-              metaAnnotationTypes.forEach(metaAnnotationType -> {
-                  System.out.printf("注解 @%s 元标注 @%s\n", annotationType, metaAnnotationType);
-              });
-  
-          });
-      }
-  }
-  ```
-
-  
-
-  接口 *AnnotationMetadata* 有基于 **Java 反射** 和 **ASM** 两种技术实现。实现扫描候选 Bean 定义信息功能时，采取的是 **ASM** 方式。
-
-  
-
-  **ASM** 优点在于：
-
-  * 应用启动阶段减少不必要的 *类装载 ClassLoader* 开销
-  * 方便做字节码增强，为框架实现类动态功能增强做铺垫
-
-    
-
-  > [TransactionalServiceAnnotationMetadataBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceAnnotationMetadataBootstrap.java)
-
-  
-
-- Spring 注解属性别名和覆盖（Meta-Annotations）
-
-  
-
-  &emsp;&emsp;&emsp;上一小节中，在扫描候选 Bean 定义时，借助 *AnnotationMetadata* 的 `hasAnnotation(String annotationType)` 、`hasMetaAnnotation(String metaAnnotationName)` 方法能轻在某个类的多层级注解中判断是否包含指定注解。而那时使用的 *AnnotationMetadata* 接口的实现类是 ***AnnotationMetadataReadingVisitor***，它基于 ASM 技术。
-
-  
-
-  &emsp;&emsp;本小节将通过对比 **纯 Java 反射 API** 、*AnnotationMetadata* 的另一个实现类 ***StandardAnnotationMetadata（ 基于Java反射 ）*** 两种方式获取类的注解属性信息，来进一步验证 *AnnotationMetadata* 抽象带来的便利性。另外将理解 Spring 注解属性的抽象类 ***AnnotationAttributes*** 以及注解属性的 ***覆盖机制*** 和 ***别名机制***。
-
-  
-
-  - 理解 Spring 注解元信息抽象 ***AnnotationMetadata***
-
-    获取类 *TransactionalService* 注解所有属性信息（纯 Java 反射 API 版本）
-
-    ```java
-    @TransactionalService(name = "test")
-    public class TransactionalServiceAnnotationReflectionBootstrap {
-    
-        public static void main(String[] args) {
-            // Class 实现了 AnnotatedElement 接口
-            AnnotatedElement annotatedElement = TransactionalServiceAnnotationReflectionBootstrap.class;
-            // 从 AnnotatedElement 获取 TransactionalService
-            TransactionalService transactionalService = annotatedElement.getAnnotation(TransactionalService.class);
-            // 获取 transactionalService 的所有的元注解
-            Set<Annotation> metaAnnotations = getAllMetaAnnotations(transactionalService);
-            // 输出结果
-            metaAnnotations.forEach(TransactionalServiceAnnotationReflectionBootstrap::printAnnotationAttribute);
-        }
-    
-        private static Set<Annotation> getAllMetaAnnotations(Annotation annotation) {
-            Annotation[] metaAnnotations = annotation.annotationType().getAnnotations();
-            if (ObjectUtils.isEmpty(metaAnnotations)) { // 没有找到，返回空集合
-                return Collections.emptySet();
+    // 【影响派生层次的判断方法不变】证明主要改动是 this.metaAnnotationMap.values() 值的变化
+    public boolean hasMetaAnnotation(String metaAnnotationType) {
+        Collection<Set<String>> allMetaTypes = this.metaAnnotationMap.values();
+        for (Set<String> metaTypes : allMetaTypes) {
+            if (metaTypes.contains(metaAnnotationType)) {
+                return true;
             }
-            // 获取所有非 Java 标准元注解结合
-            Set<Annotation> metaAnnotationsSet = Stream.of(metaAnnotations)
-                    // 排除 Java 标准注解，如 @Target，@Documented 等，它们因相互依赖，将导致递归不断
-                    // 通过 java.lang.annotation 包名排除
-                    .filter(metaAnnotation -> !Target.class.getPackage().equals(metaAnnotation.annotationType().getPackage()))
-                    .collect(Collectors.toSet());
-    
-            // 递归查找元注解的元注解集合
-            Set<Annotation> metaMetaAnnotationsSet = metaAnnotationsSet.stream()
-                    .map(TransactionalServiceAnnotationReflectionBootstrap::getAllMetaAnnotations)
-                    .collect(HashSet::new, Set::addAll, Set::addAll);
-            // 添加递归结果
-            metaMetaAnnotationsSet.add(annotation);
-            return metaMetaAnnotationsSet;
         }
-    
-    
-        private static void printAnnotationAttribute(Annotation annotation) {
-            Class<?> annotationType = annotation.annotationType();
-            // 完全 Java 反射实现（ReflectionUtils 为 Spring 反射工具类）
-            ReflectionUtils.doWithMethods(annotationType,
-                    method -> System.out.printf("@%s.%s() = %s\n", annotationType.getSimpleName(),
-                            method.getName(), ReflectionUtils.invokeMethod(method, annotation)) // 执行 Method 反射调用
-                    , method -> !method.getDeclaringClass().equals(Annotation.class));// 选择非 Annotation 方法
-        }
+        return false;
     }
-    ```
+}
+```
 
-    获取类 *TransactionalService* 注解所有属性信息（StandardAnnotationMetadata 版本）
+&emsp;&emsp;对比发现，判断是否包含某个元注解的方法 `boolean hasMetaAnnotation(String metaAnnotationType)` 没有变动，跨两级派生判断是否包含 @Component 却返回为 `true`，只能是 `this.metaAnnotationMap.values()` 里确实出现了 @Component，而这个 Map 的值构建是在 *AnnotationAttributesReadingVisitor* 类的 `visitEnd()` 方法：
 
-    ```java
-    @TransactionalService
-    public class TransactionalServiceStandardAnnotationMetadataBootstrap {
-    
-        public static void main(String[] args) throws IOException {
-    
-            // 读取 @TransactionService AnnotationMetadata 信息
-            // AnnotationMetadata Java 反射实现版本
-            AnnotationMetadata annotationMetadata = new StandardAnnotationMetadata(TransactionalServiceStandardAnnotationMetadataBootstrap.class);
-    
-            // AnnotationMetadata ASM 实现版本
-            // MetadataReader reader = new SimpleMetadataReaderFactory().getMetadataReader(TransactionalServiceStandardAnnotationMetadataBootstrap.class.getName());
-            // AnnotationMetadata annotationMetadata = reader.getAnnotationMetadata();
-    
-            // 获取所有的元注解类型（全类名）集合
-            Set<String> metaAnnotationTypes = annotationMetadata.getAnnotationTypes()
-                    .stream() // TO Stream
-                    .map(annotationMetadata::getMetaAnnotationTypes) // 读取单注解的元注解类型集合
-                    .collect(LinkedHashSet::new, Set::addAll, Set::addAll); // 合并元注解类型（全类名）集合
-    
-            metaAnnotationTypes.forEach(metaAnnotation -> { // 读取所有元注解类型
-                // 读取元注解属性信息
-                Map<String, Object> annotationAttributes = annotationMetadata.getAnnotationAttributes(metaAnnotation);
-                if (!CollectionUtils.isEmpty(annotationAttributes)) {
-                    annotationAttributes.forEach((name, value) ->
-                            System.out.printf("注解 @%s 属性 %s = %s\n", ClassUtils.getShortName(metaAnnotation), name, value));
+```java
+final class AnnotationAttributesReadingVisitor implements AnnotationVisitor {
+
+    private final String annotationType;
+
+    private final Map<String, Map<String, Object>> attributesMap;
+
+    private final Map<String, Set<String>> metaAnnotationMap;
+
+    private final Map<String, Object> localAttributes = new LinkedHashMap<String, Object>();
+
+    public void visitEnd() {
+        this.attributesMap.put(this.annotationType, this.localAttributes);
+        try {
+            // 当前需解析上层元注解的注解 class，本例为 StringRepository.class
+            Class<?> annotationClass = this.classLoader.loadClass(this.annotationType);
+            // Check declared default values of attributes in the annotation type.
+            Method[] annotationAttributes = annotationClass.getMethods();
+            for (Method annotationAttribute : annotationAttributes) {
+                String attributeName = annotationAttribute.getName();
+                Object defaultValue = annotationAttribute.getDefaultValue();
+                if (defaultValue != null && !this.localAttributes.containsKey(attributeName)) {
+                    this.localAttributes.put(attributeName, defaultValue);
                 }
-            });
+            }
+            // 该注解上的元注解名称集合，本例为 StringRepository 上的元注解集合
+            Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
+            // 与 2.5 版本单层 for 循环相比，3.0 采取双层 for 循环
+            // 很明显，下探层数为两级, 本例为：
+            //		1. 第一层 for 解析 StringRepository 的元注解，得到 Repository
+            // 		2. 第二层 for 解析 Repository 的元注解，得到 Component
+            for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
+                metaAnnotationTypeNames.add(metaAnnotation.annotationType().getName());
+                if (!this.attributesMap.containsKey(metaAnnotation.annotationType().getName())) {
+                    this.attributesMap.put(metaAnnotation.annotationType().getName(),
+                            AnnotationUtils.getAnnotationAttributes(metaAnnotation, true));
+                }
+                for (Annotation metaMetaAnnotation : metaAnnotation.annotationType().getAnnotations()) {
+                    metaAnnotationTypeNames.add(metaMetaAnnotation.annotationType().getName());
+                }
+            }
+            if (this.metaAnnotationMap != null) {
+                this.metaAnnotationMap.put(this.annotationType, metaAnnotationTypeNames);
+            }
+        } catch (ClassNotFoundException ex) {
+            // Class not found - can't determine meta-annotations.
         }
     }
-    ```
+}
+```
 
-    &emsp;&emsp;上面的例子中，也可以将 *反射版本*  ***StandardAnnotationMetadata*** 替换成 ASM 版本 ***AnnotationMetadataReadingVisitor***， ASM 版本更适合不装载 class 文件的场景，例如：扫描指定包路径下的 Spring 模式注解。两者性能上存在明显差异，ASM 版本更加优异，具体可以执行 [AnnotationMetadataPerformanceBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/AnnotationMetadataPerformanceBootstrap.java) 类进行性能比较。
+&emsp;&emsp;由此证明，Spring Framework 3.0 版本支持两层次的派生, 并且由于采取双层 for 循环解析的原因，也仅仅只支持两层派生。 通过项目 [HierarchicalDerivedComponentAnnotationBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-3.0.x-sample) 修改 3.x 的不同版本，进一步发现：
 
-    
+> Spring Framework 3.x 都只支持两层次派生，从 4.0 版本后支持多层次（两级以上）派生。 
 
-    &emsp;&emsp;而只用 **纯 Java 反射 API** 获取每个嵌套元注解的属性信息时，需要开发者自己编写递归查询。与之相对，***StandardAnnotationMetadata*** **`getAnnotationTypes()`** 方法却能直接获取所有嵌套元注解的类型集合，再通过 **`getAnnotationAttributes(String annotationName)`** 方法获取每个注解的属性信息。
+通过查看 4.0 版本源代码，发现解析元注解已从双层 for 循环变更为**递归实现**，从而实现多层次派生。
 
-    
+```java
+final class AnnotationAttributesReadingVisitor extends RecursiveAnnotationAttributesVisitor {
 
-    > ***AnnotationMetadata* 将复杂的递归搜集元注解的过程 “扁平化”，降低开发成本**。
+    private final String annotationType;
 
-    
+    private final MultiValueMap<String, AnnotationAttributes> attributesMap;
 
-  - 理解 Spring 注解属性抽象 ***AnnotationAttributes***
+    private final Map<String, Set<String>> metaAnnotationMap;
 
-    
 
-    &emsp;&emsp;观察 *StandardAnnotationMetadata* 类的 **`getAnnotationAttributes(String annotationName)`** 方法的返回类型为 **AnnotationAttributes**, 它由 **AnnotatedElementUtils.getMergedAnnotationAttributes** 静态方法生成，并且是一个继承于 ***LinkedHashMap<String, Object>*** 的**有序 Map**，因为它既要使用 **Key-Value 的数据结构**来保存属性方法的 **名称** 和 **值**，还要确保 **属性方法的次序与 运行时反射加载的属性方法数组顺序 [^1] 一致**。
+    @Override
+    public void doVisitEnd(Class<?> annotationClass) {
+        super.doVisitEnd(annotationClass);
+        List<AnnotationAttributes> attributes = this.attributesMap.get(this.annotationType);
+        if (attributes == null) {
+            this.attributesMap.add(this.annotationType, this.attributes);
+        } else {
+            attributes.add(0, this.attributes);
+        }
+        Set<String> metaAnnotationTypeNames = new LinkedHashSet<String>();
+        for (Annotation metaAnnotation : annotationClass.getAnnotations()) {
+            // 将每个元注解递归解析上层元注解
+            recursivelyCollectMetaAnnotations(metaAnnotationTypeNames, metaAnnotation);
+        }
+        if (this.metaAnnotationMap != null) {
+            this.metaAnnotationMap.put(annotationClass.getName(), metaAnnotationTypeNames);
+        }
+    }
 
-    
+    private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation annotation) {
+        if (visited.add(annotation.annotationType().getName())) {
+            // Only do further scanning for public annotations; we'd run into IllegalAccessExceptions
+            // otherwise, and don't want to mess with accessibility in a SecurityManager environment.
+            if (Modifier.isPublic(annotation.annotationType().getModifiers())) {
+                this.attributesMap.add(annotation.annotationType().getName(),
+                        AnnotationUtils.getAnnotationAttributes(annotation, true, true));
+                for (Annotation metaMetaAnnotation : annotation.annotationType().getAnnotations()) {
+                    // 此处递归收集元注解
+                    recursivelyCollectMetaAnnotations(visited, metaMetaAnnotation);
+                }
+            }
+        }
+    }
+}
+```
 
-    &emsp;&emsp;根据 [*AnnotationAttributesBootstrap*](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/AnnotationAttributesBootstrap.java) 验证，还能发现 *AnnotatedElementUtils.getMergedAnnotationAttributes(AnnotatedElement element， String annotationName)* 会在 element 的元注解中，搜索第一个类型名为 annotationName 注解及该 annotationName 上的元注解的属性合并添加到 **AnnotationAttributes** 之中。在属性合并中难免会发生 annotationName 注解属性名与其元注解上的属性名有相同的情况，而 *AnnotationAttributes*
 
-    为 *Map* 的缘故，势必会出现相同 key 不同 value 的覆盖问题，就必须遵照一定的规则，也就是下一节要讲的属性覆盖规则。
 
-    
+#### Spring 组合注解
 
-  - 理解 Spring 注解属性覆盖（Overrides）
+&emsp;&emsp;***组合注解* (Composed Annotations)** 是指某个注解 “元标注” 一个或多个其他注解，目的在于**将关联的注解行为组合成单个自定义注解**。
 
-    
+&emsp;&emsp;Spring 组合注解中的元注解允许是 **Spring 模式注解**与其他 **Spring 功能注解** 的任意组合。Spring 通过 ***AnnotationMetadata*** 接口对外暴露组合注解中包含的元注解信息，经过之前对 *@Component* 派生性原理分析可知，该接口的实现类为 ***AnnotationMetadataReadingVisitor*** 并且在 Spring Framework 4.0 开始关联 ***AnnotationAttributesReadingVisitor*** 类得以实现递归查找多层次元注解信息，并将其保存在 *AnnotationMetadataReadingVisitor* 的 `metaAnnotationMap` 属性字段中。
 
-    &emsp;&emsp;*AnnotationAttributes* 采用注解就近覆盖的规则，也就是说较低层注解能够覆盖其元注解的同名属性。这种由于元注解层次高低关系衍生出的 “Spring 注解属性覆盖” 的规则，称其为 **隐式覆盖**。
+围绕 ***AnnotationMetadata*** 接口相关类图，如下所示：
 
-    
 
-    &emsp;&emsp;以项目 [**spring-framework-5.0.x-sample**](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-5.0.x-sample) 中所定义的注解 *@TransactionalService* 为例，它的元注解层次关系为：
 
-    ```java
-    @Component                          高
-        |-  @Service                    中
-            |-  @TransactionalService   低
-    ```
+<img src="https://raw.githubusercontent.com/ReionChan/thinking-in-spring-boot-samples/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/resources/annotation-metadata.svg" alt="annotation-metadata"/>
 
-    
 
-    - 隐式覆盖（Implicit Overrides）
 
-      即较低层注解覆盖其上元注解的同名属性的覆盖规则。那上面例子举例：
+&emsp;&emsp;由类图可知，要获取指定 **class 全限定名** 的 **AnnotationMetadata 注解元信息**，可以由 *CachingMetadataReaderFactory* 获取  *SimpleMeatdataReader* 元数据读取器，从而获得 *AnnotationMetadata* 接口实例，继而可以获取该 class 的 **类元数据信息（ClassMetadata）**、**注解元信息（AnnotationMetadata）** 等多种信息。
 
-      *@TransactionalService* 的 `value`覆盖 *@Service* 元注解的 `value`
+> ***AnnotationMetadata API***  提供整套完善的访问类元信息的能力，为 Spring **走向注解驱动编程奠定良好的基础**。
 
-      
+项目 [spring-framework-5.0.x-sample](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-5.0.x-sample) 中的 [TransactionalServiceAnnotationMetadataBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceAnnotationMetadataBootstrap.java) 示例演示了获取该类的注解信息：
 
-    - 显式覆盖（Explicit Overrides）
+```java
+@TransactionalService
+public class TransactionalServiceAnnotationMetadataBootstrap {
 
-      &emsp;&emsp;即使用元注解 ***@AliasFor*** 显式指定当前注解的某个属性显示覆盖其上层元注解的某个属性，拿 *@TransactionalService* 举例：
+    public static void main(String[] args) throws IOException {
+        // @TransactionalService 标注在当前类 TransactionalServiceAnnotationMetadataBootstrap
+        String className = TransactionalServiceAnnotationMetadataBootstrap.class.getName();
+        // 构建 MetadataReaderFactory 实例
+        MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
+        // 读取 @TransactionService MetadataReader 信息
+        MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(className);
+        // 读取 @TransactionService AnnotationMetadata 信息
+        AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
 
-      ```java
-      @Service(value = "transactionalService")
-      public @interface TransactionalService {
-          // 显式指定将 name 属性显示覆盖其上元注解 @Service 的 value 属性
-          @AliasFor(attribute = "value", annotation = Service.class)
-          String name() default "";
-      }
-      ```
+        annotationMetadata.getAnnotationTypes().forEach(annotationType -> {
 
-      &emsp;&emsp;显示覆盖包含下面含义：
+            Set<String> metaAnnotationTypes = annotationMetadata.getMetaAnnotationTypes(annotationType);
 
-      - 被显示覆盖的注解一定是当前注解的元注解
+            metaAnnotationTypes.forEach(metaAnnotationType -> {
+                System.out.printf("注解 @%s 元标注 @%s\n", annotationType, metaAnnotationType);
+            });
 
-        &emsp;&emsp;本例即：被显示覆盖的注解 *@Service* 一定是当前注解 *@TransactionalService* 的元注解
+        });
+    }
+}
+```
 
-      - 指定覆盖的属性方法名可不与被覆盖的元注解属性方法名形同（隐式覆盖一定是同名属性）
+接口 *AnnotationMetadata* 有基于 **Java 反射** 和 **ASM** 两种技术实现。实现扫描候选 Bean 定义信息功能时，采取的是 **ASM** 方式。
 
-        &emsp;&emsp;本例即：*@TransactionalService* 的 `name` 显示覆盖 *@Service* 的 `value`
+**ASM** 优点在于：
 
-      - **属性覆盖** 发生在注解及其元注解之间
+* 应用启动阶段减少不必要的 *类装载 ClassLoader* 开销
+* 方便做字节码增强，为框架实现类动态功能增强做铺垫
 
-        &emsp;&emsp;注意区别下一节的 **属性别名**，它只发生在相同注解内部
 
-        
+> [TransactionalServiceAnnotationMetadataBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceAnnotationMetadataBootstrap.java)
 
-    - 传递的显式覆盖（Transitive Explicit Overrides）
 
-      &emsp;&emsp;如果 *@One* 注解的属性 `A` 显示覆盖 @Two 注解的属性 `B`，而 *@Two* 注解的属性 `B` 又显式覆盖 *@Three* 注解的属性 `C`，那么 *@One* 注解的属性 `A` 传递显示覆盖 *@Three* 注解的属性 `C`。
 
-      ```
-      IF
-          @One#A --Overrides--> @Two#B
-          @Two#B --Overrides--> @Three#C
-      THEN
-          @One#A --Overrides--> @Three#C
-      ```
+#### Spring 注解属性别名和覆盖
 
-      
+&emsp;&emsp;&emsp;上一小节中，在扫描候选 Bean 定义时，借助 *AnnotationMetadata* 的 `hasAnnotation(String annotationType)` 、`hasMetaAnnotation(String metaAnnotationName)` 方法能轻在某个类的多层级注解中判断是否包含指定注解。而那时使用的 *AnnotationMetadata* 接口的实现类是 ***AnnotationMetadataReadingVisitor***，它基于 ASM 技术。
 
-  > [TransactionalServiceBeanBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceBeanBootstrap.java)
+
+
+&emsp;&emsp;本小节将通过对比 **纯 Java 反射 API** 、*AnnotationMetadata* 的另一个实现类 ***StandardAnnotationMetadata（ 基于Java反射 ）*** 两种方式获取类的注解属性信息，来进一步验证 *AnnotationMetadata* 抽象带来的便利性。另外将理解 Spring 注解属性的抽象类 ***AnnotationAttributes*** 以及注解属性的 ***覆盖机制*** 和 ***别名机制***。
+
+##### 理解 Spring 注解元信息抽象 ***AnnotationMetadata***
+
+获取类 *TransactionalService* 注解所有属性信息（纯 Java 反射 API 版本）
+
+```java
+@TransactionalService(name = "test")
+public class TransactionalServiceAnnotationReflectionBootstrap {
+
+    public static void main(String[] args) {
+        // Class 实现了 AnnotatedElement 接口
+        AnnotatedElement annotatedElement = TransactionalServiceAnnotationReflectionBootstrap.class;
+        // 从 AnnotatedElement 获取 TransactionalService
+        TransactionalService transactionalService = annotatedElement.getAnnotation(TransactionalService.class);
+        // 获取 transactionalService 的所有的元注解
+        Set<Annotation> metaAnnotations = getAllMetaAnnotations(transactionalService);
+        // 输出结果
+        metaAnnotations.forEach(TransactionalServiceAnnotationReflectionBootstrap::printAnnotationAttribute);
+    }
+
+    private static Set<Annotation> getAllMetaAnnotations(Annotation annotation) {
+        Annotation[] metaAnnotations = annotation.annotationType().getAnnotations();
+        if (ObjectUtils.isEmpty(metaAnnotations)) { // 没有找到，返回空集合
+            return Collections.emptySet();
+        }
+        // 获取所有非 Java 标准元注解结合
+        Set<Annotation> metaAnnotationsSet = Stream.of(metaAnnotations)
+                // 排除 Java 标准注解，如 @Target，@Documented 等，它们因相互依赖，将导致递归不断
+                // 通过 java.lang.annotation 包名排除
+                .filter(metaAnnotation -> !Target.class.getPackage().equals(metaAnnotation.annotationType().getPackage()))
+                .collect(Collectors.toSet());
+
+        // 递归查找元注解的元注解集合
+        Set<Annotation> metaMetaAnnotationsSet = metaAnnotationsSet.stream()
+                .map(TransactionalServiceAnnotationReflectionBootstrap::getAllMetaAnnotations)
+                .collect(HashSet::new, Set::addAll, Set::addAll);
+        // 添加递归结果
+        metaMetaAnnotationsSet.add(annotation);
+        return metaMetaAnnotationsSet;
+    }
+
+
+    private static void printAnnotationAttribute(Annotation annotation) {
+        Class<?> annotationType = annotation.annotationType();
+        // 完全 Java 反射实现（ReflectionUtils 为 Spring 反射工具类）
+        ReflectionUtils.doWithMethods(annotationType,
+                method -> System.out.printf("@%s.%s() = %s\n", annotationType.getSimpleName(),
+                        method.getName(), ReflectionUtils.invokeMethod(method, annotation)) // 执行 Method 反射调用
+                , method -> !method.getDeclaringClass().equals(Annotation.class));// 选择非 Annotation 方法
+    }
+}
+```
+
+获取类 *TransactionalService* 注解所有属性信息（StandardAnnotationMetadata 版本）
+
+```java
+@TransactionalService
+public class TransactionalServiceStandardAnnotationMetadataBootstrap {
+
+    public static void main(String[] args) throws IOException {
+
+        // 读取 @TransactionService AnnotationMetadata 信息
+        // AnnotationMetadata Java 反射实现版本
+        AnnotationMetadata annotationMetadata = new StandardAnnotationMetadata(TransactionalServiceStandardAnnotationMetadataBootstrap.class);
+
+        // AnnotationMetadata ASM 实现版本
+        // MetadataReader reader = new SimpleMetadataReaderFactory().getMetadataReader(TransactionalServiceStandardAnnotationMetadataBootstrap.class.getName());
+        // AnnotationMetadata annotationMetadata = reader.getAnnotationMetadata();
+
+        // 获取所有的元注解类型（全类名）集合
+        Set<String> metaAnnotationTypes = annotationMetadata.getAnnotationTypes()
+                .stream() // TO Stream
+                .map(annotationMetadata::getMetaAnnotationTypes) // 读取单注解的元注解类型集合
+                .collect(LinkedHashSet::new, Set::addAll, Set::addAll); // 合并元注解类型（全类名）集合
+
+        metaAnnotationTypes.forEach(metaAnnotation -> { // 读取所有元注解类型
+            // 读取元注解属性信息
+            Map<String, Object> annotationAttributes = annotationMetadata.getAnnotationAttributes(metaAnnotation);
+            if (!CollectionUtils.isEmpty(annotationAttributes)) {
+                annotationAttributes.forEach((name, value) ->
+                        System.out.printf("注解 @%s 属性 %s = %s\n", ClassUtils.getShortName(metaAnnotation), name, value));
+            }
+        });
+    }
+}
+```
+
+&emsp;&emsp;上面的例子中，也可以将 *反射版本*  ***StandardAnnotationMetadata*** 替换成 ASM 版本 ***AnnotationMetadataReadingVisitor***， ASM 版本更适合不装载 class 文件的场景，例如：扫描指定包路径下的 Spring 模式注解。两者性能上存在明显差异，ASM 版本更加优异，具体可以执行 [AnnotationMetadataPerformanceBootstrap](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/AnnotationMetadataPerformanceBootstrap.java) 类进行性能比较。
+
+
+
+&emsp;&emsp;而只用 **纯 Java 反射 API** 获取每个嵌套元注解的属性信息时，需要开发者自己编写递归查询。与之相对，***StandardAnnotationMetadata*** **`getAnnotationTypes()`** 方法却能直接获取所有嵌套元注解的类型集合，再通过 **`getAnnotationAttributes(String annotationName)`** 方法获取每个注解的属性信息。
+
+
+
+> ***AnnotationMetadata* 将复杂的递归搜集元注解的过程 “扁平化”，降低开发成本**。
+
+
+
+##### 理解 Spring 注解属性抽象 ***AnnotationAttributes***
+
+
+
+&emsp;&emsp;观察 *StandardAnnotationMetadata* 类的 **`getAnnotationAttributes(String annotationName)`** 方法的返回类型为 **AnnotationAttributes**, 它由 **AnnotatedElementUtils.getMergedAnnotationAttributes** 静态方法生成，并且是一个继承于 ***LinkedHashMap<String, Object>*** 的**有序 Map**，因为它既要使用 **Key-Value 的数据结构**来保存属性方法的 **名称** 和 **值**，还要确保 **属性方法的次序与 运行时反射加载的属性方法数组顺序 [^1] 一致**。
+
+
+
+&emsp;&emsp;根据 [*AnnotationAttributesBootstrap*](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/AnnotationAttributesBootstrap.java) 验证，还能发现 *AnnotatedElementUtils.getMergedAnnotationAttributes(AnnotatedElement element， String annotationName)* 会在 element 的元注解中，搜索第一个类型名为 annotationName 注解及该 annotationName 上的元注解的属性合并添加到 **AnnotationAttributes** 之中。在属性合并中难免会发生 annotationName 注解属性名与其元注解上的属性名有相同的情况，而 *AnnotationAttributes*
+
+为 *Map* 的缘故，势必会出现相同 key 不同 value 的覆盖问题，就必须遵照一定的规则，也就是下一节要讲的属性覆盖规则。
+
+
+
+##### 理解 Spring 注解属性覆盖 *Overrides*
+
+&emsp;&emsp;*AnnotationAttributes* 采用注解就近覆盖的规则，也就是说较低层注解能够覆盖其元注解的同名属性。这种由于元注解层次高低关系衍生出的 “Spring 注解属性覆盖” 的规则，称其为 **隐式覆盖**。
+
+&emsp;&emsp;以项目 [**spring-framework-5.0.x-sample**](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-framework-5.0.x-sample) 中所定义的注解 *@TransactionalService* 为例，它的元注解层次关系为：
+
+```java
+@Component                          高
+    |-  @Service                    中
+        |-  @TransactionalService   低
+```
+
+- 隐式覆盖（Implicit Overrides）
+
+  即较低层注解覆盖其上元注解的同名属性的覆盖规则。那上面例子举例：
+
+  *@TransactionalService* 的 `value`覆盖 *@Service* 元注解的 `value`
 
   
 
-  - 理解 Spring 注解属性别名（Aliases）
+- 显式覆盖（Explicit Overrides）
 
-    &emsp;&emsp;当 ***@AliasFor*** 用在同一注解属性方法之间，这些相互被注解的属性方法之间，互称为别名。
+  &emsp;&emsp;即使用元注解 ***@AliasFor*** 显式指定当前注解的某个属性显示覆盖其上层元注解的某个属性，拿 *@TransactionalService* 举例：
 
-    - 显式别名
+  ```java
+  @Service(value = "transactionalService")
+  public @interface TransactionalService {
+      // 显式指定将 name 属性显示覆盖其上元注解 @Service 的 value 属性
+      @AliasFor(attribute = "value", annotation = Service.class)
+      String name() default "";
+  }
+  ```
 
-      &emsp;&emsp;**相同注解中属性方法之间相互 “@AliasFor”** 并且 **默认值必须相等**，例如：
+  &emsp;&emsp;显示覆盖包含下面含义：
 
-      ```java
-      @Target({ElementType.TYPE})
-      @Retention(RetentionPolicy.RUNTIME)
-      @Documented
-      @Transactional
-      @Service(value = "transactionalService")
-      public @interface TransactionalService {
-      
-          @AliasFor(attribute = "value")
-          String name() default "txManager";
-      
-          @AliasFor("name")
-          String value() default "txManager";
-      }
-      ```
+  - 被显示覆盖的注解一定是当前注解的元注解
 
-      &emsp;&emsp;本例中，`name()` 和 `value()` 即是显式别名，尤其注意它们的默认值必须相同 `default "txManager"`。
+    &emsp;&emsp;本例即：被显示覆盖的注解 *@Service* 一定是当前注解 *@TransactionalService* 的元注解
 
-      
+  - 指定覆盖的属性方法名可不与被覆盖的元注解属性方法名形同（隐式覆盖一定是同名属性）
 
-      &emsp;&emsp;细心留意，不难发现 *@TransactionalService* 的 `value()` 隐式覆盖 *@Transactional* 的 `value()`，而后者又显式别名 `transactionManager()`。当执行事务时，Spring 会优先在 Bean 容器中找名称为 "txManager" 的 *PlatformTransactionManager* 事务管理器。这是因为 *@TransactionalService* 的 `value()` 隐式别名覆盖了  *@Transactional* 的 `value()`，使得 *@Transactional* 的 `value()` 被设置为 "txManager"，即寻找事务管理器的**限定符**，符合该限定符的事务管理器会被优先采纳。
+    &emsp;&emsp;本例即：*@TransactionalService* 的 `name` 显示覆盖 *@Service* 的 `value`
 
-      
+  - **属性覆盖** 发生在注解及其元注解之间
 
-      扩展阅读：依赖的自动依赖推断
+    &emsp;&emsp;注意区别下一节的 **属性别名**，它只发生在相同注解内部
 
-      
+    
 
-    - 隐式别名覆盖
+- 传递的显式覆盖（Transitive Explicit Overrides）
 
-      &emsp;&emsp;继续上面例子，*@TransactionalService* 中 `name()` 和 `value()` 显式别名，其中的 `value()` 又隐式覆盖其元注解 *@Service* 的 `value()`，那么可以称 *@TransactionalSerice* 的 `name()` 隐式别名覆盖 *@Service* 的 `value()`。
+  &emsp;&emsp;如果 *@One* 注解的属性 `A` 显示覆盖 @Two 注解的属性 `B`，而 *@Two* 注解的属性 `B` 又显式覆盖 *@Three* 注解的属性 `C`，那么 *@One* 注解的属性 `A` 传递显示覆盖 *@Three* 注解的属性 `C`。
 
-      ```
-      IF
-          @TransactionalService#name --Alias--> @TransactionalService#value
-          @TransactionalService#value --Implicit Overrides--> @Service#value
-      THEN
-          @TransactionalService#name -- Implicit Alias Overrides--> @Service#value
-      ```
+  ```
+  IF
+      @One#A --Overrides--> @Two#B
+      @Two#B --Overrides--> @Three#C
+  THEN
+      @One#A --Overrides--> @Three#C
+  ```
 
-      &emsp;&emsp;注意：这里之所以称为隐式别名覆盖，而不直接叫隐式别名，是遵照别名只发生在相同注解之中，只有覆盖才发生在不同注解之间。
 
-      
+> [TransactionalServiceBeanBootstrap 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/blob/master/spring-framework-samples/spring-framework-5.0.x-sample/src/main/java/thinking/in/spring/boot/samples/spring5/bootstrap/TransactionalServiceBeanBootstrap.java)
 
-    - 传递隐式别名覆盖
 
-      &emsp;&emsp;隐式别名覆盖更进一步，考虑 *@Service* 的 `value()` 又隐式覆盖 *@Component* 的 `value()`，那么可以称  *@TransactionalSerice* 的 `name()` 传递隐式别名覆盖  *@Component* 的 `value()`。
 
-      ```
-      IF
-          @TransactionalService#name --Alias--> @TransactionalService#value
-          @TransactionalService#value --Implicit Overrides--> @Service#value
-          @Service#value --Implicit Overrides--> @Component#value
-      THEN
-          @TransactionalService#name -- Transitive Implicit Alias Overrides--> @Component#value
-      ```
+##### 理解 Spring 注解属性别名 *Aliases*
+
+&emsp;&emsp;当 ***@AliasFor*** 用在同一注解属性方法之间，这些相互被注解的属性方法之间，互称为别名。
+
+- 显式别名
+
+  &emsp;&emsp;**相同注解中属性方法之间相互 “@AliasFor”** 并且 **默认值必须相等**，例如：
+
+  ```java
+  @Target({ElementType.TYPE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @Documented
+  @Transactional
+  @Service(value = "transactionalService")
+  public @interface TransactionalService {
+  
+      @AliasFor(attribute = "value")
+      String name() default "txManager";
+  
+      @AliasFor("name")
+      String value() default "txManager";
+  }
+  ```
+
+  &emsp;&emsp;本例中，`name()` 和 `value()` 即是显式别名，尤其注意它们的默认值必须相同 `default "txManager"`。
 
   
+
+  &emsp;&emsp;细心留意，不难发现 *@TransactionalService* 的 `value()` 隐式覆盖 *@Transactional* 的 `value()`，而后者又显式别名 `transactionManager()`。当执行事务时，Spring 会优先在 Bean 容器中找名称为 "txManager" 的 *PlatformTransactionManager* 事务管理器。这是因为 *@TransactionalService* 的 `value()` 隐式别名覆盖了  *@Transactional* 的 `value()`，使得 *@Transactional* 的 `value()` 被设置为 "txManager"，即寻找事务管理器的**限定符**，符合该限定符的事务管理器会被优先采纳。
+
+  
+
+  扩展阅读：依赖的自动依赖推断
+
+  
+
+- 隐式别名覆盖
+
+  &emsp;&emsp;继续上面例子，*@TransactionalService* 中 `name()` 和 `value()` 显式别名，其中的 `value()` 又隐式覆盖其元注解 *@Service* 的 `value()`，那么可以称 *@TransactionalSerice* 的 `name()` 隐式别名覆盖 *@Service* 的 `value()`。
+
+  ```
+  IF
+      @TransactionalService#name --Alias--> @TransactionalService#value
+      @TransactionalService#value --Implicit Overrides--> @Service#value
+  THEN
+      @TransactionalService#name -- Implicit Alias Overrides--> @Service#value
+  ```
+
+  &emsp;&emsp;注意：这里之所以称为隐式别名覆盖，而不直接叫隐式别名，是遵照别名只发生在相同注解之中，只有覆盖才发生在不同注解之间。
+
+  
+
+- 传递隐式别名覆盖
+
+  &emsp;&emsp;隐式别名覆盖更进一步，考虑 *@Service* 的 `value()` 又隐式覆盖 *@Component* 的 `value()`，那么可以称  *@TransactionalSerice* 的 `name()` 传递隐式别名覆盖  *@Component* 的 `value()`。
+
+  ```
+  IF
+      @TransactionalService#name --Alias--> @TransactionalService#value
+      @TransactionalService#value --Implicit Overrides--> @Service#value
+      @Service#value --Implicit Overrides--> @Component#value
+  THEN
+      @TransactionalService#name -- Transitive Implicit Alias Overrides--> @Component#value
+  ```
+
+
 
 ## Spring 注解驱动设计模式
 
@@ -1074,8 +1034,6 @@ repo: thinking-in-spring-boot-samples
 &emsp;&emsp;引入 “@Enable 模块驱动” 意义在于能够**简化装配步骤，实现了按需装配，屏蔽组件装配的细节**。
 
 &emsp;&emsp;弊端是该模式必须手动添加 @Enable 激活注解，且实现成本相对较高。
-
-
 
 常见的 @Enable 激活注解及对应功能模块如下表所示：
 
@@ -2042,8 +2000,6 @@ repo: thinking-in-spring-boot-samples
 
 &emsp;&emsp;Servlet 3.0 引入 ***ServletContainerInitializer*** 接口来支持编程的方式替换传统的 `web.xml` 文件来初始化 Servlet 上下文。Spring 借助此特性引入 **WebApplicationInitializer** 接口进行 Spring Web 自动装配，从而替换之前在 `web.xml` 中配置 ***ContextLoaderListener*** 、***DispatcherServlet*** 的方式。
 
-
-
 &emsp;&emsp;XML 的方式添加 *DispatcherServlet*：
 
 ```xml
@@ -2134,8 +2090,6 @@ public class SpringWebMvcServletInitializer extends AbstractAnnotationConfigDisp
 &emsp;&emsp;对比直接实现接口 *WebApplicationInitializer*，继承抽象类能使得自定义 Web 自动装配的开发成本进一步降低，仅需覆盖一小部分方法，大部分模板式的代码都被抽象类的默认方法完成。具体 Web 自动装配是如何通过 Servelet 容器一步步引导至 *WebApplicationInitializer* 进而装配整个 Spring Web MVC，将在下面的原理小节讲述。
 
 > [HelloWorldController 源码](https://github.com/ReionChan/thinking-in-spring-boot-samples/tree/master/spring-framework-samples/spring-webmvc-3.2.x-sample)
-
-
 
 #### Web 自动装配原理
 
