@@ -185,7 +185,7 @@ repo: thinking-in-spring-boot-samples
      </beans>
      ```
   
-     由 `xsi:schemaLocatio` 属性可知：
+     由 `xsi:schemaLocation` 属性可知：
      
      - **命名空间**：`http://www.springframework.org/schema/context`
      
@@ -515,7 +515,7 @@ repo: thinking-in-spring-boot-samples
 
 - **Spring Framework 2.5 仅能够实现单层次派生**
 
-  例如：某个类要称为可扫描的候选组件，那该类要么**被 @Component 修饰**，要么**被 @Component 派生的注解修饰**。
+  例如：某个类要成为可扫描的候选组件，那该类要么**被 @Component 修饰**，要么**被 @Component 派生的注解修饰**。
 
 - 利用 *ClassPathBeanDefinitionScanner* 和 *AnnotationTypeFilter* 能实现**不派生 @Component 的注解**扫描注册（**编程式**）
 
