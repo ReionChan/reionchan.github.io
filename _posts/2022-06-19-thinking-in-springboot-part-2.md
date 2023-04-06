@@ -2874,7 +2874,7 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   
   &emsp;&emsp;将收集到的 ***DeferredImportSelectorHolder*** 进行分组：
   
-```java
+    ```java
   class ConfigurationClassParser {
     // 【方法 1】
       public void parse(Set<BeanDefinitionHolder> configCandidates) {
@@ -2954,11 +2954,11 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
           }
       }
   }
-```
+    ```
 
   &emsp;&emsp;由【方法 5】可知，解析收集的 ***DeferredImportSelectorHolder*** 交由 ***DeferredImportSelector.Group*** 接口实现类进行处理，而自动装配导入类 *AutoConfigurationImportSelector* 是 *DeferredImportSelector* 实现类，前者覆盖了接口默认方法 `getImportGroup()` 返回 *DeferredImportSelector.Group* 接口实现类为 ***AutoConfigurationGroup***：
 
-  ```java
+    ```java
 public class AutoConfigurationImportSelector
           implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
           BeanFactoryAware, EnvironmentAware, Ordered {
@@ -2970,7 +2970,7 @@ public class AutoConfigurationImportSelector
       }
       ...
   }
-  ```
+    ```
 
   &emsp;&emsp;那么下一小节将着重分析 ***AutoConfigurationGroup*** 对 *AutoConfigurationImportSelector* 引入的候选自动装配类的**装载**、**筛选**、**排序**等操作。
 
@@ -3407,89 +3407,89 @@ public class AutoConfigurationImportSelector
      org.springframework.boot.autoconfigure.condition.ConditionEvaluationReportAutoConfigurationImportListener
      ```
 
-  &emsp;&emsp;执行完事件处理后，*AutoConfigurationGroup* 委托 *AutoConfigurationImportSelector* 类获取所需导入的候选配置类名数组已经完成，并将它们封装成候选类名称为索引，注解元数据位值的 *LinkedHashMap* 成员变量  `entries`，然后调用方法 `selectImports()` 进行排序操作：
-
-  ```java
-  private static class AutoConfigurationGroup implements DeferredImportSelector.Group,
-          BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
-      // 导入配置类名称为 key, @EnableAutoConfiguration 所在配置类的元注解为 value 的索引缓存对象    
-      private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();
-  
-      @Override
-      public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
-          // 1. 委托 AutoConfigurationImportSelector 类获取所需导入的候选配置类名数组完成
-          String[] imports = deferredImportSelector.selectImports(annotationMetadata);
-          for (String importClassName : imports) {
-              // 2. 建立导入配置类名称及元注解信息的索引
-              this.entries.put(importClassName, annotationMetadata);
-          }
-      }
-  
-      // 3. 执行该方法完成最终排序，并将排序后的候选配置类封装成 Iterable<Entry> 给 ConfigurationClassParser 进行解析注册
-      @Override
-      public Iterable<Entry> selectImports() {
-          // 利用 sortAutoConfigurations 方法排序，然后封装成可迭代 Iterable<Entry> 对象返回
-          return sortAutoConfigurations().stream()
-                  .map((importClassName) -> new Entry(this.entries.get(importClassName),
-                          importClassName))
-                  .collect(Collectors.toList());
-      }
-      // 4. 排序方法
-      private List<String> sortAutoConfigurations() {
-          List<String> autoConfigurations = new ArrayList<>(this.entries.keySet());
-          
-          ...
-  
-          // 此处又重新读取了一遍自动配置元数据文件，即 META-INF/spring-autoconfigure-metadata.properties
-          // 里面包含排序的信息：	
-          //      绝对排序的属性 AutoConfigureOrder
-          //      相对排序的 AutoConfigureAfter、AutoConfigureBefore
-          AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
-          // 交由 AutoConfigurationSorter 提取排序元信息做最后的排序操作
-          return new AutoConfigurationSorter(getMetadataReaderFactory(),
-                  autoConfigurationMetadata).getInPriorityOrder(autoConfigurations);
-      }
-  }
-  ```
-
-  &emsp;&emsp;接下来关注最后处理进行排序的类 *AutoConfigurationSorter* 的排序方法 `getInPriorityOrder`：
-
-  ```java
-  class AutoConfigurationSorter {
-  	...
-      // 5. 排序逻辑
-      public List<String> getInPriorityOrder(Collection<String> classNames) {
-          // 将待排序候选类、自动装配元数据信息、元数据读取工厂类封装成 classes
-          AutoConfigurationClasses classes = new AutoConfigurationClasses(
-                  this.metadataReaderFactory, this.autoConfigurationMetadata, classNames);
-          List<String> orderedClassNames = new ArrayList<>(classNames);
-          // 5.1 先按类全限定名进行字母顺序排序
-          Collections.sort(orderedClassNames);
-          // 5.2 在从自动装配元数据信息提取绝对定位属性 @AutoConfigureOrder 进行绝对位置排序
-          orderedClassNames.sort((o1, o2) -> {
-              int i1 = classes.get(o1).getOrder();
-              int i2 = classes.get(o2).getOrder();
-              return Integer.compare(i1, i2);
-          });
-          // 5.3 最后从自动装配元数据信息提取属性 @AutoConfigureBefore @AutoConfigureAfter 进行相对位置排序
-          orderedClassNames = sortByAnnotation(classes, orderedClassNames);
-          // 返回排序后的结果列表
-          return orderedClassNames;
-      }
-  }
-  ```
-
-  &emsp;&emsp;候选自动装配类全限定名列表先后经过三次排序，由先到后依次为：
-
-  1. **字母排序**
-
-  2. **@AutoConfigureOrder 值绝对排序，数值越小优先级越高**
-
-  3. **@AutoConfigureBefore @AutoConfigureAfter 值相对排序**
-
+     &emsp;&emsp;执行完事件处理后，*AutoConfigurationGroup* 委托 *AutoConfigurationImportSelector* 类获取所需导入的候选配置类名数组已经完成，并将它们封装成候选类名称为索引，注解元数据位值的 *LinkedHashMap* 成员变量  `entries`，然后调用方法 `selectImports()` 进行排序操作：
      
-
-  &emsp;&emsp;排序完成后将会回到配置类解析器 *ConfigurationClassParser* 按照顺序依次解析每个配置类的 Bean 定义信息，进而完成所有自动配置类的装配。
+     ```java
+     private static class AutoConfigurationGroup implements DeferredImportSelector.Group,
+             BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
+         // 导入配置类名称为 key, @EnableAutoConfiguration 所在配置类的元注解为 value 的索引缓存对象    
+         private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();
+     
+         @Override
+         public void process(AnnotationMetadata annotationMetadata, DeferredImportSelector deferredImportSelector) {
+             // 1. 委托 AutoConfigurationImportSelector 类获取所需导入的候选配置类名数组完成
+             String[] imports = deferredImportSelector.selectImports(annotationMetadata);
+             for (String importClassName : imports) {
+                 // 2. 建立导入配置类名称及元注解信息的索引
+                 this.entries.put(importClassName, annotationMetadata);
+             }
+         }
+     
+         // 3. 执行该方法完成最终排序，并将排序后的候选配置类封装成 Iterable<Entry> 给 ConfigurationClassParser 进行解析注册
+         @Override
+         public Iterable<Entry> selectImports() {
+             // 利用 sortAutoConfigurations 方法排序，然后封装成可迭代 Iterable<Entry> 对象返回
+             return sortAutoConfigurations().stream()
+                     .map((importClassName) -> new Entry(this.entries.get(importClassName),
+                             importClassName))
+                     .collect(Collectors.toList());
+         }
+         // 4. 排序方法
+         private List<String> sortAutoConfigurations() {
+             List<String> autoConfigurations = new ArrayList<>(this.entries.keySet());
+             
+             ...
+     
+             // 此处又重新读取了一遍自动配置元数据文件，即 META-INF/spring-autoconfigure-metadata.properties
+             // 里面包含排序的信息：	
+             //      绝对排序的属性 AutoConfigureOrder
+             //      相对排序的 AutoConfigureAfter、AutoConfigureBefore
+             AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader.loadMetadata(this.beanClassLoader);
+             // 交由 AutoConfigurationSorter 提取排序元信息做最后的排序操作
+             return new AutoConfigurationSorter(getMetadataReaderFactory(),
+                     autoConfigurationMetadata).getInPriorityOrder(autoConfigurations);
+         }
+     }
+     ```
+     
+     &emsp;&emsp;接下来关注最后处理进行排序的类 *AutoConfigurationSorter* 的排序方法 `getInPriorityOrder`：
+     
+     ```java
+     class AutoConfigurationSorter {
+     	...
+         // 5. 排序逻辑
+         public List<String> getInPriorityOrder(Collection<String> classNames) {
+             // 将待排序候选类、自动装配元数据信息、元数据读取工厂类封装成 classes
+             AutoConfigurationClasses classes = new AutoConfigurationClasses(
+                     this.metadataReaderFactory, this.autoConfigurationMetadata, classNames);
+             List<String> orderedClassNames = new ArrayList<>(classNames);
+             // 5.1 先按类全限定名进行字母顺序排序
+             Collections.sort(orderedClassNames);
+             // 5.2 在从自动装配元数据信息提取绝对定位属性 @AutoConfigureOrder 进行绝对位置排序
+             orderedClassNames.sort((o1, o2) -> {
+                 int i1 = classes.get(o1).getOrder();
+                 int i2 = classes.get(o2).getOrder();
+                 return Integer.compare(i1, i2);
+             });
+             // 5.3 最后从自动装配元数据信息提取属性 @AutoConfigureBefore @AutoConfigureAfter 进行相对位置排序
+             orderedClassNames = sortByAnnotation(classes, orderedClassNames);
+             // 返回排序后的结果列表
+             return orderedClassNames;
+         }
+     }
+     ```
+     
+     &emsp;&emsp;候选自动装配类全限定名列表先后经过三次排序，由先到后依次为：
+     
+     1. **字母排序**
+     
+     1. **@AutoConfigureOrder 值绝对排序，数值越小优先级越高**
+     
+     3. **@AutoConfigureBefore @AutoConfigureAfter 值相对排序**
+     
+     
+     
+     &emsp;&emsp;排序完成后将会回到配置类解析器 *ConfigurationClassParser* 按照顺序依次解析每个配置类的 Bean 定义信息，进而完成所有自动配置类的装配。
 
   
 
