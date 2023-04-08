@@ -2871,10 +2871,10 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
   
       }
   ```
-  
+
   &emsp;&emsp;将收集到的 ***DeferredImportSelectorHolder*** 进行分组：
-  
-    ```java
+
+  ```java
   class ConfigurationClassParser {
     // 【方法 1】
       public void parse(Set<BeanDefinitionHolder> configCandidates) {
@@ -2954,12 +2954,14 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
           }
       }
   }
-    ```
+  ```
+
+  
 
   &emsp;&emsp;由【方法 5】可知，解析收集的 ***DeferredImportSelectorHolder*** 交由 ***DeferredImportSelector.Group*** 接口实现类进行处理，而自动装配导入类 *AutoConfigurationImportSelector* 是 *DeferredImportSelector* 实现类，前者覆盖了接口默认方法 `getImportGroup()` 返回 *DeferredImportSelector.Group* 接口实现类为 ***AutoConfigurationGroup***：
 
-    ```java
-public class AutoConfigurationImportSelector
+  ```java
+  public class AutoConfigurationImportSelector
           implements DeferredImportSelector, BeanClassLoaderAware, ResourceLoaderAware,
           BeanFactoryAware, EnvironmentAware, Ordered {
       ...
@@ -2970,7 +2972,7 @@ public class AutoConfigurationImportSelector
       }
       ...
   }
-    ```
+  ```
 
   &emsp;&emsp;那么下一小节将着重分析 ***AutoConfigurationGroup*** 对 *AutoConfigurationImportSelector* 引入的候选自动装配类的**装载**、**筛选**、**排序**等操作。
 
