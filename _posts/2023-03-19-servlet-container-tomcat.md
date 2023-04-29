@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Servlet 容器 —— Tomcat 架构及原理
-categories: Tomcat
+title: Servlet 容器：Tomcat 架构及原理
+categories: Tomcat Server
 excerpt: 详解 Tomcat 的架构及运行原理
 image: https://tomcat.apache.org/res/images/tomcat.png
-description: 详解 Tomcat 的架构及运行原理
-keywords: Tomcat Servlet Web Server architecture
+description: 详解 Tomcat 的架构设计及运行原理
+keywords: Tomcat Servlet Server architecture Connector CoyoteAdapter Catalina
 licences: cc
 repo: tomcat
 ---
