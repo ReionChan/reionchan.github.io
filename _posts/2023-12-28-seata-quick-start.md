@@ -116,7 +116,7 @@ seata:
 
   1. 新建名称为 `seata` 的命名空间，产生**唯一命名空间 ID** 
 
-  ![seata-nacos-namespace](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-namespace.png)
+     ![seata-nacos-namespace](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-namespace.png)
 
   2. 上传 Seata 配置文件到 Nacos
 
@@ -124,29 +124,33 @@ seata:
 
      ![seata-nacos-config](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-config-1.png)
 
-     &emsp;&emsp;在配置管理中点击***创建配置***，并设置 `seata-server`、`SEATA_GROUP` 的 ***Data ID*** 和 ***Group***, 同时选择 ***Properties*** 配置格式，并将 `seata_home/script/config-center/config.txt` 配置内容拷贝到 ***配置内容***，然后点击 ***发布***：
+     在配置管理中点击***创建配置***，并设置 `seata-server`、`SEATA_GROUP` 的 ***Data ID*** 和 ***Group***, 同时选择 ***Properties*** 配置格式，并将 `seata_home/script/config-center/config.txt` 配置内容拷贝到 ***配置内容***，然后点击 ***发布***：
 
      ![seata-nacos-config](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-config-2.png)
 
-     &emsp;&emsp;之后，修改 `seata_home/conf/application.yml` 中 **seata.config** 下的内容为：
+     
 
-     ```yaml
-     seata:
-       config:
-         type: nacos
-         nacos:
-           # Nacos 服务地址 
-           server-addr: 127.0.0.1:8848
-           # Nacos 命名空间
-           namespace: 8b4a9073-dc11-4302-aa02-6c02fc6d81fe
-           # 分组
-           group: SEATA_GROUP
-           # 数据ID
-           data-id: seata-server
-           username:
-           password:
-           context-path:
-     ```
+* Seata 配置
+
+  修改 `seata_home/conf/application.yml` 中 **seata.config** 下的内容为：
+
+  ```yaml
+  seata:
+    config:
+      type: nacos
+      nacos:
+        # Nacos 服务地址 
+        server-addr: 127.0.0.1:8848
+        # Nacos 命名空间
+        namespace: 8b4a9073-dc11-4302-aa02-6c02fc6d81fe
+        # 分组
+        group: SEATA_GROUP
+        # 数据ID
+        data-id: seata-server
+        username:
+        password:
+        context-path:
+  ```
 
 ### seata.registry 注册方式（Nacos）
 
