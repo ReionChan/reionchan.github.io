@@ -300,7 +300,7 @@ seata:
 
 ### seata.registry 注册方式（Nacos）
 
-&emsp;&emsp;此处是设置 Seata 服务端启动后，要被注册到的注册中心，可用 `， ` 逗号分隔配置多个注册中心，本例仅将 Seata 服务端注册到 Nacos，修改 `seata_home/conf/application.yml` 中 **seata.registry** 下的内容为：
+&emsp;&emsp;此处是设置 Seata 服务端启动后，要被注册到的注册中心，可用 `,` 逗号分隔配置多个注册中心，本例仅将 Seata 服务端注册到 Nacos，修改 `seata_home/conf/application.yml` 中 **seata.registry** 下的内容为：
 
 ```yaml
 seata:
