@@ -1,8 +1,8 @@
 ---
 layout: post
-title: 分布式事务框架 Seata 快速配置指南
+title: 分布式事务框架 Seata 服务端快速配置指南
 categories: Java
-excerpt: Seata 配置指南
+excerpt: Seata 2.0 服务端配置指南
 image: https://seata.io/zh-cn/img/seata_logo.png
 description: Seata 快速配置指南
 keywords: Seata Quick Start Distributed Transaction Solution
