@@ -324,7 +324,7 @@ seata:
 
 ### seata.store 存储方式（DB，MySQL）
 
-&emsp;&emsp;先在 MySQL 数据库创建名为 *seata* 的数据库打开 `seata_home/server/db/mysql.sql` 文件，并在数据库中执行：
+&emsp;&emsp;先在 MySQL 数据库创建名为 *seata* 的数据库，之后打开 `seata_home/server/db/mysql.sql` 文件，并在数据库中执行：
 
 ```sql
 -- -------------------------------- The script used when storeMode is 'db' --------------------------------
