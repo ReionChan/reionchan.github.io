@@ -124,10 +124,156 @@ seata:
 
      ![seata-nacos-config](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-config-1.png)
 
-     在配置管理中点击***创建配置***，并设置 `seata-server`、`SEATA_GROUP` 的 ***Data ID*** 和 ***Group***, 同时选择 ***Properties*** 配置格式，并将 `seata_home/script/config-center/config.txt` 配置内容拷贝到 ***配置内容***，然后点击 ***发布***：
+     在配置管理中点击***创建配置***，并设置 `seata-server`、`SEATA_GROUP` 的 ***Data ID*** 和 ***Group***, 同时选择 ***Properties*** 配置格式，并将 `seata_home/script/config-center/config.txt` 配置内容中保留 Seata 服务端的配置属性，然后拷贝到 ***配置内容***，然后点击 ***发布***：
 
      ![seata-nacos-config](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-config-2.png)
 
+     下面是筛选后的 **Seata 服务端配置**：
+     
+     ```properties
+     #配置项详情查看： https://seata.io/zh-cn/docs/user/configurations.html
+     
+     # === Seata 服务端、客户端公用属性 ===
+     transport.type=TCP
+     transport.server=NIO
+     transport.heartbeat=true
+     transport.enableTmClientBatchSendRequest=false
+     transport.enableRmClientBatchSendRequest=true
+     transport.enableTcServerBatchSendResponse=false
+     transport.rpcRmRequestTimeout=30000
+     transport.rpcTmRequestTimeout=30000
+     transport.rpcTcRequestTimeout=30000
+     transport.threadFactory.bossThreadPrefix=NettyBoss
+     transport.threadFactory.workerThreadPrefix=NettyServerNIOWorker
+     transport.threadFactory.serverExecutorThreadPrefix=NettyServerBizHandler
+     transport.threadFactory.shareBossWorker=false
+     transport.threadFactory.clientSelectorThreadPrefix=NettyClientSelector
+     transport.threadFactory.clientSelectorThreadSize=1
+     transport.threadFactory.clientWorkerThreadPrefix=NettyClientWorkerThread
+     transport.threadFactory.bossThreadSize=1
+     transport.threadFactory.workerThreadSize=default
+     transport.shutdown.wait=3
+     transport.serialization=seata
+     transport.compressor=none
+     log.exceptionRate=100
+     
+     # === Seata 服务端配置 ===
+     # 事务存储配置
+     store.mode=db
+     store.lock.mode=db
+     store.session.mode=db
+     #store.publicKey=
+     store.db.datasource=druid
+     store.db.dbType=mysql
+     store.db.driverClassName=com.mysql.jdbc.Driver
+     store.db.url=jdbc:mysql://127.0.0.1:3306/seata?rewriteBatchedStatements=true&useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+     store.db.user=root
+     store.db.password=root
+     store.db.minConn=5
+     store.db.maxConn=30
+     store.db.globalTable=global_table
+     store.db.branchTable=branch_table
+     store.db.distributedLockTable=distributed_lock
+     store.db.queryLimit=100
+     store.db.lockTable=lock_table
+     store.db.maxWait=5000
+     
+     server.undo.logSaveDays=7
+     server.undo.logDeletePeriod=86400000
+     server.recovery.committingRetryPeriod=1000
+     server.recovery.asynCommittingRetryPeriod=1000
+     server.recovery.rollbackingRetryPeriod=1000
+     server.recovery.timeoutRetryPeriod=1000
+     server.maxCommitRetryTimeout=-1
+     server.maxRollbackRetryTimeout=-1
+     server.rollbackRetryTimeoutUnlockEnable=false
+     server.distributedLockExpireTime=10000
+     server.session.branchAsyncQueueSize=5000
+     server.session.enableBranchAsyncRemove=false
+     server.enableParallelRequestHandle=true
+     server.enableParallelHandleBranch=false
+     
+     # Metrics 配置
+     metrics.enabled=false
+     metrics.registryType=compact
+     metrics.exporterList=prometheus
+     metrics.exporterPrometheusPort=9898
+     ```
+     
+     虽然 **Seata 客户端** 配置不在本文涵盖范围，但也给出配置：
+     
+     ```properties
+     #配置项详情查看： https://seata.io/zh-cn/docs/user/configurations.html
+     
+     # === Seata 服务端、客户端公用属性 ===
+     transport.type=TCP
+     transport.server=NIO
+     transport.heartbeat=true
+     transport.enableTmClientBatchSendRequest=false
+     transport.enableRmClientBatchSendRequest=true
+     transport.enableTcServerBatchSendResponse=false
+     transport.rpcRmRequestTimeout=30000
+     transport.rpcTmRequestTimeout=30000
+     transport.rpcTcRequestTimeout=30000
+     transport.threadFactory.bossThreadPrefix=NettyBoss
+     transport.threadFactory.workerThreadPrefix=NettyServerNIOWorker
+     transport.threadFactory.serverExecutorThreadPrefix=NettyServerBizHandler
+     transport.threadFactory.shareBossWorker=false
+     transport.threadFactory.clientSelectorThreadPrefix=NettyClientSelector
+     transport.threadFactory.clientSelectorThreadSize=1
+     transport.threadFactory.clientWorkerThreadPrefix=NettyClientWorkerThread
+     transport.threadFactory.bossThreadSize=1
+     transport.threadFactory.workerThreadSize=default
+     transport.shutdown.wait=3
+     transport.serialization=seata
+     transport.compressor=none
+     log.exceptionRate=100
+     
+     # === Seata 客户端属性 ===
+     service.vgroupMapping.default_tx_group=default
+     service.default.grouplist=127.0.0.1:8091
+     service.enableDegrade=false
+     service.disableGlobalTransaction=false
+     client.metadataMaxAgeMs=30000
+     client.rm.asyncCommitBufferLimit=10000
+     client.rm.lock.retryInterval=10
+     client.rm.lock.retryTimes=30
+     client.rm.lock.retryPolicyBranchRollbackOnConflict=true
+     client.rm.reportRetryCount=5
+     client.rm.tableMetaCheckEnable=true
+     client.rm.tableMetaCheckerInterval=60000
+     client.rm.sqlParserType=druid
+     client.rm.reportSuccessEnable=false
+     client.rm.sagaBranchRegisterEnable=false
+     client.rm.sagaJsonParser=fastjson
+     client.rm.tccActionInterceptorOrder=-2147482648
+     client.rm.sqlParserType=druid
+     client.tm.commitRetryCount=5
+     client.tm.rollbackRetryCount=5
+     client.tm.defaultGlobalTransactionTimeout=60000
+     client.tm.degradeCheck=false
+     client.tm.degradeCheckAllowTimes=10
+     client.tm.degradeCheckPeriod=2000
+     client.tm.interceptorOrder=-2147482648
+     client.undo.dataValidation=true
+     client.undo.logSerialization=jackson
+     client.undo.onlyCareUpdateColumns=true
+     client.undo.logTable=undo_log
+     client.undo.compress.enable=true
+     client.undo.compress.type=zip
+     client.undo.compress.threshold=64k
+     tcc.fence.logTableName=tcc_fence_log
+     tcc.fence.cleanPeriod=1h
+     tcc.contextJsonParserType=jackson
+     tcc.fence.logTableName=tcc_fence_log
+     tcc.fence.cleanPeriod=1h
+     tcc.contextJsonParserType=jackson
+     ```
+     
+     当 Seata 服务端、客户端配置完成后，如下图所示：
+     
+     ![seata-nacos-config](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/seata/seata-nacos-config-3.png)
+     
      
 
 * Seata 配置
@@ -145,7 +291,7 @@ seata:
         namespace: 8b4a9073-dc11-4302-aa02-6c02fc6d81fe
         # 分组
         group: SEATA_GROUP
-        # 数据ID
+        # 数据ID，服务端为 seata-server，即加载服务端配置  
         data-id: seata-server
         username:
         password:
@@ -154,7 +300,7 @@ seata:
 
 ### seata.registry 注册方式（Nacos）
 
-&emsp;&emsp;修改 `seata_home/conf/application.yml` 中 **seata.registry** 下的内容为：
+&emsp;&emsp;此处是设置 Seata 服务端启动后，要被注册到的注册中心，可用 `， ` 逗号分隔配置多个注册中心，本例仅将 Seata 服务端注册到 Nacos，修改 `seata_home/conf/application.yml` 中 **seata.registry** 下的内容为：
 
 ```yaml
 seata:
@@ -178,9 +324,7 @@ seata:
 
 ### seata.store 存储方式（DB，MySQL）
 
-&emsp;&emsp;先在 MySQL 数据库创建名为 *seata* 的数据库
-
-&emsp;&emsp;打开 `seata_home/server/db/mysql.sql` 文件，并在数据库中执行：
+&emsp;&emsp;先在 MySQL 数据库创建名为 *seata* 的数据库打开 `seata_home/server/db/mysql.sql` 文件，并在数据库中执行：
 
 ```sql
 -- -------------------------------- The script used when storeMode is 'db' --------------------------------
@@ -287,6 +431,8 @@ seata:
       query-limit: 1000
       max-wait: 5000
 ```
+
+&emsp;&emsp;**注意：**当前面 **seata.config** 的配置中心有关服务端配置中已经设置了 `store.*` 开头属性时，本配置文件中的设置其实会被覆盖。
 
 ## 启动
 
