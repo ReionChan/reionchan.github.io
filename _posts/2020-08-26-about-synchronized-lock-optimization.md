@@ -3,7 +3,7 @@ layout: post
 title: 关于 synchronized 锁优化
 categories: Java
 excerpt: HotSpot JVM 针对 synchronized 的隐式锁的优化，涉及偏向锁、轻量级锁、重量级锁。
-image: https://en.wikipedia.org/wiki/File:Java_programming_language_logo.svg
+image: https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg
 description: HotSpot JVM 针对 synchronized 的隐式锁的优化，涉及偏向锁、轻量级锁（瘦锁）、重量级锁（胖锁）。
 keywords: Java HotSpot JVM synchronized lock biasLock thinLock fatLock 偏向锁 轻量级锁 重量级锁 锁升级 锁降级
 licences: cc
