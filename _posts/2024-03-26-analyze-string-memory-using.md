@@ -132,6 +132,11 @@ public class Test {
 
 ## 实际操作
 
+#### 运行环境
+
+* 本操作是基于 JDK 8 版本的 HSDB 工具
+* 程序源码以 Java 8 版本编译及运行
+
 #### JVM 内存区域
 
 * 在菜单栏【Tools】中选择子菜单【Heap Parameters】获得 JVM 运行时内存区域划分信息：
