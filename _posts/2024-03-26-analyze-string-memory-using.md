@@ -2,9 +2,9 @@
 layout: post
 title: String 类型对象内存使用分析
 categories: Java Tools
-excerpt: 利用 HSDB 分析字符串对象的内存占用及分布
+excerpt: 利用 HSDB 分析字符串对象的内存分布
 image: https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg
-description: 利用 HSDB 分析字符串对象的内存占用及分布
+description: 利用 HSDB 分析字符串对象的内存分布
 keywords: String Runtime Constant Pool Memory intern HotSpot JVM
 licences: cc
 ---
@@ -19,11 +19,7 @@ licences: cc
 
 #### 快速简介
 
-&emsp;&emsp;HSDB（HotSpot Debugger）是一个用于分析 Java 应用程序性能问题的工具。它是针对 Java HotSpot 虚拟机的调试器，可以帮助开发人员诊断和调试应用程序中的性能瓶颈和问题。
-
-&emsp;&emsp;Hotspot Debugger 提供了一系列功能，包括实时监控应用程序的性能指标、跟踪方法调用、分析内存使用情况、查看线程状态等。
-
-&emsp;&emsp;使用 Hotspot Debugger，开发人员可以深入了解应用程序在 JVM 层面的执行情况，从而更好地优化和调试 Java 应用程序的性能。
+&emsp;&emsp;HSDB（HotSpot Debugger）是一个用于分析 Java 应用程序性能问题的工具。它是针对 Java HotSpot 虚拟机的调试器，可以帮助开发人员诊断和调试应用程序中的性能瓶颈和问题。它提供了一系列功能，包括实时监控应用程序的性能指标、跟踪方法调用、分析内存使用情况、查看线程状态等。使用 Hotspot Debugger，开发人员可以深入了解应用程序在 JVM 层面的执行情况，从而更好地优化和调试 Java 应用程序的性能。
 
 #### 使用说明
 
@@ -152,7 +148,7 @@ public class Test {
   	# 新生代
   	PSYoungGen 
   	[ 
-  		#       起始地址            已使用到地址          结束地址
+  		#       起始地址              已使用到地址          结束地址
   		eden =  [0x0000000795580000, 0x00000007958c3800, 0x0000000797600000] , 
   		from =  [0x0000000797b00000, 0x0000000797b00000, 0x0000000798000000] , 
   		to   =  [0x0000000797600000, 0x0000000797600000, 0x0000000797b00000]  
@@ -188,12 +184,12 @@ public static void main(String[] args) {
   #----------------------------------------------------------------------------
   #  高位 <-- 低位         小端存储，字节序已翻转
   #============================================================================
-  0x00007000043fb9f0		0x00000007958660e0		PSYoungGen java/lang/String
+  0x00007000043fb9f0      0x00000007958660e0      PSYoungGen java/lang/String
   ```
 
   &emsp;&emsp;如上图所示，方法本地变量区域中的变量对应的引用分别为：
 
-  * 变量 **`t`**： **`0x7958660d0`**, 在堆的 `eden` 区
+  * 变量 **`t`**：**`0x7958660d0`**, 在堆的 `eden` 区
   * 变量 **`clazz`**: **`0x795861e38`**，在堆的 `eden` 区
   * 变量 **`c`**: **`0x7958660e0`**，在堆的 `eden` 区
 
@@ -235,7 +231,7 @@ public class Test {
 
 &emsp;&emsp;解压缩后地址 **`0x7c0060028`** ，参考上面堆内存分配详情可知其已超出 JVM 堆内存区域范围，**间接证实 Java 8 中用来保存字节码信息的元空间已经在本地内存区域分配**。本案例重点不是分析字节码信息在内存中的真实存储情况，故此处不在跳转到该地址空间查看数据。
 
-#### 变量 clazz
+#### 变量 `clazz`
 
 &emsp;&emsp;JVM 虚拟机类加载（Loading、Linking、Initalizing）行为会将类字节码文件加载到内存，然后经过验证、准备、解析后将类的**元信息**保存在**方法区**，同时将其包含的静态常量表收集汇总到**运行时常量池**，最终还会生成 **`Class<Test>`** 类型的实例对象用于在 JVM 中表示该类。上面解压缩后的内存地址 **`0x7c0060028`** 所存储的即为 **`Test`** 类元信息，通过 **Class Browser** 工具来看看该类元信息：
 
@@ -276,7 +272,7 @@ public final class String
 
 &emsp;&emsp;可以看到该对象是一个字符数组类型，其字节码元信息 `char[].class` 在压缩地址 `0xf8000041` 中保存，这里就不在解压缩观察。可以发现数组对象相比非数组对象在 **对象头** 中多出了 4 字节用来描述数组长度，本例字符数组长度值为 `0x00000006`，即字符数组长度为 6，后续数据中依次存储这 6 个字符，每个字符占用 2 字节（Unicode 编码）。
 
-#### 变量 c
+#### 变量 `c`
 
 &emsp;&emsp;继续跟随代码执行 `String c = new String("abcdef")`，来观察变量 **`c`**: **`0x7958660e0`**，在堆的存储：
 
