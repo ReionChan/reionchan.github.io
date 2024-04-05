@@ -17,7 +17,9 @@ licences: cc
 
 ## 序
 
-&emsp;&emsp;本 Java 技术栈笔记系列文章，是读[《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)这篇涵盖 Java 程序员需要掌握的核心知识的文章时的个人的摘录及补充笔记。未读此篇指南的读者请优先阅读，而本笔记仅针对个人情况做了筛选摘录与补充，留以自用，若同时也能您有所帮助深感荣幸。在此再次感谢 **[JavaGuide](https://javaguide.cn/)** 及开源社区，对本文有何建议欢迎补充。
+&emsp;&emsp;本 Java 技术栈笔记系列文章，是读[《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)这篇涵盖 Java 程序员需要掌握的核心知识的文章时的个人的摘录及补充笔记。未读此篇指南的读者请优先阅读，而本笔记仅针对个人情况做了筛选摘录与补充，留以自用，若同时也能您有所帮助深感荣幸。
+
+&emsp;&emsp;在此感谢 **[JavaGuide](https://javaguide.cn/)** 及开源社区，对本文有何建议欢迎补充。
 
 > [《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)
 
@@ -30,11 +32,15 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
 * JDK 7
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/jvm/java-runtime-data-areas-jdk1.7.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/java-runtime-data-areas-jdk1.7.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/jvm/java-runtime-data-areas-jdk1.7.png)
 
 * JDK 8
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/jvm/java-runtime-data-areas-jdk1.8.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/java-runtime-data-areas-jdk1.8.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/jvm/java-runtime-data-areas-jdk1.8.png)
 
   * 线程私有部分
 
@@ -646,7 +652,9 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
       u2             access_flags;//Class 的访问标记
   ```
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/access-flags.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97.png)
 
 * 当前类、父类、接口
 
@@ -664,13 +672,17 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
       field_info     fields[fields_count];//一个类会可以有个字段
   ```
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/%E5%AD%97%E6%AE%B5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/field-table.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/%E5%AD%97%E6%AE%B5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png)
 
   
 
   字段访问修饰标志
 
-  ![](https://oss.javaguide.cn/JVM/image-20201031084342859.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/image-20201031084342859.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/JVM/image-20201031084342859.png)
 
 * 方法表集合
 
@@ -679,11 +691,15 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
       method_info    methods[methods_count];//一个类可以有个多个方法
   ```
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/%E6%96%B9%E6%B3%95%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/method-table.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/%E6%96%B9%E6%B3%95%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84.png)
 
   方发表访问修饰符
 
-  ![](https://oss.javaguide.cn/JVM/image-20201031084248965.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/image-20201031084248965.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/JVM/image-20201031084248965.png)
 
 * 属性表集合
 
@@ -941,7 +957,9 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
 * 堆内存相关
 
-  ![](https://javaguide.cn/assets/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0-BhVyMqLd.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/java-memory-area-args.png)
+
+  [引用图源-JavaGuide](https://javaguide.cn/assets/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0-BhVyMqLd.png)
 
   * 堆内存显式指定参数
 
@@ -1120,15 +1138,6 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
 ### **JDK 附带工具**
 
-> JDK 附带工具众多，详细请查阅
->
-> *  [Java SE Tools Reference for Windows](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/toc.html)
-> *  [Java SE Tools Reference for UNIX](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/index.html)
-> * [JDK Mission Control User Guide](https://docs.oracle.com/en/java/java-components/jdk-mission-control/8/user-guide/#Java-%E5%B9%B3%E5%8F%B0%EF%BC%8C%E6%A0%87%E5%87%86%E7%89%88)
-> * [JDK Mission Control 8 Downloads](https://www.oracle.com/java/technologies/javase/products-jmc8-downloads.html)
-> * [Java Flight Recorder](https://docs.oracle.com/en/java/java-components/jdk-mission-control/8/user-guide/using-jdk-flight-recorder.html#GUID-D38849B6-61C7-4ED6-A395-EA4BC32A9FD6)
-> * [Troubleshooting Guide](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot)
-
 * JDK 命令行工具
 
   * **`jps` (Java Process Status)**
@@ -1217,7 +1226,15 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
     可以显示快照时线程所处状态，对于排除线程死锁、死循环、等待时间过长等问题有帮助。
 
-    
+
+  > JDK 附带工具众多，详细请查阅
+  >
+  > *  [Java SE Tools Reference for Windows](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/toc.html)
+  > *  [Java SE Tools Reference for UNIX](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/index.html)
+  > *  [JDK Mission Control User Guide](https://docs.oracle.com/en/java/java-components/jdk-mission-control/8/user-guide/#Java-%E5%B9%B3%E5%8F%B0%EF%BC%8C%E6%A0%87%E5%87%86%E7%89%88)
+  > *  [JDK Mission Control 8 Downloads](https://www.oracle.com/java/technologies/javase/products-jmc8-downloads.html)
+  > *  [Java Flight Recorder](https://docs.oracle.com/en/java/java-components/jdk-mission-control/8/user-guide/using-jdk-flight-recorder.html#GUID-D38849B6-61C7-4ED6-A395-EA4BC32A9FD6)
+  > *  [Troubleshooting Guide](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot)
 
 * JDK 可视化分析工具
 
@@ -1242,25 +1259,33 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
     * Java 程序概览
 
-      ![](https://javaguide.cn/assets/2%E6%9F%A5%E7%9C%8BJava%E7%A8%8B%E5%BA%8F%E6%A6%82%E5%86%B5-aaU-gmsb.png)
+      ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/jconsole-overview.png)
+
+      [引用图源-JavaGuide](https://javaguide.cn/assets/2%E6%9F%A5%E7%9C%8BJava%E7%A8%8B%E5%BA%8F%E6%A6%82%E5%86%B5-aaU-gmsb.png)
 
     * 内存监控
 
-      ![](https://javaguide.cn/assets/3%E5%86%85%E5%AD%98%E7%9B%91%E6%8E%A7-s29rEsmq.png)
+      ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/jconsole-memory.png)
+
+      [引用图源-JavaGuide](https://javaguide.cn/assets/3%E5%86%85%E5%AD%98%E7%9B%91%E6%8E%A7-s29rEsmq.png)
 
       可以浏览不同堆分区的内存使用情况，并且可以手动触发 GC
 
     * 线程监控
 
-      ![](https://javaguide.cn/assets/4%E7%BA%BF%E7%A8%8B%E7%9B%91%E6%8E%A7-LIxwEnVV.png)
+      ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/jsoncole-threads.png)
 
+      [引用图源-JavaGuide](https://javaguide.cn/assets/4%E7%BA%BF%E7%A8%8B%E7%9B%91%E6%8E%A7-LIxwEnVV.png)
+      
       检测死锁工具 能快速查询到死锁线程及它们的详细信息
 
   * **`VisualVM`**
 
     [`VisualVM`](https://visualvm.github.io/)  是一款集成 JDK 命令行工具，具备轻量化分析功能的可视化工具，适用于开发环境、生产环境。
 
-    ![](https://raw.githubusercontent.com/visualvm/visualvm.java.net.backup/master/www/zh_CN/images/docs/vvm-start.png)
+    ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/vvm-start.png)
+
+    [引用图源-visualvm.java.net.backup](https://raw.githubusercontent.com/visualvm/visualvm.java.net.backup/master/www/zh_CN/images/docs/vvm-start.png)
 
     [查看使用说明](https://visualvm.github.io/documentation.html)
 
@@ -3233,7 +3258,9 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
 * 虚拟线程（第二次预览）
 
-  ![](https://oss.javaguide.cn/github/javaguide/java/new-features/virtual-threads-platform-threads-kernel-threads-relationship.png)
+  ![](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/virtual-threads-platform-threads-kernel-threads-relationship.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/new-features/virtual-threads-platform-threads-kernel-threads-relationship.png)
 
   &emsp;&emsp;在引入虚拟线程之前，`java.lang.Thread` 包已经支持所谓的平台线程，也就是没有虚拟线程之前，我们一直使用的线程。JVM 调度程序通过平台线程（载体线程）来管理虚拟线程，一个平台线程可以在不同的时间执行不同的虚拟线程（多个虚拟线程挂载在一个平台线程上），当虚拟线程被阻塞或等待时，平台线程可以切换到执行另一个虚拟线程。
 
