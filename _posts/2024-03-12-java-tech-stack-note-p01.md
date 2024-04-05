@@ -17,7 +17,9 @@ licences: cc
 
 ## 序
 
-&emsp;&emsp;本 Java 技术栈笔记系列文章，是读[《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)这篇涵盖 Java 程序员需要掌握的核心知识的文章时的个人的摘录及补充笔记。未读此篇指南的读者请优先阅读，而本笔记仅针对个人情况做了筛选摘录与补充，留以自用，若同时也能您有所帮助深感荣幸。在此再次感谢 **[JavaGuide](https://javaguide.cn/)** 及开源社区，对本文有何建议欢迎补充。
+&emsp;&emsp;本 Java 技术栈笔记系列文章，是读[《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)这篇涵盖 Java 程序员需要掌握的核心知识的文章时的个人的摘录及补充笔记。未读此篇指南的读者请优先阅读，而本笔记仅针对个人情况做了筛选摘录与补充，留以自用，若同时也能您有所帮助深感荣幸。
+
+&emsp;&emsp;在此感谢 **[JavaGuide](https://javaguide.cn/)** 及开源社区，对本文有何建议欢迎补充。
 
 > [《JavaGuide（Java学习&面试指南）》](https://javaguide.cn/home.html)
 
@@ -872,7 +874,9 @@ licences: cc
 
 * 集合框架
 
-  ![集合框架总览图](https://oss.javaguide.cn/github/javaguide/java/collection/java-collection-hierarchy.png)
+  ![集合框架总览图](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/java-collection-hierarchy.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/collection/java-collection-hierarchy.png)
 
 * 四种容器的区别
 
@@ -1113,7 +1117,7 @@ licences: cc
 
   结论：
 
-  * 不存在阻塞时，Iterator | For EntrySet > Stream > Lambda > KeySet > Parrallel Stream
+  * 不存在阻塞时，`Iterator | For EntrySet > Stream > Lambda > KeySet > Parrallel Stream`
   * 存在阻塞时，Parrallel Stream 性能最高
 
 * `ConcurrentHashMap` vs `Hashtable`
@@ -1245,7 +1249,9 @@ licences: cc
   * **TIME_WAITING**：`waite(long)`、`join(long)`、`sleep(long)`、`LockSupport.parkNanos(long)`
   * **TERMINATED**：执行完成
 
-  ![线程状态转化图](https://oss.javaguide.cn/github/javaguide/java/concurrent/640.png)
+  ![线程状态转化图](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/640.png)
+  
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/concurrent/640.png)
 * 线程上下文切换
 
   * 线程执行过程包含一些运行条件和状态（程序计数器、栈信息）被称作上下文
@@ -1748,7 +1754,7 @@ licences: cc
   * CLH 锁是自旋锁的改良，属于隐式的链表队列，通过该队列进行线程的管理
   * 通过同步状态值 `state` 来标识锁的状态与类型
 
-### **[CLH 锁](https://mp.weixin.qq.com/s/jEx-4XhNGOFdCo4Nou5tqg)**
+### **CLH 锁**
 
 * 自旋锁
 
@@ -1808,6 +1814,8 @@ licences: cc
         * 锁释放时，由于后驱节点并非原子性插入，不可靠，如果释放时后续节点不可用
         * 将利用队尾指针 Tail 从尾部逆序遍历到当前节点正确的后驱节点
         * 逆序遍历将自动跳过取消、中断等异常节点
+
+  > [Java AQS 核心数据结构-CLH 锁](https://mp.weixin.qq.com/s/jEx-4XhNGOFdCo4Nou5tqg)
 
 ### **AQS (基于 Java 8 版本)**
 
@@ -1884,7 +1892,7 @@ licences: cc
     * 当计数器 `count` 为 0 时，将等待队列的 parties 个线程全部唤醒
     * 执行 `nextGeneration()` 时，又可以开启下一轮上面的线程同步步骤
 
-#### **虚拟线程**
+### **虚拟线程**
 
 &emsp;&emsp;参考 **新特性 Java 20 章节**
 
@@ -1954,15 +1962,21 @@ licences: cc
 
 * 同步阻塞 BIO
 
-  ![同步阻塞](https://oss.javaguide.cn/p3-juejin/6a9e704af49b4380bb686f0c96d33b81~tplv-k3u1fbpfcp-watermark.png)
+  ![同步阻塞](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/6a9e704af49b4380bb686f0c96d33b81~tplv-k3u1fbpfcp-watermark.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/p3-juejin/6a9e704af49b4380bb686f0c96d33b81~tplv-k3u1fbpfcp-watermark.png)
 
 * 同步非阻塞 NIO
 
-  ![同步非阻塞](https://oss.javaguide.cn/p3-juejin/bb174e22dbe04bb79fe3fc126aed0c61~tplv-k3u1fbpfcp-watermark.png)
+  ![同步非阻塞](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/bb174e22dbe04bb79fe3fc126aed0c61~tplv-k3u1fbpfcp-watermark.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/p3-juejin/bb174e22dbe04bb79fe3fc126aed0c61~tplv-k3u1fbpfcp-watermark.png)
 
 * 多路复用 NIO select/poll/epoll
 
-  ![多路复用](https://oss.javaguide.cn/github/javaguide/java/io/88ff862764024c3b8567367df11df6ab~tplv-k3u1fbpfcp-watermark.png)
+  ![多路复用](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/88ff862764024c3b8567367df11df6ab~tplv-k3u1fbpfcp-watermark.png)
+
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/io/88ff862764024c3b8567367df11df6ab~tplv-k3u1fbpfcp-watermark.png)
 
   * select/poll vs epoll
 
@@ -1983,7 +1997,7 @@ licences: cc
     * epoll
 
       * epoll 采用哈希表保存 fd，且改用事件通知回调方式将就绪的 fd 放到
-    
+
         用户空间的 rdlist 里面，免去用户态频繁拷贝 fd 集合，内核态不断轮询
         
         * epoll_create
@@ -2014,7 +2028,9 @@ licences: cc
         
           * 由于中断处理会将已准备就绪的 fd 放入就绪链表，故 epoll_wait 免去遍历红黑树
       
-      ![多路复用区别对比](https://img2022.cnblogs.com/blog/577140/202211/577140-20221104170510883-1267943094.png)
+      ![多路复用区别对比](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/577140-20221104170510883-1267943094.png)
+      
+      [引用图源-cnblogs](https://img2022.cnblogs.com/blog/577140/202211/577140-20221104170510883-1267943094.png)
 
   * Reactor 模式
 
@@ -2030,11 +2046,17 @@ licences: cc
 
 * 信号驱动
 
-  ![信号驱动](https://img2022.cnblogs.com/blog/577140/202211/577140-20221104170510676-1445375786.png)
+  ![信号驱动](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/577140-20221104170510676-1445375786.png)
+
+  [引用图源-cnblogs](https://img2022.cnblogs.com/blog/577140/202211/577140-20221104170510676-1445375786.png)
 
 * 异步
 
-  ![异步](https://oss.javaguide.cn/github/javaguide/java/io/3077e72a1af049559e81d18205b56fd7~tplv-k3u1fbpfcp-watermark.png)
+  ![异步](https://raw.githubusercontent.com/ReionChan/PhotoRepo/master/jtsn/3077e72a1af049559e81d18205b56fd7~tplv-k3u1fbpfcp-watermark.png)
+  
+  [引用图源-JavaGuide](https://oss.javaguide.cn/github/javaguide/java/io/3077e72a1af049559e81d18205b56fd7~tplv-k3u1fbpfcp-watermark.png)
+  
+  
 
 ### **内核零拷贝**
 
