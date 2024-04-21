@@ -3567,3 +3567,5 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 ## 推荐阅读
 
 [Java 技术栈笔记 —— Java 上篇](https://reionchan.github.io/2024/03/12/java-tech-stack-note-p01)
+
+[Java 技术栈笔记 —— 计算机基础](https://reionchan.github.io/2024/03/24/java-tech-stack-note-p03)

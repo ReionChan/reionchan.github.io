@@ -2174,3 +2174,5 @@ licences: cc
 ## 推荐阅读
 
 [Java 技术栈笔记 —— Java 下篇](https://reionchan.github.io/2024/03/18/java-tech-stack-note-p02)
+
+[Java 技术栈笔记 —— 计算机基础](https://reionchan.github.io/2024/03/24/java-tech-stack-note-p03)
