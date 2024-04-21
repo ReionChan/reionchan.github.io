@@ -143,7 +143,7 @@ licences: cc
 
   &emsp;&emsp;百万条指令 / 秒，即每秒执行以百万条指令为单位的次数，即：
   
-  $MIPS = 指令条数 \div \left( 执行时间 \times 10^6 \right)$
+  $$MIPS = 指令条数 \div \left( 执行时间 \times 10^6 \right)$$
   
   
 
@@ -151,7 +151,7 @@ licences: cc
   
   &emsp;&emsp;百万浮点运算 / 秒，即每秒执行以百万条浮点运算的次数，即：
   
-  $MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)$
+  $$MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)$$
 
   
   
@@ -159,7 +159,7 @@ licences: cc
   
   &emsp;&emsp;十亿浮点运算 / 秒，即每秒执行以十亿条浮点运算的次数，即：
 
-  $GFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^9 \right)$
+  $$GFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^9 \right)$$
   
   
   
@@ -167,7 +167,7 @@ licences: cc
   
   &emsp;&emsp;万亿浮点运算 / 秒，即每秒执行以万亿条浮点运算的次数，即：
   
-  $TFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^{12} \right)$
+  $$TFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^{12} \right)$$
   
   
 
