@@ -142,29 +142,32 @@ licences: cc
   **MIPS**（Million Instructions Per Second）
 
   &emsp;&emsp;百万条指令 / 秒，即每秒执行以百万条指令为单位的次数
-  $$MIPS = 指令条数 \div \left( 执行时间 \times 10^6 \right)$$
+  
+  $MIPS = 指令条数 \div \left( 执行时间 \times 10^6 \right)$
   
   
-  
+
   **MFLOPS**（Mega Floating-point Operation Per Second）
   
   &emsp;&emsp;百万浮点运算 / 秒，即每秒执行以百万条浮点运算的次数
-  
-  $$MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)$$
+
+  $MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)$
   
   
   
   **GFLOPS**（Giga Floating-point Operation Per Second）
-  
+
   &emsp;&emsp;十亿浮点运算 / 秒，即每秒执行以十亿条浮点运算的次数
-  $$GFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^9 \right)$$
+  
+  $GFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^9 \right)$
   
   
   
   **TFLOPS**（Tera Floating-point Operation Per Second）
   
   &emsp;&emsp;万亿浮点运算 / 秒，即每秒执行以万亿条浮点运算的次数
-  $$TFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^{12} \right)$$
+  
+  $TFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^{12} \right)$
 
 ### 数据表示及运算
 
