@@ -149,9 +149,8 @@ licences: cc
 
   &emsp;&emsp;百万浮点运算 / 秒，即每秒执行以百万条浮点运算的次数
   
-  ```math
-  MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)
-  ```
+  &emsp;&emsp;$$MFLOPS = 浮点运算次数 \div \left( 执行时间 \times 10^6 \right)$$
+
   
   
   **GFLOPS**（Giga Floating-point Operation Per Second）
