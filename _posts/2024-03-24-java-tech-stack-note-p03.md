@@ -2105,7 +2105,7 @@ I/O 设备由机械部件、电子部件构成：
   * HTTP 运行在 TCP 上，明文传输，无状态
   * HTTPS 运行在 SSL/TLS 上的 HTTP 协议，SSL/TLS 运行在 TCP 上，加密传输
 
-**HTTP/1.0 vs HTTP/1.1 **
+**HTTP/1.0 vs HTTP/1.1**
 
 * 后者比前者增加了更多的状态码
 * 缓存处理
