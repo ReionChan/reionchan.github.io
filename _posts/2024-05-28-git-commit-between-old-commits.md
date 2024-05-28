@@ -54,7 +54,7 @@ $ git rebase tmp master
 
 ### 副作用
 
-VV 之后接的 Common Log 的 SHA 被更新，在原 SHA 上的 **`tag`** 标签未能同步到新的 SHA 上。
+VV 之后接的 Commit Log 的 SHA 被更新，在原 SHA 上的 **`tag`** 标签未能同步到新的 SHA 上。
 
 解决办法是获得原由 *原标签* 的**名称**及**提交日期时间**，手动映射到相同日期时间的新 SHA 上。
 
@@ -82,7 +82,4 @@ Date:   Tue May 28 20:15:28 2024 +0800
 # 将原标签名打在此 eb1a65e37632539a7000d8e5bf3f9e25bf16f202 上
 $ git tag --force TAG_NAME eb1a65e37632539a7000d8e5bf3f9e25bf16f202
 ```
-
-### 
-
 
