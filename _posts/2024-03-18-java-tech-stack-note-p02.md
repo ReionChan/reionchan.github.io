@@ -351,12 +351,14 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
 
 * 垃圾收集器
 
-  > [详解经典的七种垃圾回收器](http://element-ui.cn/article/show-65973.html?action=onClick)
+  > [JVM垃圾回收器 七种经典垃圾回收器](https://blog.csdn.net/m0_43408858/article/details/123879245)
+  >
+  > [详解JVM中的经典7种垃圾回收器](https://blog.csdn.net/Kobe_k/article/details/107999154)
   >
   > [Java中9种常见的CMS GC问题分析与解决](https://tech.meituan.com/2020/11/12/java-9-cms-gc.html)
 
   * 根据收集区域划分不同收集器
-
+  
     * 年轻代收集器
   
       * Serial
@@ -384,7 +386,7 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
         * 支持并发、多阶段的回收器，采用标记清除算法
 
         * **关注最短的回收停顿时间**，适合注重用户体验的应用
-
+  
         * 分四个阶段回收动作
   
           * 初始标记：单线程串行、 STW，记录与 GC Roots 直接相连的对象，速度快
@@ -409,13 +411,13 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
             &emsp;&emsp;由于并发方式需要与应用线程同时运行，对线程所需的内存资源有要求，需考虑同时工作时应用程序依然有足够的空间支持，故无法等到老年代空间几乎完全填满前就要提前开始工作，如果阈值设置不算理想会发生 **`Concurrent Mode Failure`** 时，虚拟机将会启动预备方案：临时使用 **Serial Old** 进行老年代垃圾收集，停顿时间会相当长
 
         * JDK 9 将 CMS 标记为 `Deprecate`, JDK 14 已完全删除 CMS
-
+  
       * Serial Old (MSC)
   
         * Serial 收集器的老年代版本，单线程串行、STW 独占式的回收，采用标记整理算法
         * JDK 5 及之前与 Parallel Scavenge 搭配使用
         * 可用作 CMS 收集器的后背方案
-
+  
       * Parallel Old
   
         * Parallel Scavenge 收集器的老年代版本，采用多线程并行、STW 独占式回收的标记整理算法
@@ -518,7 +520,7 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
         * G1 相关参数
 
           * 通用规则参数
-
+  
             * `-XX:InitialHeapSize` 初始最小 Java 堆大小
             * `-XX:MaxHeapSize` 最大 Java 堆大小
             * `-XX:MinHeapFreeRatio` 最小百分比可用堆内存
@@ -556,7 +558,7 @@ Java 虚拟机从 8 版本后对内存区域做了一些调整，故将分析版
         > [Oracle 官方 G1 垃圾回收器调优文档](https://docs.oracle.com/en/java/javase/17/gctuning/garbage-first-g1-garbage-collector1.html#GUID-15921907-B297-43A4-8C48-DC88035BC7CF)
 
   * 根据线程数划分不同收集器
-
+  
     * 串行回收（同一时间段内只运行单个 CPU 线程执行回收，适合单 CPU较小内存的场景）
       * Serial、Serial Old
     * 并行回收（同一时间段运行多个 CPU 线程同时执行回收，适合多 CPU 有吞吐量需求的场景）
